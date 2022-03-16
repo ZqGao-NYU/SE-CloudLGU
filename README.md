@@ -13,6 +13,11 @@ Please check the [description document](https://github.com/118010077/SE-CloudLGU
 ## Deployment
 Please follow the steps in this [Deployment Document](https://github.com/118010077/SE-CloudLGU/blob/main/Design%20Document/Deployment%20Document.md) if you want to deploy our project on your machine. 
 
+## Changelog
+
+Detailed changes for each versions are documented in the [release notes](https://github.com/118010077/SE-CloudLGU/releases).
+
+
 ## Stay In Touch
 - 高梓骐 118010077@link.cuhk.edu.cn
 - 夏瀚洋 118010339@link.cuhk.edu.cn
