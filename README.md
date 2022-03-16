@@ -1,5 +1,6 @@
 # Software Engineering Group Project
 *Group project for CSC4001 2021-2022 Term2 in CUHK(SZ)*  
+*Good luck and Work Hard*
 
 ## Introduction
 Our project, CloudLGU (meaning "the Chinese University of Hong Kong, Shenzhen on the cloud") aims to provide a platform for all students and faculty members in CUHK(SZ) to communicate, share and help each other in the hope that every CUHK(SZ)er can meet on the cloud, stand together and feel the warmth of the community especially in this difficult time shrouded by the COVID.
