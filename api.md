@@ -13,7 +13,6 @@
 **Return**
 - status: confirmation status - string (success or failure, check the existance of the user's ID and Email)
 
----  
 
 #### Forget Password
 **Send**
@@ -22,7 +21,7 @@
 **Return**
 - status: confirmation status - string (success or failure, check the existance of the user)
 
----  
+  
 #### Login 
 **Send**
 - userEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
