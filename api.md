@@ -65,12 +65,14 @@
 
 #### Update User Introduction
 **Send**
-- userIntro: Updated user's self-introduction {string}
+- userIntro: Updated user's self-introduction {string}  
+
 **Return**
 - status: Confirmation Status {bool}(Success)
 
 #### Update User Profile Photo
 **Send**
-- userPhoto: User's profile photo {JPG/PNG}
+- userPhoto: Updated user's profile photo {JPG/PNG}
+
 **Return**
 - status: Confirmation Status {bool}(Success)
