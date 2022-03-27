@@ -6,10 +6,9 @@
 
 #### Registrate
 **Send**
-- uID: user's ID - string (Check its pattern in front-end. Only _digits_, _underline_, _alphabet_ are valid)
-- uEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
-- uPass: password - string (Check its pattern in front-end. Only _digits_, _underline_, _alphabet_ are valid)
-- uPassConfirm: password confirm - string (Check in front-end, whether the two passwords are identical)
+- userID: user's ID - string (Check its pattern in front-end. Only _digits_, _underline_, _alphabet_ are valid)
+- userEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
+- password: password - string (Check its pattern in front-end. Only _digits_, _underline_, _alphabet_ are valid. And check the password with the reenterred confirmaton password in advance)
 
 **Return**
 - status: confirmation status - string (success or failure, check the existance of the user's ID and Email)
@@ -18,7 +17,7 @@
 
 #### Forget Password
 **Send**
-- uEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
+- userEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
 
 **Return**
 - status: confirmation status - string (success or failure, check the existance of the user)
@@ -26,12 +25,12 @@
 ---  
 #### Login 
 **Send**
-- uEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
-- uPass: password - string (Check its pattern in front-end. Only _digits_, _underline_, _alphabet_ are valid)
+- userEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
+- password: password - string (Check its pattern in front-end. Only _digits_, _underline_, _alphabet_ are valid)
 
 **Return**
 - status: confirmation status - string (success or failure, check whether the password and username are correct )
-- identity: identity - string （Staff, Students, Administer)
+- useridentity: identity - string （Staff, Students, Administer)
 
 ---
 
@@ -46,8 +45,8 @@
 
 #### Reset User Lists
 **Send**
-- uID: user's id
-- uEmail: user's email
+- userID: user's id
+- userEmail: user's email
 
 **Return**
 - status: confirmation status - string  
@@ -59,19 +58,19 @@
 - Nothing
 
 **Return**
-- uID: User's ID {string}
-- uEmail: User's Email {string}
-- uIntro: User's self-introduction {string}
-- uPhoto: User's profile photo {JPG/PNG}
+- userID: User's ID {string}
+- userEmail: User's Email {string}
+- userIntro: User's self-introduction {string}
+- userPhoto: User's profile photo {JPG/PNG}
 
 #### Update User Introduction
 **Send**
-- uIntro: Updated user's self-introduction {string}
+- userIntro: Updated user's self-introduction {string}
 **Return**
 - status: Confirmation Status {bool}(Success)
 
 #### Update User Profile Photo
 **Send**
-- uPhoto: User's profile photo {JPG/PNG}
+- userPhoto: User's profile photo {JPG/PNG}
 **Return**
 - status: Confirmation Status {bool}(Success)
