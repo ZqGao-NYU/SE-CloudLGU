@@ -9,6 +9,7 @@ from django.contrib.auth.views import (
     PasswordResetDoneView as BasePasswordResetDoneView, PasswordResetConfirmView as BasePasswordResetConfirmView,
 )
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 from django.utils.crypto import get_random_string
 from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
@@ -65,13 +66,21 @@ def register(request):
 #     response = {}
 
 def ActivateView(request, code):
+    print("CHeck")
     if(request.method == 'GET'):
-        confirm = get_object_or_404(ConfirmString, code=code)
-        user = confirm.user
-        user.has_confirmed = True
-        user.save()
+        try:
+            confirm = ConfirmString.objects.get(code=code)
+            user = confirm.user
+            user.has_confirmed = True
+            user.save()
+            confirm.delete()
+        except:
+            context = {}
+            context['message'] = 'Invalid Authentication Request. This link may already been used!'
+            context['uri'] = reverse('register')
+            return render(request, 'verification_fail.html', context) #  Replace it with login page or successful inform page after integration
 
-        confirm.delete()
+
 
         messages.success(request, "You have successfully activated your account!")
-        return redirect('register') # Replace it with login page after integration
+        return redirect('register') # Replace it with login page or successful inform page after integration
