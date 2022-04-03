@@ -6,12 +6,14 @@
 
 #### Registrate
 **Send**
-- userID: user's ID - string (Check its pattern in front-end. Only _digits_, _underline_, _alphabet_ are valid)
+- userName: user's name shown to other users - string (Check its pattern in front-end. Only _digits_, _underline_, _alphabet_ are valid)
 - userEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
 - password: password - string (Check its pattern in front-end. Only _digits_, _underline_, _alphabet_ are valid. And check the password with the reenterred confirmaton password in advance)
 
 **Return**
-- status: confirmation status - string (success or failure, check the existance of the user's ID and Email)
+- goodMail: bool (check the existance of mail, if true, then the mail is ok to register)
+- goodName: bool (check the existance of name, if ture, the name is ok to register)
+- success: bool (if true, the register is finished, and the certification mail is sent to the email address. if false, goodMail or goodName may be False)
 
 
 #### Forget Password
@@ -19,7 +21,7 @@
 - userEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
 
 **Return**
-- status: confirmation status - string (success or failure, check the existance of the user)
+- sucess:  bool (success or failure, check the existance of the user's email)
 
   
 #### Login 
@@ -28,7 +30,7 @@
 - password: password - string (Check its pattern in front-end. Only _digits_, _underline_, _alphabet_ are valid)
 
 **Return**
-- status: confirmation status - string (success or failure, check whether the password and username are correct )
+- sucess:  bool (success or failure, check the correctness of the user's email and password)
 - useridentity: identity - string （Staff, Students, Administer)
 
 ---
@@ -48,8 +50,7 @@
 - userEmail: user's email
 
 **Return**
-- status: confirmation status - string  
-
+- sucess:  bool (success or failure of the reset operation)
 ---
 ### _Profile_
 #### Get Profile Info
@@ -57,7 +58,7 @@
 - Nothing
 
 **Return**
-- userID: User's ID {string}
+- useName: User's Name {string}
 - userEmail: User's Email {string}
 - userIntro: User's self-introduction {string}
 - userPhoto: User's profile photo {JPG/PNG}
@@ -67,11 +68,11 @@
 - userIntro: Updated user's self-introduction {string}  
 
 **Return**
-- status: Confirmation Status {bool}(Success)
+- sucess:  bool (success or failure of the update operation)
 
 #### Update User Profile Photo
 **Send**
 - userPhoto: Updated user's profile photo {JPG/PNG}
 
 **Return**
-- status: Confirmation Status {bool}(Success)
+- sucess:  bool  (success or failure of the update operation)
