@@ -123,7 +123,7 @@
 }  
 
 ### Book Office Time
-** Send ** 
+**Send** 
 - otID: Office time ID got from the Database (Int)
 - StudentID: Student ID who books the office time. (Int)
 
