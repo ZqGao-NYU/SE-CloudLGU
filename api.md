@@ -31,7 +31,10 @@
 
 **Return**
 - sucess:  bool (success or failure, check the correctness of the user's email and password)
-- useridentity: identity - string （Staff, Students, Administer)
+- userInfo:{  
+  isFaculty: bool (True for teacher, false for student)  
+  userID: int (Userr's ID in Database)  
+}  
 
 ---
 
@@ -55,7 +58,7 @@
 ### _Profile_
 #### Get Profile Info
 **Send**
-- Nothing
+- userID: int (User's ID sent from the back-end) 
 
 **Return**
 - useName: User's Name {string}
@@ -76,3 +79,38 @@
 
 **Return**
 - sucess:  bool  (success or failure of the update operation)
+
+---
+### _Office Time Part_
+### Create Office Time Slot 
+**Send**
+- otStartTime: Start Time of the wanted office time (String MM/DD/YYYY hh:mm)
+- otEndTime: End time of the wanted office time (String MM/DD/YYYY hh:mm)
+- otLocation: Where to hold the office time. (String)
+- Professor_userID: Professor's userID (int sent from the backend during the login part)  
+**Return**
+- otID: Office time ID stored in the Database (Int)  
+- status:{  
+  success: bool (success or failure of the create operation)  
+  otherInfo: String (report success/failure reason (time conflict, location conflict))  
+}  
+### Delete Office Time Slot
+**Send**
+- otID: Office time ID of the office time slot to delete (ID)
+**Return**
+- success: bool (success or failure of the create operation)
+
+
+### Update Office Time Slot
+**Send**
+- otID: Office time ID got from the Database (Int)
+- otStartTime: Start Time of the wanted office time (String MM/DD/YYYY hh:mm)
+- otEndTime: End time of the wanted office time (String MM/DD/YYYY hh:mm)
+- otLocation: Where to hold the office time. (String)
+- Professor_userID: Professor's userID (int sent from the backend during the login part)  
+**Return**
+- otID: New Office time ID stored in the Database (Int)  
+- status:{  
+  success: bool (success or failure of the create operation)  
+  otherInfo: String (report success/failure reason (time conflict, location conflict))  
+}  
