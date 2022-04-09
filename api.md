@@ -84,6 +84,7 @@
 ### _Office Time Part_
 ### Create Office Time Slot 
 **Send**
+- otDate: Date of the office hour (String MM/DD/YYYY)
 - otStartTime: Start Time of the wanted office time (String MM/DD/YYYY hh:mm)
 - otEndTime: End time of the wanted office time (String MM/DD/YYYY hh:mm)
 - otLocation: Where to hold the office time. (String)
