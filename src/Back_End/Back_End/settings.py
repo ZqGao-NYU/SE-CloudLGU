@@ -126,6 +126,7 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email Service
+CONFIRM_TIME = 30
 DEFAULT_FROM_EMAIL = '13141391404@163.com'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.163.com'
@@ -135,3 +136,4 @@ EMAIL_PORT = 25
 
 # Other Setting
 MAIN_PAGE = ""
+VERFICATION_BITS = 6

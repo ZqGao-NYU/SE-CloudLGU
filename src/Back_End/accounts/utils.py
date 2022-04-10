@@ -1,3 +1,5 @@
+import random
+
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.conf import settings
@@ -16,7 +18,9 @@ def send_mail(to, template, context):
 def send_activation_email(request, email, code):
     context = {
         'subject': 'Profile activation',
-        'uri': request.build_absolute_uri(reverse('activate', kwargs={'code': code})),
+        # 'uri': request.build_absolute_uri(reverse('activate', kwargs={'code': code})),
+        'code': code,
+        'confirm_time': settings.CONFIRM_TIME
     }
 
     send_mail(email, 'activate_profile', context)
@@ -32,3 +36,9 @@ def check_identification(email):
         return 'staff'
     else:
         return 'invalid'
+def get_verification(bits):
+    code = ""
+    for i in range(bits):
+        ch = chr(random.randrange(ord('0'), ord('9') + 1))
+        code += ch
+    return code
