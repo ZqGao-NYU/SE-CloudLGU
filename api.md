@@ -47,7 +47,7 @@
 **Return**
 - sucess:  bool (success or failure, check the correctness of the user's email and password)
 - userInfo:{  
-  isFaculty: bool (True for teacher, false for student)  
+  identity: String (Faculty, Student, Administer)
   userID: int (Userr's ID in Database)  
 }  
 
