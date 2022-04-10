@@ -84,9 +84,9 @@
 ### _Office Time Part_
 ### Create Office Time Slot 
 **Send**
-- otDate: Date of the office hour (String MM/DD/YYYY)
-- otStartTime: Start Time of the wanted office time (String MM/DD/YYYY hh:mm)
-- otEndTime: End time of the wanted office time (String MM/DD/YYYY hh:mm)
+- otDate: Date of the office hour (String YYYY-MM-DD)
+- otStartTime: Start Time of the wanted office time (String hh-mm)
+- otEndTime: End time of the wanted office time (String hh-mm)
 - otLocation: Where to hold the office time. (String)
 - Professor_userID: Professor's userID (int sent from the backend during the login part)  
 
@@ -110,8 +110,9 @@
 ### Update Office Time Slot
 **Send**
 - otID: Office time ID got from the Database (Int)
-- otStartTime: Start Time of the wanted office time (String MM/DD/YYYY hh:mm)
-- otEndTime: End time of the wanted office time (String MM/DD/YYYY hh:mm)
+- otDate: Date of the Office Hour (String YYYY-MM-DD)
+- otStartTime: Start Time of the wanted office time (String hh:mm)
+- otEndTime: End time of the wanted office time (String hh:mm)
 - otLocation: Where to hold the office time. (String)
 - Professor_userID: Professor's userID (int sent from the backend during the login part)
 
