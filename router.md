@@ -2,23 +2,23 @@
 
 /register Register
 
-/forgetPassword ForgetPassword
+/forget_password ForgetPassword
 
-  /forgetPassword/resetPassword ResetPassword
+  /forget_password/reset_password ResetPassword
   
   /home Home
   
   /post ---- 
   
-  /officeHour ----
+  /office_hour ----
   
   /pandemics Pandemics
   
-  /personalCenter PersonalCenter
+  /personal_center PersonalCenter
   
-    /personalCenter/basicInfo BasicInfo
+    /personal_center/basic_info BasicInfo
     
-    /personalCenter/resetPassword ResetPassword
+    /personal_center/reset_password ResetPassword
     
-    /personalCenter/manageUsers ManageUsers (for admin only)
+    /personal_center/manage_users ManageUsers (for admin only)
     
