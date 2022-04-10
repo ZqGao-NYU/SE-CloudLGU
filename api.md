@@ -5,6 +5,8 @@
 ### _Login and Registration Part_
 
 #### Registrate
+API Address: /api/register  
+
 **Send**
 - userName: user's name shown to other users - string (Check its pattern in front-end. Only _digits_, _underline_, _alphabet_ are valid)
 - userEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
