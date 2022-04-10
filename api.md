@@ -14,7 +14,22 @@
 - goodMail: bool (check the existance of mail, if true, then the mail is ok to register)
 - goodName: bool (check the existance of name, if ture, the name is ok to register)
 - success: bool (if true, the register is finished, and the certification mail is sent to the email address. if false, goodMail or goodName may be False)
+- status: string ("")
 
+#### Send Verification (Register)
+**Send**
+- userEmai: User's Email
+
+**Return**
+- goodMail: bool (check the existance of mail, if true, then the mail is ok to register, and the verification code will be sent to the user's email)
+
+
+#### Send Verification (Modify Password)
+**Send**
+- userEmail: User's Email
+
+**Return**
+- goodMail: bool (check the existance of mail, if true, then 
 
 #### Forget Password
 **Send**
