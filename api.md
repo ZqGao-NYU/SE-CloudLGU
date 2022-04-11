@@ -131,7 +131,6 @@ API Address: /api/register
 - otStartTime: Start Time of the wanted office time (String hh:mm)
 - otEndTime: End time of the wanted office time (String hh:mm)
 - otLocation: Where to hold the office time. (String)
-- Professor_userID: Professor's userID (int sent from the backend during the login part)
 
 
 **Return**  
