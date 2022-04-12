@@ -19,27 +19,31 @@ API Address: /api/register
 - status: string ("")
 
 #### Send Verification (Register)
+API Address: /api/sendverification  
 **Send**
 - userEmai: User's Email
 
 **Return**
-- goodMail: bool (check the existance of mail, if true, then the mail is ok to register, and the verification code will be sent to the user's email)
-
+- goodMail: bool (check the existance of mail, if true, then the mail is ok to register, and the verification code will be sent to the user's email)  
+- code(verification code)  
 
 #### Send Verification (Modify Password)
+API Address: /api/forget(same with forget password)  
 **Send**
 - userEmail: User's Email
 
 **Return**
-- goodMail: bool (check the existance of mail, if true, then 
+- goodMail: bool (check the existance of mail, if true, then the mail is ok to register, and the verification code will be sent to the user's email)  
+- code(verification code)  
 
 #### Forget Password
-API Address: /api/forget
+API Address: /api/forget  
 **Send**
 - userEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
 
 **Return**
-- sucess:  bool (success or failure, check the existance of the user's email)
+- sucess:  bool (success or failure, check the existance of the user's email)  
+- code  
 
   
 #### Login 
@@ -107,6 +111,7 @@ API Address: /api/updateprofile
 ---
 ### _Office Time Part_
 ### Create Office Time Slot 
+API Address: /api/createslot  
 **Send**
 - otDate: Date of the office hour (String YYYY-MM-DD)
 - otStartTime: Start Time of the wanted office time (String hh-mm)
@@ -122,7 +127,8 @@ API Address: /api/updateprofile
   otherInfo: String (report success/failure reason (time conflict, location conflict))  
 }  
 
-### Delete Office Time Slot
+### Delete Office Time Slot(for teacher)
+API Address: /api/deleteslot  
 **Send**
 - otID: Office time ID of the office time slot to delete (ID)
 
@@ -131,7 +137,8 @@ API Address: /api/updateprofile
 - success: bool (success or failure of the create operation)
 
 
-### Update Office Time Slot
+### Update Office Time Slot(for teacher)
+API Address: /api/updateslot  
 **Send**
 - otID: Office time ID got from the Database (Int)
 - otDate: Date of the Office Hour (String YYYY-MM-DD)
@@ -147,7 +154,8 @@ API Address: /api/updateprofile
   otherInfo: String (report success/failure reason (time conflict, location conflict))  
 }  
 
-### Book Office Time
+### Book Office Time(for student)
+API Address: /api/book  
 **Send** 
 - otID: Office time ID got from the Database (Int)
 - StudentID: Student ID who books the office time. (Int)
@@ -156,6 +164,7 @@ API Address: /api/updateprofile
 - success: bool (success or failure of the book operation)
 
 ### Search by professor's name
+API Address: /api/searchprof  
 **Send** 
 - Professor_Name: Professor's Username given by the user
 
@@ -170,24 +179,45 @@ API Address: /api/updateprofile
 }  
 
 ### Professor Check Office Time
+API Address: /api/profOT  
 **Send**
-- Professor_ID: Professor's userID
-
+- Professor_ID: Professor's userID  
 
 **Return**
-- List of info{  
+- Info{  
   otID,  
   otStartTime,  
   otEndTime,  
   otLocation,  
-  status (whether the slot is booked)  
+  isbooked,
+  booked_by,
+  prof_name
 }  
-- success: bool (success or failure of the opearation)
+- success: bool (success or failure of the opearation)  
+
+### Student Check Office Time
+API Address: /api/studentOT  
+**Send**
+- Student_ID: Student's userID  
+
+**Return**
+- Info{  
+  otID,  
+  otStartTime,  
+  otEndTime,  
+  otLocation,  
+  isbooked,
+  booked_by,
+  prof_name
+}  
+- success: bool (success or failure of the opearation)  
+
 
 
 ---
 ### _Post Article_
 ### Create New Post
+API Address: /api/createpost  
 **Send**
 - postTitle: Title of the post (String)
 - postContent: Content of the post (String)
@@ -199,6 +229,7 @@ API Address: /api/updateprofile
 - success: bool (success or failure of the create operation)  
 
 ### Delete Post
+API Address: /api/deletepost  
 **Send**
 - postID: Poster's ID (Int)
 
@@ -206,6 +237,7 @@ API Address: /api/updateprofile
 - success: bool (success or failure of the delete operation)  
 
 ### Update Post
+API Address: /api/updatepost  
 **Send**
 - postID: Poster's ID (Int)
 - postTitle: New title of the post (String)
@@ -219,6 +251,7 @@ API Address: /api/updateprofile
 ---
 ### _Comment Part_
 ### Create New Comment
+API Address: /api/createcomment  
 **Send**
 - postID: post's ID (Int)
 - userID: Commenter's ID (Int)
@@ -229,13 +262,15 @@ API Address: /api/updateprofile
 - success: bool (success or failure of the create operation)  
 
 ### Delete Comment 
+API Address: /api/deletecomment  
 **Send**
 - commentID: Content of the comment
 
 **Return**
 - success: bool (success or failure of the delete operation)  
 
-### Update New Comment 
+### Update New Comment  
+API Address: /api/updatecomment  
 **Send**
 - postID: post's ID (Int)
 - commentID: Comment's ID (Int, with the foreign key Post ID)
