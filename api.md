@@ -34,6 +34,7 @@ API Address: /api/register
 - goodMail: bool (check the existance of mail, if true, then 
 
 #### Forget Password
+API Address: /api/forget
 **Send**
 - userEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
 
@@ -42,6 +43,7 @@ API Address: /api/register
 
   
 #### Login 
+API Address: /api/login
 **Send**
 - userEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
 - password: password - string (Check its pattern in front-end. Only _digits_, _underline_, _alphabet_ are valid)
@@ -49,13 +51,14 @@ API Address: /api/register
 **Return**
 - sucess:  bool (success or failure, check the correctness of the user's email and password)
 - userInfo:{  
-  identity: String (Faculty, Student, Administer)
+  identity: String (Faculty, Student, Administer)  
   userID: int (Userr's ID in Database)  
 }  
 
 ---
 
-### _Admin (For Adminisiter)_
+### _Admin (For Adminisiter)_  
+API Address: /admin  
 #### Get User Lists
 **Send**
 - Nothing  
@@ -64,7 +67,8 @@ API Address: /api/register
 - id_list: list of users' id {Array of string}
 - mail_list: list of users' email {Array of string}
 
-#### Reset User Lists
+#### Reset User Lists  
+API Address: /api/reset  
 **Send**
 - userID: user's id
 - userEmail: user's email
@@ -74,6 +78,7 @@ API Address: /api/register
 ---
 ### _Profile_
 #### Get Profile Info
+
 **Send**
 - userID: int (User's ID sent from the back-end) 
 
