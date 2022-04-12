@@ -170,13 +170,14 @@ API Address: /api/searchprof
 
 **Return**
 - successs: bool (success or failure of the search opearation (no research result))
-- List of info{  
+- lists: [{  
   otID,  
   otStartTime,  
   otEndTime,  
   otLocation,  
-  status (whether the slot is booked)  
-}  
+  isBooked (whether the slot is booked),  
+  booked_by
+}] (List of Json Objects)   
 
 ### Professor Check Office Time
 API Address: /api/profOT  
@@ -191,7 +192,7 @@ API Address: /api/profOT
   otLocation,  
   isbooked,
   booked_by,
-}]     (List of json objects)
+}]     (List of json objects)  
 - success: bool (success or failure of the opearation)  
 
 ### Student Check Office Time
