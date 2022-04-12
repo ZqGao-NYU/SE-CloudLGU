@@ -247,9 +247,9 @@ API Address: /api/forum/post/update
 - success: bool (success or failure of the create operation)  
 
 ### Show Post
-API Address: /api/forum/post/show 
+API Address: /api/forum/post/show  
 **Send**
-- postID: Poster's ID (Int)
+- postID: Poster's ID (Int)  
 
 **Return**
 - success: bool (success or failure of the delete operation)  
