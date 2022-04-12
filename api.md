@@ -184,15 +184,14 @@ API Address: /api/profOT
 - Professor_ID: Professor's userID  
 
 **Return**
-- Info{  
+- lists: [{  
   otID,  
   otStartTime,  
   otEndTime,  
   otLocation,  
   isbooked,
   booked_by,
-  prof_name
-}  
+}]     (List of json objects)
 - success: bool (success or failure of the opearation)  
 
 ### Student Check Office Time
@@ -201,15 +200,13 @@ API Address: /api/studentOT
 - Student_ID: Student's userID  
 
 **Return**
-- Info{  
+- lists: [{  
   otID,  
   otStartTime,  
   otEndTime,  
   otLocation,  
-  isbooked,
-  booked_by,
   prof_name
-}  
+}]     (List of json objects)
 - success: bool (success or failure of the opearation)  
 
 
