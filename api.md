@@ -43,7 +43,7 @@ API Address: /api/forget
 
   
 #### Login 
-API Address: /api/login
+API Address: /api/login  
 **Send**
 - userEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
 - password: password - string (Check its pattern in front-end. Only _digits_, _underline_, _alphabet_ are valid)
@@ -78,7 +78,7 @@ API Address: /api/reset
 ---
 ### _Profile_
 #### Get Profile Info
-
+API Address: /api/getprofile  
 **Send**
 - userID: int (User's ID sent from the back-end) 
 
@@ -89,6 +89,7 @@ API Address: /api/reset
 - userPhoto: User's profile photo {JPG/PNG}
 
 #### Update User Introduction
+API Address: /api/updateprofile  
 **Send**
 - userIntro: Updated user's self-introduction {string}  
 
@@ -96,6 +97,7 @@ API Address: /api/reset
 - sucess:  bool (success or failure of the update operation)
 
 #### Update User Profile Photo
+API Address: /api/updateprofile  
 **Send**
 - userPhoto: Updated user's profile photo {JPG/PNG}
 
