@@ -111,7 +111,7 @@ API Address: /api/updateprofile
 ---
 ### _Office Time Part_
 ### Create Office Time Slot 
-API Address: /api/createslot  
+API Address: /api/officetime/prof/create  
 **Send**
 - otDate: Date of the office hour (String YYYY-MM-DD)
 - otStartTime: Start Time of the wanted office time (String hh-mm)
@@ -128,7 +128,7 @@ API Address: /api/createslot
 }  
 
 ### Delete Office Time Slot(for teacher)
-API Address: /api/deleteslot  
+API Address: /api/officetime/prof/delete  
 **Send**
 - otID: Office time ID of the office time slot to delete (ID)
 
@@ -138,7 +138,7 @@ API Address: /api/deleteslot
 
 
 ### Update Office Time Slot(for teacher)
-API Address: /api/updateslot  
+API Address: /api/officetime/prof/update  
 **Send**
 - otID: Office time ID got from the Database (Int)
 - otDate: Date of the Office Hour (String YYYY-MM-DD)
@@ -154,8 +154,8 @@ API Address: /api/updateslot
   otherInfo: String (report success/failure reason (time conflict, location conflict))  
 }  
 
-### Book Office Time(for student)
-API Address: /api/book  
+### Book Office Time(for student)  
+API Address: /api/officetime/student/book  
 **Send** 
 - otID: Office time ID got from the Database (Int)
 - StudentID: Student ID who books the office time. (Int)
@@ -164,7 +164,7 @@ API Address: /api/book
 - success: bool (success or failure of the book operation)
 
 ### Search by professor's name
-API Address: /api/searchprof  
+API Address: /api/officetime/student/searchprof  
 **Send** 
 - Professor_Name: Professor's Username given by the user
 
@@ -180,7 +180,7 @@ API Address: /api/searchprof
 }] (List of Json Objects)   
 
 ### Professor Check Office Time
-API Address: /api/profOT  
+API Address: /api/officetime/professor/show  
 **Send**
 - Professor_ID: Professor's userID  
 
@@ -196,7 +196,7 @@ API Address: /api/profOT
 - success: bool (success or failure of the opearation)  
 
 ### Student Check Office Time
-API Address: /api/studentOT  
+API Address: /api/officetime/student/show  
 **Send**
 - Student_ID: Student's userID  
 
@@ -215,7 +215,7 @@ API Address: /api/studentOT
 ---
 ### _Post Article_
 ### Create New Post
-API Address: /api/createpost  
+API Address: /api/forum/post/create  
 **Send**
 - postTitle: Title of the post (String)
 - postContent: Content of the post (String)
@@ -227,7 +227,7 @@ API Address: /api/createpost
 - success: bool (success or failure of the create operation)  
 
 ### Delete Post
-API Address: /api/deletepost  
+API Address: /api/forum/post/delete  
 **Send**
 - postID: Poster's ID (Int)
 
@@ -235,7 +235,7 @@ API Address: /api/deletepost
 - success: bool (success or failure of the delete operation)  
 
 ### Update Post
-API Address: /api/updatepost  
+API Address: /api/forum/post/update  
 **Send**
 - postID: Poster's ID (Int)
 - postTitle: New title of the post (String)
@@ -246,10 +246,26 @@ API Address: /api/updatepost
 - postID: Updated Poster's ID (Int)
 - success: bool (success or failure of the create operation)  
 
+### Show Post
+API Address: /api/forum/post/show 
+**Send**
+- postID: Poster's ID (Int)
+
+**Return**
+- success: bool (success or failure of the delete operation)  
+
+### Show All Post
+API Address: /api/forum/post/showall  
+**Send**
+- postID: Poster's ID (Int)
+
+**Return**
+- success: bool (success or failure of the delete operation)  
+
 ---
 ### _Comment Part_
 ### Create New Comment
-API Address: /api/createcomment  
+API Address: /api/forum/comment/create 
 **Send**
 - postID: post's ID (Int)
 - userID: Commenter's ID (Int)
@@ -260,7 +276,7 @@ API Address: /api/createcomment
 - success: bool (success or failure of the create operation)  
 
 ### Delete Comment 
-API Address: /api/deletecomment  
+API Address: /api/forum/comment/delete  
 **Send**
 - commentID: Content of the comment
 
@@ -268,7 +284,7 @@ API Address: /api/deletecomment
 - success: bool (success or failure of the delete operation)  
 
 ### Update New Comment  
-API Address: /api/updatecomment  
+API Address: /api/forum/comment/update
 **Send**
 - postID: post's ID (Int)
 - commentID: Comment's ID (Int, with the foreign key Post ID)
