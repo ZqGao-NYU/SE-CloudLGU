@@ -264,6 +264,13 @@ API Address: /api/forum/post/show
 
 **Return**
 - success: bool (success or failure of the delete operation)  
+- postTitle: Title of the post (String)  
+- postContent: Content of the post (String)  
+- postTag: Subject of this post (String? **待定**)  
+- posterName: Name of the poster(String)  
+- createTime: Create time of the post(String)  
+- updateTime: Last update time of the post(String)  
+- commentList: All comments for this post(**具体细节待定**)  
 
 ### Show All Post
 API Address: /api/forum/post/showall  
@@ -272,6 +279,14 @@ API Address: /api/forum/post/showall
 
 **Return**
 - success: bool (success or failure of the delete operation)  
+- postList: All posts
+-- postID: Post's ID (Int)
+-- postTitle: Title of the post (String)  
+-- postContent: Content of the post (String)  
+-- postTag: Subject of this post (String? **待定**)  
+-- posterName: Name of the poster(String)  
+-- createTime: Create time of the post(String)  
+-- updateTime: Last update time of the post(String)  
 
 ---
 ### _Comment Part_
