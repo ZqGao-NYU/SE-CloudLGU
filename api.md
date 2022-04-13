@@ -43,7 +43,7 @@ API Address: /api/forget
 
 **Return**
 - sucess:  bool (success or failure, check the existance of the user's email)  
-- code  
+- code: Verification Code
 
   
 #### Login 
@@ -54,9 +54,10 @@ API Address: /api/login
 
 **Return**
 - sucess:  bool (success or failure, check the correctness of the user's email and password)
-- userInfo:{  
+- token:{  
   identity: String (Faculty, Student, Administer)  
   userID: int (Userr's ID in Database)  
+  info: string (Error Description)
 }  
 
 ---
