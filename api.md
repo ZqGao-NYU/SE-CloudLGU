@@ -280,13 +280,12 @@ API Address: /api/forum/post/showall
 **Return**
 - success: bool (success or failure of the delete operation)  
 - postList: All posts  
--- postID: Post's ID (Int)
--- postTitle: Title of the post (String)  
--- postContent: Content of the post (String)  
--- postTag: Subject of this post (String? **待定**)  
--- posterName: Name of the poster(String)  
--- createTime: Create time of the post(String)  
--- updateTime: Last update time of the post(String)  
+    --Title：Title of the post (String)  
+    --Content：Content of the post (String)  
+    --Tag: Subject of this post (String? **待定**)  
+    --Poster: Name of the poster(String) 
+    --Ctime: Create time of the post(String)  
+    --UpdateTime: Last update time of the post(String)  
 
 ---
 ### _Comment Part_
