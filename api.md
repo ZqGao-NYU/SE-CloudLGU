@@ -223,7 +223,7 @@ API Address: /api/forum/post/create
 - userID: Poster's ID (Int)
 
 **Return** 
-- postID: Poster's ID (Int)
+- postID: Post's ID (Int)
 - success: bool (success or failure of the create operation)  
 
 ### Delete Post
