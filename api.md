@@ -238,7 +238,7 @@ API Address: /api/forum/post/delete
 ### Update Post
 API Address: /api/forum/post/update  
 **Send**
-- postID: Poster's ID (Int)
+- postID: Post's ID (Int)
 - postTitle: New title of the post (String)
 - postContent: New content of the post (String)
 - postTag: New Subject of this post (String? **待定**)
@@ -250,7 +250,7 @@ API Address: /api/forum/post/update
 ### Show Post
 API Address: /api/forum/post/show  
 **Send**
-- postID: Poster's ID (Int)  
+- postID: Post's ID (Int)  
 
 **Return**
 - success: bool (success or failure of the delete operation)  
