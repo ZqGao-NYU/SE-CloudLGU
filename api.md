@@ -290,7 +290,7 @@ API Address: /api/forum/post/showall
 ---
 ### _Comment Part_
 ### Create New Comment
-API Address: /api/forum/comment/create 
+API Address: /api/forum/comment/create  
 **Send**
 - postID: post's ID (Int)
 - userID: Commenter's ID (Int)
@@ -309,7 +309,7 @@ API Address: /api/forum/comment/delete
 - success: bool (success or failure of the delete operation)  
 
 ### Update Comment  
-API Address: /api/forum/comment/update
+API Address: /api/forum/comment/update  
 **Send**
 - postID: post's ID (Int)
 - commentID: Comment's ID (Int, with the foreign key Post ID)
