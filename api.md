@@ -308,7 +308,7 @@ API Address: /api/forum/comment/delete
 **Return**
 - success: bool (success or failure of the delete operation)  
 
-### Update New Comment  
+### Update Comment  
 API Address: /api/forum/comment/update
 **Send**
 - postID: post's ID (Int)
