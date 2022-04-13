@@ -179,7 +179,17 @@ API Address: /api/officetime/student/searchprof
   isBooked (whether the slot is booked),  
   booked_by
 }] (List of Json Objects)   
-
+### Search This Week
+API Address: /api/officetime/student/searchtime  
+**Send**
+- Nothing
+**Return**
+- success: bool (If no professor hold OH this week, it will return False)
+- lists:[  
+  prof:{  
+  profID: int Professor's User ID
+  profName: String Professor's User Name
+  }]  
 ### Professor Check Office Time
 API Address: /api/officetime/professor/show  
 **Send**
