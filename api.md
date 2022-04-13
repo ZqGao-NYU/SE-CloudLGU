@@ -275,11 +275,11 @@ API Address: /api/forum/post/show
 ### Show All Post
 API Address: /api/forum/post/showall  
 **Send**
-- postID: Poster's ID (Int)
+- 不需要特别的send内容，因为是返回所有的post
 
 **Return**
 - success: bool (success or failure of the delete operation)  
-- postList: All posts
+- postList: All posts  
 -- postID: Post's ID (Int)
 -- postTitle: Title of the post (String)  
 -- postContent: Content of the post (String)  
