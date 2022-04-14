@@ -188,7 +188,8 @@ API Address: /api/officetime/student/searchtime
 - lists:[  
   prof:{  
   profID: int Professor's User ID
-  profName: String Professor's User Name
+  profName: String Professor's User Name,
+  DateList: List of Available Dates (YYYY-MM-DD)
   }]  
 ### Professor Check Office Time
 API Address: /api/officetime/professor/show  
