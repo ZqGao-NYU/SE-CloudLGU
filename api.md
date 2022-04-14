@@ -13,10 +13,8 @@ API Address: /api/register
 - password: password - string (Check its pattern in front-end. Only _digits_, _underline_, _alphabet_ are valid. And check the password with the reenterred confirmaton password in advance)
 
 **Return**
-- goodMail: bool (check the existance of mail, if true, then the mail is ok to register)
-- goodName: bool (check the existance of name, if ture, the name is ok to register)
 - success: bool (if true, the register is finished, and the certification mail is sent to the email address. if false, goodMail or goodName may be False)
-- status: string ("")
+
 
 #### Send Verification (Register)
 API Address: /api/sendverification  
@@ -36,7 +34,9 @@ API Address: /api/forget(same with forget password)
 - goodMail: bool (check the existance of mail, if true, then the mail is ok to register, and the verification code will be sent to the user's email)  
 - code(verification code)  
 
-#### Forget Password
+#### 用旧密码改密码
+
+#### Forget Password 
 API Address: /api/forget  
 **Send**
 - userEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
@@ -54,10 +54,8 @@ API Address: /api/login
 
 **Return**
 - sucess:  bool (success or failure, check the correctness of the user's email and password)
-- token:{  
-  identity: String (Faculty, Student, Administer)  
+- token:{   
   userID: int (Userr's ID in Database)  
-  info: string (Error Description)
 }  
 
 ---
@@ -69,45 +67,47 @@ API Address: /admin
 - Nothing  
 
 **Return**
-- id_list: list of users' id {Array of string}
-- mail_list: list of users' email {Array of string}
+- [ {user1} {user2} {''''}]
+- user infomation
+- useName: User's Name {string}
+- userEmail: User's Email {string}
+- userIntro: User's self-introduction {string}
+- userPhoto: User's profile photo {url}
+- userIdentity: ['admin'], ['faculty'], ['student'] 
 
-#### Reset User Lists  
-API Address: /api/reset  
+#### Reset User Password  
+API Address: /api/admin/resetPassword  
 **Send**
-- userID: user's id
 - userEmail: user's email
+- password: new password
 
 **Return**
 - sucess:  bool (success or failure of the reset operation)
 ---
+
 ### _Profile_
 #### Get Profile Info
 API Address: /api/getprofile  
 **Send**
-- userID: int (User's ID sent from the back-end) 
+- userID: int (User's ID sent from the back-end) (token) 
 
 **Return**
 - useName: User's Name {string}
 - userEmail: User's Email {string}
 - userIntro: User's self-introduction {string}
-- userPhoto: User's profile photo {JPG/PNG}
+- userPhoto: User's profile photo {url}
+- userIdentity: ['admin'], ['faculty'], ['student'] 
 
-#### Update User Introduction
+#### Update User Profile
 API Address: /api/updateprofile  
 **Send**
-- userIntro: Updated user's self-introduction {string}  
+- userID token
+- useName: User's Name {string}
+- userIntro: User's self-introduction {string}
+- userPhoto: User's profile photo {url}
 
 **Return**
 - sucess:  bool (success or failure of the update operation)
-
-#### Update User Profile Photo
-API Address: /api/updateprofile  
-**Send**
-- userPhoto: Updated user's profile photo {JPG/PNG}
-
-**Return**
-- sucess:  bool  (success or failure of the update operation)
 
 ---
 ### _Office Time Part_
