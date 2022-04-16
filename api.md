@@ -70,7 +70,6 @@ API Address: /api/login
 ---
 
 ### _Admin (For Adminisiter)_  
-API Address: /admin  
 #### Get User Lists
 API Address: /api/admin/getList  
 **Send**
