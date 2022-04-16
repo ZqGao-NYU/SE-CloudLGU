@@ -81,14 +81,27 @@ API Address: /api/admin/getList
 - useName: User's Name {string}
 - userEmail: User's Email {string}
 - userIntro: User's self-introduction {string}
-- userPhoto: User's profile photo {url}
+- userPassword: User's Password
 - userIdentity: ['admin'], ['faculty'], ['student'] 
 
-#### Reset User Password  
-API Address: /api/admin/resetPassword  
+#### Reset User Profile  
+API Address: /api/admin/resetProfile  
 **Send**
 - userEmail: user's email
-- password: new password
+- useName: User's Name {string}
+- userIntro: User's self-introduction {string}
+- userPassword: User's Password (required)
+- userIdentity: ['admin'], ['faculty'], ['student'] 
+
+
+**Return**
+- sucess:  bool (success or failure of the reset operation)
+---
+
+#### Delete User (suggested)
+API Address: /api/admin/deleteUser
+**Send**
+-userEmail: user's email
 
 **Return**
 - sucess:  bool (success or failure of the reset operation)
