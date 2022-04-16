@@ -34,16 +34,25 @@ API Address: /api/forget(same with forget password)
 - goodMail: bool (check the existance of mail, if true, then the mail is ok to register, and the verification code will be sent to the user's email)  
 - code(verification code)  
 
-#### 用旧密码改密码
+#### Modify Pwd with Old Pwd
+User can modify their pwd with old pwd.  
+API Address: /api/modifyPwd/old  
+**Send**
+- userEmail: user's Email - string  
+- oldPassword: user's old password  
+- newPassword: user's new password
+**Return** 
+- success: bool (successs or failure, check the existance)
 
-#### Forget Password 
-API Address: /api/forget  
+#### Modify (Reset) Password
+After Receivign the verification code, the user can set their new password
+API Address: /api/reset 
 **Send**
 - userEmail: user's email - string (Check its pattern in front-end, like xxx@link.cuhk.edu.cn and xxx@cuhk.edu.cn) 
+- password: user's new password - string
 
 **Return**
 - sucess:  bool (success or failure, check the existance of the user's email)  
-- code: Verification Code
 
   
 #### Login 
