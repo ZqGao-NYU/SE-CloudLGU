@@ -180,14 +180,7 @@ API Address: /api/officetime/student/searchprof
 
 **Return**
 - successs: bool (success or failure of the search opearation (no research result))
-- lists: [{  
-  otID,  
-  otStartTime,  
-  otEndTime,  
-  otLocation,  
-  isBooked (whether the slot is booked),  
-  booked_by
-}] (List of Json Objects)   
+- lists: [{prof:}] (List of Json Objects)   
 ### Search This Week
 API Address: /api/officetime/student/searchtime   
 **Send**  
