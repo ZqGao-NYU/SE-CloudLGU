@@ -1,3 +1,4 @@
+import json
 import os
 from datetime import datetime
 
@@ -103,9 +104,10 @@ def register(request):
         response = {}
         # if not request.is_ajax():
         #     raise Http404("No Ajax Request")
-        userName = request.POST.get('userName')
-        userEmail = request.POST.get('userEmail')
-        password = request.POST.get('password')
+        data = json.load(request.body)
+        userName = data['userName']
+        userEmail = data['userEmail']
+        password = data['password']
         # code = request.POST.get('code')
         # identify = utils.check_identification(userEmail)
         new_user = my_user.objects.get(email = userEmail)
@@ -115,8 +117,8 @@ def register(request):
         identity = check_identification(new_user.email)
         if identity == 'student':
             new_user.identity = 'student'
-        elif identity == 'staff':
-            new_user.identity = 'staff'
+        elif identity == 'faculty':
+            new_user.identity = 'faculty'
         elif identity == 'invalid':
             # response['goodMail'] = False
             # response['goodName'] = True
@@ -191,7 +193,6 @@ def authenticationView(request):
     return render(request,'auth.html',locals())
 
 
-@api_view(['POST'])
 def login(request):
     response = {}
     if request.session.get('is_login', None):  # 不允许重复登录
@@ -199,6 +200,7 @@ def login(request):
         response['info'] = "Repeat Logins are not allowed！"
         return JsonResponse(response)
     if request.method == 'POST':
+        data = json.load(request.body)
         userEmail = request.POST.get('userEmail')
         password = request.POST.get('password')
 
@@ -247,9 +249,10 @@ def updateProfile(request):
 def getProfile(request):
     if(request.method == 'POST'):
         response = {}
-        uID = request.POST.get('userID')
+        data = json.load(request.body)
+        uID = data['userID']
         user = my_user.objects.get(id=uID)
-        response['userPhoto'] = user.Profile.userPhoto.url
+        response['userPhoto'] = request.get_host()  + user.Profile.userPhoto.url
         response['userIntro'] = user.Profile.userIntro
         response['userName'] = user.username
         response['userEmail'] = user.email

@@ -21,7 +21,7 @@ def Create_new_post(request):
     new_post.save()
 
     response = {}
-    response['postID'] = new_post.id()
+    response['postID'] = new_post.id
     response['success'] = True
     return JsonResponse(response)
 

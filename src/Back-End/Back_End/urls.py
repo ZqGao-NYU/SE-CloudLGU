@@ -20,12 +20,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 
-from accounts.views import register, ActivateView, authenticationView, Reset_Pwd_Code, login
+from accounts.views import register, ActivateView, authenticationView, Reset_Pwd_Code, login, reg_Verification, getProfile
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/register/', register, name='register'),
-    path('api/login/', login, name='register'),
+    path('api/login', login, name='login'),
+    path('api/sendverification', reg_Verification),
+    path('api/getprofile', getProfile),
+    # path('api/forget',  )
     # path('api/activate/<code>', ActivateView, name='activate'),
     path('api/forum/', include('forum.urls')),
     path('api/forget/', Reset_Pwd_Code, name='forget'),
