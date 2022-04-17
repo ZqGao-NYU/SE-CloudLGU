@@ -76,7 +76,8 @@ API Address: /api/admin/getList
 - Nothing  
 
 **Return**
-- [ {user1} {user2} {''''}]
+- [ {user1} {user2} {''''}]  
+e.g. {"lists": [{"userName": "0002", "userEmail": "0002@lgu.com", "userPassword": "12345678", "userIntro": null, "userIdentity": "student"}, {"userName": "", "userEmail": "0001@lgu.com", "userPassword": "12345678", "userIntro": "hello", "userIdentity": "student"}]}
 - user infomation
 - useName: User's Name {string}
 - userEmail: User's Email {string}
