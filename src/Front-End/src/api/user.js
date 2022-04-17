@@ -16,7 +16,7 @@ export function register(registerForm) {
     url: '/api/register',
     method: 'post',
     data: {
-      userName: registerForm.name,
+      userName: registerForm.name.replace(/\s*/g, ''),
       userEmail: registerForm.email,
       password: registerForm.password
     }
