@@ -10,7 +10,7 @@
               <div class="img">
                 <el-avatar
                   :size="100"
-                  :src="require(valueUrl)"
+                  :src="valueUrl"
                   align="center"
                 ></el-avatar>
               </div>
@@ -116,6 +116,7 @@ export default {
     this.email = this.$store.state.user.email
     this.intro = this.$store.state.user.intro
     this.identity = this.$store.state.user.roles[0]
+    console.log(this.valueUrl)
   },
   methods: {
     toggleModify(){

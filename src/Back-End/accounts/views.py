@@ -18,7 +18,8 @@ from .utils import send_activation_email, check_identification, get_verification
 def reg_Verification(request):
     if(request.method == 'POST'):
         response = {}
-        userEmail = request.POST.get('userEmail')
+        data = json.loads(request.body)
+        userEmail = data['email']
         same_user = my_user.objects.filter(email=userEmail)
         if same_user:
             response['goodMail'] = False
@@ -104,7 +105,7 @@ def register(request):
         response = {}
         # if not request.is_ajax():
         #     raise Http404("No Ajax Request")
-        data = json.load(request.body)
+        data = json.loads(request.body)
         userName = data['userName']
         userEmail = data['userEmail']
         password = data['password']
@@ -200,31 +201,29 @@ def login(request):
         response['info'] = "Repeat Logins are not allowed！"
         return JsonResponse(response)
     if request.method == 'POST':
-        data = json.load(request.body)
-        userEmail = request.POST.get('userEmail')
-        password = request.POST.get('password')
+        data = json.loads(request.body)
+        userEmail = data['userEmail']
+        password = data['password']
 
+        try:
+            user = my_user.objects.get(email=userEmail)
+            if user.password == password:
+                request.session['is_login'] = True
+                request.session['userID'] = user.id
+                request.session['userEmail'] = user.email
+                response['success'] = True
+                # response['token'] = {"info":"Login Success", "identity":user.identity, "userID":user.id}
+                response['token'] = user.id
+                return JsonResponse(response)
 
-        user = my_user.objects.get(email=userEmail)
-        if not user:
-            #返回json
+            else:#返回json
+                response['success'] = False
+                response['info'] = "Incompatible Password"
+                return JsonResponse(response)
+        except my_user.DoesNotExist:
             response['success'] = False
             # response['info'] = "This Account Does not Exist！Please Try Again"
             response['token'] = -1
-            return JsonResponse(response)
-
-        if user.password == password:
-            request.session['is_login'] = True
-            request.session['userID'] = user.id
-            request.session['userEmail'] = user.userEmail
-            response['success'] = True
-            # response['token'] = {"info":"Login Success", "identity":user.identity, "userID":user.id}
-            response['token'] = user.id
-            return JsonResponse(response)
-
-        else:#返回json
-            response['success'] = False
-            response['info'] = "Incompatible Password"
             return JsonResponse(response)
 
     # login_form = UserForm()
@@ -249,11 +248,11 @@ def updateProfile(request):
 def getProfile(request):
     if(request.method == 'POST'):
         response = {}
-        data = json.load(request.body)
-        uID = data['userID']
+        data = json.loads(request.body)
+        uID = data['token']
         user = my_user.objects.get(id=uID)
-        response['userPhoto'] = request.get_host()  + user.Profile.userPhoto.url
-        response['userIntro'] = user.Profile.userIntro
+        response['userPhoto'] = "http://" + request.get_host()  + user.profile.userPhoto.url
+        response['userIntro'] = user.profile.userIntro
         response['userName'] = user.username
         response['userEmail'] = user.email
         response['userIdentity'] = user.identity
