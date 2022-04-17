@@ -1,13 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.core.files.storage import FileSystemStorage
 # Create your models here.
 
 class my_user(User):
     identity = models.CharField(max_length=16, choices=(('staff', 'staff'), ('student', 'student')), default='student')
     has_confirmed = models.BooleanField(default=False)
     c_time = models.DateTimeField(auto_now_add=True)
-    Profile = models.OneToOneField('Profile', on_delete=models.CASCADE)
     class Meta:
         ordering = ["-c_time"]
 
@@ -23,8 +22,11 @@ class ConfirmString(models.Model):
         verbose_name = "Confirmation_Code"
         verbose_name_plural = "Confirmation_Codes"
 
+
+
 class Profile(models.Model):
+    user = models.OneToOneField('my_user', on_delete=models.CASCADE)
     userIntro = models.CharField(max_length=400)
-    userPhoto = models.ImageField(upload_to='uploads/')
+    userPhoto = models.ImageField(upload_to='accounts/uploads/', default='accounts/uploads/default.png')
 
 

@@ -6,7 +6,9 @@ from .models import TimeSlot
 from django.db.models import Q
 from datetime import datetime, timedelta
 from accounts.models import my_user
-from utils import getStartEnd
+from utils import getStartEnd, converter
+from itertools import groupby
+import pandas as pd
 # Create your views here.
 
 def CreateSlot(request):
@@ -153,7 +155,9 @@ def BookSlot(request):
 
 def Search_By_Prof_Name(request):
     prof_Name = request.POST.get('Professor_Name')
-    get_slots = TimeSlot.objects.filter(Q(Professor__username__contains=prof_Name)).distinct()
+    today = datetime.today().date()
+    Sunday, Saturday = getStartEnd(today)
+    get_slots = TimeSlot.objects.filter(Q(Professor__username__contains=prof_Name), Q(otDate__in=(Sunday, Saturday)))
     profs = [Prof['Professor'] for Prof in get_slots.only('Professor')]
     response = {}
     if len(profs):
@@ -164,25 +168,24 @@ def Search_By_Prof_Name(request):
         response['success'] = False
         response['list'] = []
         return JsonResponse(response)
-
-
-
-
 
 
 def Search_By_Time(request):
     today = datetime.today().date()
     Sunday, Saturday = getStartEnd(today)
-    get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday))).distinct()
-    profs = [Prof['Professor'] for Prof in get_slots.only('Professor')]
+    get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)))
+
+    otLists = [dict(Professor_Name = key, otLists=list(map(converter, group))) for key, group in groupby(get_slots, key=get_slots.values_list('Professor_username'))]
+
+
     response = {}
-    if len(profs):
+    if len(otLists):
         response['success'] = True
-        response['list'] = [json.dumps({'profID': prof.id, 'profName':prof.username}) for prof in profs]
+        response['otLists'] = otLists
         return JsonResponse(response)
     else:
         response['success'] = False
-        response['list'] = []
+        response['otLists'] = []
         return JsonResponse(response)
 
 
@@ -195,7 +198,7 @@ def Student_Check(request):
     response = {}
     if len(get_slots):
         response['success'] = True
-        response['lists'] = [json.dumps({'otID': slot.id,
+        response['otLists'] = [json.dumps({'otID': slot.id,
                                          'otStarTime': slot.otStartTime,
                                          'otEndTime': slot.otEndTime,
                                          'otLocation': slot.otLocation,
@@ -223,8 +226,10 @@ def Professor_Check(request):
                                          'otLocation': slot.otLocation,
                                          'isbooked': slot.booked,
                                          'booked_by': slot.booked_by}) for slot in get_slots]
+        response['Professor_Name'] = my_user.objects.get(id=profID).username
         return JsonResponse(response)
     else:
         response['success'] = False
         response['list'] = []
+        response['Professor_Name'] = ""
         return JsonResponse(response)

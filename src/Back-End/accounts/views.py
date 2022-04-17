@@ -1,17 +1,14 @@
+import os
 from datetime import datetime
 
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, resolve_url
 from django.contrib import messages
-from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import (
-    LogoutView as BaseLogoutView, PasswordChangeView as BasePasswordChangeView,
-    PasswordResetDoneView as BasePasswordResetDoneView, PasswordResetConfirmView as BasePasswordResetConfirmView,
-)
+
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.conf import settings
+
 from .models import my_user, ConfirmString
 from .forms import UserForm
 from .utils import send_activation_email, check_identification, get_verification
@@ -23,9 +20,10 @@ def reg_Verification(request):
         same_user = my_user.objects.filter(email=userEmail)
         if same_user:
             response['goodMail'] = False
-            response['goodName'] = False
-            response['success'] = False
-            response['message'] = "This Email Has Already Been Used!"
+            # response['goodName'] = False
+            # response['success'] = False
+            # response['message'] = "This Email Has Already Been Used!"
+            response['code'] = -1
             return JsonResponse(response)
 
         # Generate Verification Code
@@ -34,15 +32,66 @@ def reg_Verification(request):
         new_user.email = userEmail
         new_user.save()
         # Create Confirmation Model
-        ConfirmString.objects.create(user=new_user, code=code)
+        # ConfirmString.objects.create(user=new_user, code=code)
         # Send Confirmation Email
         send_activation_email(request, userEmail, code)
-        response['success'] = True
-        response['status'] = "Verification Code Has Already Been Sent to Your Email {Mail}".format(Mail=userEmail)
+        # response['success'] = True
+        # response['status'] = "Verification Code Has Already Been Sent to Your Email {Mail}".format(Mail=userEmail)
         response['code'] = code
+        response['goodNMail'] = True
         return JsonResponse(response)
 
 
+def Reset_Pwd_Code(request):
+    if(request.method == 'POST'):
+        response = {}
+        userEmail = request.POST.get('userEmail')
+        # Check the existance of the user's email
+        try:
+            user = my_user.objects.get(email=userEmail)
+            code = get_verification(settings.VERFICATION_BITS)
+            send_activation_email(request, user.email, code)
+            response['code'] = code
+            response['success'] = True
+            return JsonResponse(response)
+        except my_user.DoesNotExist:
+            response['success'] = False
+            response['code'] = -1
+            return JsonResponse(response)
+
+def Modify_Pwd_By_Old(request):
+    if(request.method == 'POST'):
+        response = {}
+        userEmail = request.POST.get('userEmail')
+        oldPwd = request.POST.get('oldPassword')
+        newPwd = request.POST.get('newPassword')
+        try:
+            uLists = my_user.objects.filter(email = userEmail)
+            user = uLists.get(password=oldPwd)
+            user.password=newPwd
+            user.save()
+            response['success'] = True
+            return JsonResponse(response)
+        except my_user.DoesNotExist:
+            response['success'] = False
+            return JsonResponse(response)
+
+
+def Modify_Pwd(request):
+    if(request.method == 'POST'):
+        response = {}
+        userEmail = request.POST.get('userEmail')
+        password = request.POST.get('password') # User's new password
+        try:
+            user = my_user.objects.get(email = userEmail)
+            user.password = password
+            response['success'] = True
+            user.save()
+            return JsonResponse(response)
+
+        except my_user.DoesNotExist:
+            response['success'] = False
+            return JsonResponse(response)
 
 def register(request):
     if(request.method == 'GET'):
@@ -68,14 +117,16 @@ def register(request):
         elif identity == 'staff':
             new_user.identity = 'staff'
         elif identity == 'invalid':
-            response['goodMail'] = False
-            response['goodName'] = True
+            # response['goodMail'] = False
+            # response['goodName'] = True
             response['success'] = False
-            response['message'] = "Invalid Email Address. You need to use your CUHK(SZ) email to sign up"
+            # response['message'] = "Invalid Email Address. You need to use your CUHK(SZ) email to sign up"
             return JsonResponse(response)
         # Administer?
         new_user.has_confirmed = True
         new_user.save()
+        response['success'] = True
+        return JsonResponse(response)
        # # Confirmation (Check Verification Code):
        #  try:
        #      confirm = ConfirmString.objects.get(code=code)
@@ -155,15 +206,17 @@ def login(request):
         if not user:
             #返回json
             response['success'] = False
-            response['info'] = "This Account Does not Exist！Please Try Again"
+            # response['info'] = "This Account Does not Exist！Please Try Again"
+            response['token'] = -1
             return JsonResponse(response)
 
         if user.password == password:
             request.session['is_login'] = True
-            request.session['userID'] = user.userID
+            request.session['userID'] = user.id
             request.session['userEmail'] = user.userEmail
             response['success'] = True
-            response['token'] = {"info":"Login Success", "identity":user.identity, "userID":user.id}
+            # response['token'] = {"info":"Login Success", "identity":user.identity, "userID":user.id}
+            response['token'] = user.id
             return JsonResponse(response)
 
         else:#返回json
@@ -179,17 +232,27 @@ def updateProfile(request):
     if (request.method == 'POST'):
         userEmail = request.session['userEmail']#session不知道可不可以这么用，不行的话让前端传id
         user = my_user.objects.get(email=userEmail)
-        try:
-            user.Profile.userIntro = request.POST.get('userIntro')#需要与前端label对齐
-            user.save()
-        except:
-            #返回json报错
-            message = 'userIntro 有错'
-            return render(request, 'index.html', locals())
-        try:
-            user.Profile.userPhoto = request.POST.get('userPhoto')#需要与前端label对齐
-            user.save()
-        except:
-            # 返回json报错
-            message = '用户头像有错'
-            return render(request, 'index.html', locals())
+
+        user.Profile.userIntro = request.POST.get('userIntro')
+        user.username = request.POST.get('username')
+
+        # Save Photo
+        photo = request.FILES.get('userPhoto')
+        user.Profile.userPhoto = photo
+        user.save()
+        return JsonResponse({'success':True})
+
+
+def getProfile(request):
+    if(request.method == 'POST'):
+        response = {}
+        uID = request.POST.get('userID')
+        user = my_user.objects.get(id=uID)
+        response['userPhoto'] = user.Profile.userPhoto.url
+        response['userIntro'] = user.Profile.userIntro
+        response['userName'] = user.username
+        response['userEmail'] = user.email
+        response['userIdentity'] = user.identity
+        return JsonResponse(response)
+
+

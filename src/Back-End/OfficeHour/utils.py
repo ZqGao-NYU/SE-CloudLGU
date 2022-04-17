@@ -1,5 +1,4 @@
 from datetime import datetime, timedelta
-# def getTime(input):
 
 
 def getStartEnd(today):
@@ -10,3 +9,7 @@ def getStartEnd(today):
     Saturday = today + delta2
     return Sunday, Saturday
 
+
+def converter(TimeSlot):
+    return {'otID': TimeSlot.id, 'otDate': TimeSlot.otDate, 'otStartTime': TimeSlot.otStartTime, 'otEndTime': TimeSlot.otEndTime,
+            'otLocation': TimeSlot.otLocation, 'isBooked': TimeSlot.booked, 'booked_by': TimeSlot.booked_by}
