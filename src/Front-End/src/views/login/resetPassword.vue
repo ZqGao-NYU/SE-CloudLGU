@@ -104,7 +104,7 @@
       </el-button>
 
       <el-button type="primary" style="width:100%;margin-left:-1px;" @click.native.prevent="cancel()">
-        cancel
+        Cancel
       </el-button>
     </el-form>
   </div>

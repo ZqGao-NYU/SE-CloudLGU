@@ -6,6 +6,8 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
+    email: 'email',
+    intro: 'introduction',
     avatar: '',
     roles: []
   }
@@ -22,6 +24,12 @@ const mutations = {
   },
   SET_NAME: (state, name) => {
     state.name = name
+  },
+  SET_EMAIL: (state, email) => {
+    state.email = email
+  },
+  SET_INTRO: (state, intro) => {
+    state.intro = intro
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
@@ -65,6 +73,8 @@ const actions = {
 
         commit('SET_ROLES', roles)
         commit('SET_NAME', name)
+        commit('SET_EMAIL', 'user.js---set email')
+        commit('SET_INTRO', 'store/modules/user.js Intro')
         commit('SET_AVATAR', avatar)
         //commit('SET_ROLES', ['admin'])
         //commit('SET_NAME', 'Super Admin')
@@ -93,7 +103,7 @@ const actions = {
       commit('RESET_STATE')
       resolve()
     })
-  }
+  },
 }
 
 export default {
