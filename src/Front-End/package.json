@@ -24,6 +24,14 @@
     "vue": "2.6.10",
     "vue-router": "3.0.6",
     "vuetify": "^2.5.9",
+    "@fullcalendar/core": "^5.11.0",
+    "@fullcalendar/daygrid": "^5.11.0",
+    "@fullcalendar/interaction": "^5.11.0",
+    "@fullcalendar/list": "^5.11.0",
+    "@fullcalendar/timegrid": "^5.11.0",
+    "@fullcalendar/vue": "^5.11.0",
+    "@fullcalendar/vue3": "^5.11.0",
+    "tippy.js": "^6.3.7",
     "vuex": "3.1.0"
   },
   "devDependencies": {

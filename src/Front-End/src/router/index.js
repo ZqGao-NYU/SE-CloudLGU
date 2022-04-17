@@ -66,29 +66,30 @@ export const constantRoutes = [
       meta: { title: 'Cloud LGU', icon: 'education' }
     }]
   },
-
   {
-    path: '/personalCenter',
+    path: '/forum',
     component: Layout,
-    redirect: '/personalCenter/basicInfo',
-    name: 'PersonalCenter',
-    meta: { title: 'Personal Center', icon: 'user' },
+    redirect: '/forum/all',
+    name: 'forum',
+    meta: { title: 'Forum', icon: 'user' },
     children: [
       {
-        path: 'basicInfo',
-        name: 'BasicInfo',
-        component: () => import('@/views/personalCenter/basicInfo'),
-        meta: { title: 'Basic Infomation', icon: 'form' }
+        path: 'all',
+        name: 'forum/All',
+        component: () => import('@/views/forum/PostList'),
+        meta: { title: 'All Posts', icon: 'form' }
       },
+      {path: 'addPost',
+      name: 'add_post',
+      component: () => import('@/views/forum/addPost')
+    },
       {
-        path: 'changePassword',
-        name: 'ChangePassword',
-        component: () => import('@/views/personalCenter/changePassword'),
-        meta: { title: 'Change Password', icon: 'password' }
-      }
+        path: 'post',
+        name: 'post_content',
+        component: () => import('@/views/forum/Article')
+        }
     ]
   },
-
   // forum here, every one can access the forum
 
 ]
@@ -98,7 +99,62 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
+  {
+    path: '/officetime',
+    component: Layout,
+    redirect: '/officetime/student/searchWeek',
+    name: 'officetime',
+    meta: { title: 'Office Time', icon: 'user', roles: ['admin','faculty','student'] },
+    children: [
+      {
+        path: 'student/searchWeek',
+        name: 'studentSearchWeek',
+        component: () => import('@/views/ot/otStudentSearchWeek'),
+        meta: { title: 'search by week', icon: 'form',roles: ['admin','student'] }
+      },
+      {
+        path: 'student/seachProf',
+        name: 'studentSearchProf',
+        component: () => import('@/views/ot/otStudentSearchProf'),
+        meta: { title: 'search faculty', icon: 'form',roles: ['admin','student'] },
+        params: {message: 'p1'}
 
+      },
+      {
+        path: 'faculty',
+        name: 'faculty',
+        component: () => import('@/views/ot/otProfessor'),
+        meta: { title: 'Faculty', icon: 'form',roles: ['admin','faculty'] }
+      },
+      {
+        path: 'student/my',
+        name: 'studentMy',
+        component: () => import('@/views/ot/otStudentMy'),
+        meta: { title: 'My', icon: 'password',roles: ['admin','student'] }
+      }
+    ]
+  },
+  {
+    path: '/personalCenter',
+    component: Layout,
+    redirect: '/personalCenter/basicInfo',
+    name: 'PersonalCenter',
+    meta: { title: 'Personal Center', icon: 'user', roles: ['admin','faculty','student'] },
+    children: [
+      {
+        path: 'basicInfo',
+        name: 'BasicInfo',
+        component: () => import('@/views/personalCenter/basicInfo'),
+        meta: { title: 'Basic Infomation', icon: 'form', roles: ['admin','faculty','student'] }
+      },
+      {
+        path: 'changePassword',
+        name: 'ChangePassword',
+        component: () => import('@/views/personalCenter/changePassword'),
+        meta: { title: 'Change Password', icon: 'password', roles: ['admin','faculty','student'] }
+      }
+    ]
+  },
   {
     path: '/manageUsers',
     component: Layout,

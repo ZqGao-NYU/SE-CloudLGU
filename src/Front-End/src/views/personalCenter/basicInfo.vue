@@ -1,8 +1,8 @@
 <template>
   <div class="personalCenter">
-    <el-container >
+    <el-container>
       <el-header> Basic Information </el-header>
-      <el-container>
+      <el-container style="height:650px">
         <el-aside width="400px">
           <el-col :span="12">
             <div class="sub-title"></div>
