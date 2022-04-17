@@ -10,7 +10,7 @@
               <div class="img">
                 <el-avatar
                   :size="100"
-                  :src="valueUrl"
+                  :src="require(valueUrl)"
                   align="center"
                 ></el-avatar>
               </div>

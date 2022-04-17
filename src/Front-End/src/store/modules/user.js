@@ -6,8 +6,8 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    email: 'email',
-    intro: 'introduction',
+    email: '',
+    intro: '',
     avatar: '',
     roles: []
   }
@@ -70,7 +70,7 @@ const actions = {
           reject('Verification failed, please Login again.')
         }
 
-        role = [res.data['userIdentity']]
+        var role = [res.data['userIdentity']]
 
         //roles must be a non-empty array
         if (!role || role.length <= 0) {
@@ -82,7 +82,7 @@ const actions = {
         commit('SET_EMAIL', res.data['userEmail'])
         commit('SET_INTRO', res.data['userIntro'])
         commit('SET_AVATAR', res.data['userPhoto'])
-        resolve(res.data)
+        resolve(role)
       }).catch(error => {
         reject(error)
       })

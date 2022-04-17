@@ -23,11 +23,11 @@ export function register(registerForm) {
   })
 }
 
-export function sendVerification(email) {
+export function sendVerification(inemail) {
   return request({
     url: '/api/sendverification',
     methond: 'post',
-    data: { email }
+    data: { email: inemail }
   })
 }
 
