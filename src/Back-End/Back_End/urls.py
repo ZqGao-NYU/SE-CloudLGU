@@ -32,6 +32,7 @@ urlpatterns = [
     # path('api/activate/<code>', ActivateView, name='activate'),
     path('api/forum/', include('forum.urls')),
     path('api/forget/', Reset_Pwd_Code, name='forget'),
+    path('api/officetime/', include('OfficeHour.urls')),
     path('', TemplateView.as_view(template_name="index.html"), name='Index')
 
 

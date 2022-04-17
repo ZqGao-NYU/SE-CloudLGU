@@ -30,7 +30,7 @@ def reg_Verification(request):
             return JsonResponse(response)
 
         # Generate Verification Code
-        code = get_verification(settings.VERFICATION_BITS)
+        code = get_verification(settings.VERIFICATION_BITS)
         new_user = my_user()
         new_user.email = userEmail
         new_user.save()
@@ -41,7 +41,7 @@ def reg_Verification(request):
         # response['success'] = True
         # response['status'] = "Verification Code Has Already Been Sent to Your Email {Mail}".format(Mail=userEmail)
         response['code'] = code
-        response['goodNMail'] = True
+        response['goodMail'] = True
         return JsonResponse(response)
 
 
