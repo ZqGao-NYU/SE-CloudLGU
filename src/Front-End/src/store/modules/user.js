@@ -62,31 +62,27 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
+      getInfo(state.token).then(res => {
         console.log('---store/user.js: getInfo---');
-        console.log(response);
-        const { data } = response
+        console.log(res);
 
-        if (!data) {
+        if (!res.data) {
           reject('Verification failed, please Login again.')
         }
 
-        const { roles, name, avatar } = data
+        role = [res.data['userIdentity']]
 
         //roles must be a non-empty array
-        if (!roles || roles.length <= 0) {
+        if (!role || role.length <= 0) {
           reject('getInfo: roles must be a non-null array!')
         }
 
-        commit('SET_ROLES', roles)
-        commit('SET_NAME', name)
-        commit('SET_EMAIL', 'user.js---set email')
-        commit('SET_INTRO', 'store/modules/user.js Intro')
-        commit('SET_AVATAR', avatar)
-        //commit('SET_ROLES', ['admin'])
-        //commit('SET_NAME', 'Super Admin')
-        //commit('SET_AVATAR', 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif')
-        resolve(data)
+        commit('SET_ROLES', role)
+        commit('SET_NAME', res.data['userName'])
+        commit('SET_EMAIL', res.data['userEmail'])
+        commit('SET_INTRO', res.data['userIntro'])
+        commit('SET_AVATAR', res.data['userPhoto'])
+        resolve(res.data)
       }).catch(error => {
         reject(error)
       })

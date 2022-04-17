@@ -168,7 +168,6 @@ export default {
               this.$router.push("/login")
             } else{
               this.$alert("Email alerady registered!")
-              this.$refs.registerUser.resetFields()
             }
           })
         }
@@ -185,7 +184,7 @@ export default {
       if (end1 !== '@link.cuhk.edu.cn' && end2 !== '@cuhk.edu.cn') {
         this.$alert("Invalid email format!")
       } else {
-        sendVerification(value).then(res => {
+        sendVerification(this.registerUser.email).then(res => {
           console.log('---register: get verification code---')
           console.log(res)
           if (res.data['goodMail']){
@@ -206,7 +205,6 @@ export default {
             }
           } else {
             this.$alert('Email has already been registered!')
-            this.$refs.registerUser.resetFields()
           }
         })
         
