@@ -23,7 +23,7 @@ export function register(registerForm) {
   })
 }
 
-export function sendVerification(emial) {
+export function sendVerification(email) {
   return request({
     url: '/api/sendverification',
     methond: 'post',
@@ -35,7 +35,7 @@ export function getInfo(token) {
   return request({
     url: '/api/getprofile',
     method: 'post',
-    params: { token }
+    data: { token }
   })
 }
 
