@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import { register, sendVerification } from '@/api/user'
+
 export default {
   name: 'Register',
   components: {},
@@ -155,30 +157,22 @@ export default {
 
   methods: {
     submitForm() {
-      this.$confirm('Go to log in now', 'Register Successfully', {
-        confirmButtonText: 'Yes',
-        cancelButtonText: 'No'
-      }).then(() => {
-        this.$router.push('/login')
+      this.$refs.registerUser.validate((valid) => {
+        if (valid){
+          register(this.registerUser).then(res => {
+            if (res.data['success']){
+              this.$message({
+                message: 'Register Successfully',
+                type: 'success'
+              })
+              this.$router.push("/login")
+            } else{
+              this.$alert("Email alerady registered!")
+              this.$refs.registerUser.resetFields()
+            }
+          })
+        }
       })
-      //      Attention!!! Need to send the input account to back-end
-      //      Please modify following codes
-      //            this.$refs.registerFrom.validate((valid) => {
-      //                if (valid) {
-      //                    this.$axios.post("api/users/register", this.registerUser)
-      //                        .then(res => {
-      //                            // register successfully
-      //                            this.$message({
-      //                                message: "Register Successfully!",
-      //                                type: "success"
-      //                            });
-      //                        })
-      //                    this.$router.push("/login")
-      //                } else {
-      //                    console.log('error submit!!');
-      //                    return false;
-      //                }
-      //            });
     },
     signIn() {
       this.$router.push('/login')
@@ -191,22 +185,31 @@ export default {
       if (end1 !== '@link.cuhk.edu.cn' && end2 !== '@cuhk.edu.cn') {
         this.$alert("Invalid email format!")
       } else {
-        this.$alert("We've sent you an email. Please check your email to find the verification code, which is valid in 30 minutes")
-        this.verifyCode = '1224'
-        // implement this!!!!!
-        if (!this.timer){
-          this.count = 60;
-          this.show = false;
-          this.timer = setInterval(()=> {
-            if (this.count > 0 && this.count <= 60){
-              this.count --;
-            } else{
-              this.show = true;
-              clearInterval(this.timer);
-              this.timer = null;
+        sendVerification(value).then(res => {
+          console.log('---register: get verification code---')
+          console.log(res)
+          if (res.data['goodMail']){
+            this.$alert("We've sent you an email. Please check your email to find the verification code, which is valid in 30 minutes")
+            this.verifyCode = res.data['code']
+            if (!this.timer){
+              this.count = 60;
+              this.show = false;
+              this.timer = setInterval(()=> {
+                if (this.count > 0 && this.count <= 60){
+                  this.count --;
+                } else{
+                  this.show = true;
+                  clearInterval(this.timer);
+                  this.timer = null;
+                }
+              },1000)
             }
-          },1000)
-        }
+          } else {
+            this.$alert('Email has already been registered!')
+            this.$refs.registerUser.resetFields()
+          }
+        })
+        
       }
     },
   },
