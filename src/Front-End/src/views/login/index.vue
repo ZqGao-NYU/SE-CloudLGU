@@ -162,12 +162,12 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$alert("Implement API request to get Token")
-          this.$store.dispatch('user/login', 'admin-token').then(() => {
+          this.$store.dispatch('user/login', this.loginForm).then(() => {
             this.$router.push({ path: this.redirect || '/' }) // 登录成功之后重定向到首页
             this.loading = false
-          }).catch(() => {
-            console.log('error in this.$store.dispatch');
+          }).catch((error) => {
+            this.$alert("Invalid user email or password")
+            console.log(error);
             this.loading = false
           })
         } else {

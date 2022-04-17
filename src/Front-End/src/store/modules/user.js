@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -41,16 +41,21 @@ const mutations = {
 
 const actions = {
   // user login
-  login({ commit }, token) {
-    //console.log(token);
+  login({ commit }, loginForm) {
     return new Promise((resolve, reject) => {
-      if (token) {
-        commit('SET_TOKEN', token)
-        setToken(token)
-        resolve()
-      }else {
-        reject("no token")
-      }
+      login(loginForm).then(res => {
+        console.log('---login---store/user.js:login---')
+        console.log(res);
+        if (res.data['success']){
+          commit('SET_TOKEN', res.data['token'])
+          setToken(res.data['token'])
+          resolve()
+        } else{
+          reject('login failed')
+        }
+      }).catch(error =>{
+        reject(error)
+      })
     })
   },
 
@@ -58,6 +63,8 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
+        console.log('---store/user.js: getInfo---');
+        console.log(response);
         const { data } = response
 
         if (!data) {
