@@ -188,25 +188,33 @@ API Address: /api/officetime/student/book
 - success: bool (success or failure of the book operation)
 
 ### Search by professor's name
+已修改为精确查询（不做模糊查询），仅返回未被预订的slot.
 API Address: /api/officetime/student/searchprof  
 **Send** 
 - Professor_Name: Professor's Username given by the user
 
 **Return**
-- successs: bool (success or failure of the search opearation (no research result))
-- lists: [{prof:}] (List of Json Objects)   
+- successs: bool (success or failure of the search opearation (no research result))  
+- slots:[{
+  otID,  
+  otDate,  
+  otStartTime,  
+  otEndTime,  
+  otLocation  
+}]  
 ### Search This Week
-API Address: /api/officetime/student/searchtime   
+API Address: /api/officetime/student/searchtime     
+返回本周有Office Hour的教授的名字及其有OH的Date.   
 **Send**  
 - Nothing     
 **Return**
 - success: bool (If no professor hold OH this week, it will return False)
 - lists:[  
-  prof:{  
-  profID: int Professor's User ID
-  profName: String Professor's User Name,
-  DateList: List of Available Dates (YYYY-MM-DD)
-  }]  
+  {  
+  profName:  
+  dates:[List of Date]  
+  }  
+  ]    
 ### Professor Check Office Time
 API Address: /api/officetime/professor/show  
 **Send**
@@ -224,7 +232,7 @@ API Address: /api/officetime/professor/show
 - success: bool (success or failure of the opearation)  
 
 ### Student Check Office Time
-API Address: /api/officetime/student/show  
+API Address: /api/officetime/student/show   
 **Send**
 - Student_ID: Student's userID  
 
