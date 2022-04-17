@@ -216,7 +216,7 @@ API Address: /api/officetime/student/searchtime
   }  
   ]    
 ### Professor Check Office Time
-API Address: /api/officetime/professor/show  
+API Address: /api/officetime/prof/show  
 **Send**
 - Professor_ID: Professor's userID  
 
