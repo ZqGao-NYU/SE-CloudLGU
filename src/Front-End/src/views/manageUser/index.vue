@@ -487,7 +487,7 @@ export default {
 
 .user .user_table {
   position: absolute;
-  left: 24%;
+  left: 18%;
   top: 25%;
   width: 63%;
 }
@@ -504,7 +504,7 @@ export default {
 
 .user .title {
   position: absolute;
-  left: 21.5%;
+  left: 18%;
   top: 6%;
   width: 25%;
 }
@@ -520,8 +520,8 @@ export default {
 
 .user .sort-title h2 {
   position: absolute;
-  left: 72%;
-  top: 17%;
+  left: 71%;
+  top: 16%;
   font-size: 17px;
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
   "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
@@ -530,20 +530,20 @@ export default {
 
 .user .search {
   position: absolute;
-  left: 24%;
+  left: 18%;
   top: 15%;
   width: 38%;
 }
 
 .user .search_button {
   position: absolute;
-  left: 63%;
-  top: 16%;
+  left: 58%;
+  top: 15.5%;
 }
 
 .user .sort {
   position: absolute;
-  left: 78%;
+  left: 76.5%;
   top: 15%;
   width: 11%;
 }
