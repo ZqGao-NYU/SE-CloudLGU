@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.conf import settings
+from rest_framework.decorators import api_view
 
 from .models import my_user, ConfirmString
 from .forms import UserForm
@@ -105,7 +106,7 @@ def register(request):
         userName = request.POST.get('userName')
         userEmail = request.POST.get('userEmail')
         password = request.POST.get('password')
-        code = request.POST.get('code')
+        # code = request.POST.get('code')
         # identify = utils.check_identification(userEmail)
         new_user = my_user.objects.get(email = userEmail)
         new_user.username = userName
@@ -190,7 +191,7 @@ def authenticationView(request):
     return render(request,'auth.html',locals())
 
 
-
+@api_view(['POST'])
 def login(request):
     response = {}
     if request.session.get('is_login', None):  # 不允许重复登录
