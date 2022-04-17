@@ -4,7 +4,7 @@ from django.core.files.storage import FileSystemStorage
 # Create your models here.
 
 class my_user(User):
-    identity = models.CharField(max_length=16, choices=(('staff', 'staff'), ('student', 'student')), default='student')
+    identity = models.CharField(max_length=16, choices=(('staff', 'staff'), ('student', 'student'), ('admin', 'admin')), default='student')
     has_confirmed = models.BooleanField(default=False)
     c_time = models.DateTimeField(auto_now_add=True)
     class Meta:
