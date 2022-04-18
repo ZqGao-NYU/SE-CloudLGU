@@ -148,7 +148,7 @@ API Address: /api/officetime/prof/create
 - otID: Office time ID stored in the Database (Int)  
 - status:{  
   success: bool (success or failure of the create operation)  
-  otherInfo: String (report success/failure reason (time conflict, location conflict))  
+  response: String (report success/failure reason (time conflict, location conflict))  
 }  
 
 ### Delete Office Time Slot(for teacher)
@@ -175,7 +175,7 @@ API Address: /api/officetime/prof/update
 - otID: New Office time ID stored in the Database (Int)  
 - status:{  
   success: bool (success or failure of the create operation)  
-  otherInfo: String (report success/failure reason (time conflict, location conflict))  
+  response: String (report success/failure reason (time conflict, location conflict))  
 }  
 
 ### Book Office Time(for student)  
@@ -215,6 +215,8 @@ API Address: /api/officetime/student/searchtime
   dates:[List of Date]  
   }  
   ]    
+  
+- response: string
 ### Professor Check Office Time
 API Address: /api/officetime/prof/show  
 **Send**
@@ -230,6 +232,7 @@ API Address: /api/officetime/prof/show
   booked_by,
 }]     (List of json objects)  
 - success: bool (success or failure of the opearation)  
+- response: string
 
 ### Student Check Office Time
 API Address: /api/officetime/student/show   
