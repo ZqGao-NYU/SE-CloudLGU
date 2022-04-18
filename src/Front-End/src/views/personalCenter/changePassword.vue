@@ -308,7 +308,7 @@ export default {
                 message: 'Reset Password Successfully',
                 type: 'success'
               })
-              await this.$store.dispatch('user/logout')
+              this.$store.dispatch('user/logout')
               this.$router.push(`/login?redirect=${this.$route.fullPath}`)
             } else {
               this.$alert('Reset Password Failed. Please Try Again')
@@ -333,7 +333,7 @@ export default {
                 message: 'Reset Password Successfully',
                 type: 'success'
               })
-              await this.$store.dispatch('user/logout')
+              this.$store.dispatch('user/logout')
               this.$router.push(`/login?redirect=${this.$route.fullPath}`)
             } else {
               this.$alert('Wrong Password! Please try again')
@@ -378,7 +378,7 @@ export default {
     },
     changeMethod() {
       this.showEmail = ! this.showEmail
-    }
+    },
   }
 }
 </script>

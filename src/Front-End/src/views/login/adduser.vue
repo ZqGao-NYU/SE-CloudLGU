@@ -161,7 +161,6 @@ export default {
       this.$refs.registerForm.validate((valid) => {
 =======
       this.$refs['registerForm'].validate((valid) => {
->>>>>>> Stashed changes
         if (valid){
           register(this.registerUser).then(res => {
             if (res.data['success']){
