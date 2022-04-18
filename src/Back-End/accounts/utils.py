@@ -33,10 +33,10 @@ def send_activation_email(request, email, code):
     send_mail(email, 'activate_profile', context)
 
 
-def send_Inform():
+def send_Inform(to):
     text_content = '''
     Thank you for using CloudLGU. Your account has been deleted. Please connect admin(118010339@link.cuhk.edu.cn)!
-    ''',
+    '''
     html_content= '''
     <p>
     Thank you for using CloudLGU. Your account has been deleted. Please connect admin (118010339@link.cuhk.edu.cn)!
