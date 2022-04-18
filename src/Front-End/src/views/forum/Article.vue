@@ -38,7 +38,7 @@
                 </div>
                 <p>{{comment.commentContent}}</p>
 				<div v-if="comment.userID==userID">
-				<el-button type="text" style="float:right; font-size:0.8rem;margin-top:-5%;" @click="deleteComment(comment.commentID)"> Detele</el-button>
+				<el-button type="text" style="float:right; font-size:0.8rem;margin-top:-5%;" @click="deletiComment(comment.commentID)"> Detele</el-button>
 				</div>
             </div>
     	</div>
@@ -46,6 +46,8 @@
 </template>
 
 <script>
+import { showPost,createComment,deleteComment } from '@/api/forum'
+
 	export default {
 		name: 'Article',
 	    data () {
@@ -83,14 +85,27 @@
 		    }
 		},
 		created () {
-			// postID = this.$router.params.postID
-			this.postTitle = this.source.postTitle
-			this.postContent = this.source.postContent
-			this.postTag = this.source.postTag
-			this.posterName = this.source.posterName
-			this.createTime = this.source.createTime
-			this.updateTime = this.source.updateTime
-			this.commentList = this.source.commentList
+			postID = this.$router.params.postID
+  showPost(this.postID)
+    .then(res => {
+      if (res.data['success']){
+        this.$message({
+          message: 'Register Successfully',
+          type: 'success'
+        })
+			this.postTitle = res.data['postTitle']
+			this.postTag = res.data['postTag']
+			this.posterName = res.data['posterName']
+			this.createTime = res.data['createTime']
+			this.updateTime = res.data['updateTime']
+			this.commentList = res.data['commentList']
+      } else{
+        this.$alert("Create post fail!")
+      }
+    })
+    .catch(function (error) { // 请求失败处理
+      console.log(error);
+    })
 			// loading: true
 		},
 	  	methods: {
@@ -99,17 +114,49 @@
 				this.message=''
 			},
 			sendComment: function () {
-				this.commentList.push ({
-					commentID: 9,
+				commentForm={postID: this.postID,
+				userID: this.this.$store.state.user.token,
+				commentContent: this.message}
+createComment(commentForm)
+    .then(res => {
+      if (res.data['success']){
+        this.$message({
+          message: 'Register Successfully',
+          type: 'success'
+        })
+   		this.commentList.push ({
+					commentID: res.data['commentID'],
 					userID: this.userID,
 					commentContent:this.message
 				})
-				this.message=''
+		this.message=''
 				this.commenting = false
+      } else{
+        this.$alert("Create post fail!")
+      }
+    })
+    .catch(function (error) { // 请求失败处理
+      console.log(error);
+    })
+		
 			},
-			deleteComment: function (id) {
-				let index = this.commentList.findIndex(e => e.commentID === id)
-          		this.commentList.splice(index, 1)
+			deletiComment: function (id) {
+deleteComment(id)
+    .then(res => {
+      if (res.data['success']){
+        this.$message({
+          message: 'Register Successfully',
+          type: 'success'
+        })
+		let index = this.commentList.findIndex(e => e.commentID === id)
+		this.commentList.splice(index, 1)
+      } else{
+        this.$alert("Create post fail!")
+      }
+    })
+    .catch(function (error) { // 请求失败处理
+      console.log(error);
+    })
 			}
 		  	// getData(){
 		  	// 	//获取文章信息

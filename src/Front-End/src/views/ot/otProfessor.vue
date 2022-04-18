@@ -10,7 +10,7 @@
     </el-input>
     <el-button @click.native=studentCheckOT()>查询</el-button>
     </el-form> -->
-    <p style="margin-left:42%; margin-top:3%; font-size:2rem;">{{ source.Professor_Name }}'s Office Time</p>
+    <p style="margin-left:42%; margin-top:3%; font-size:2rem;">{{ this.message }}'s Office Time</p>
     <div style="margin-left:5%; width:90%;">
     <FullCalendar
       :options="calendarOptions"
@@ -32,7 +32,7 @@ import tippy from 'tippy.js'
 // import 'tippy.js/dist/tippy.css'
 // import 'tippy.js/themes/light.css';
 // import 'tippy.js/animations/scale.css';
-
+import { profCheckOfficeTime, deleteOfficeTimeSlot,createOfficeTimeSlot } from '@/api/ot'
 // require('@fullcalendar/core/main.min.css')
 require('@fullcalendar/daygrid/main.min.css')
 require('@fullcalendar/timegrid/main.min.css')
@@ -102,40 +102,52 @@ export default {
     }
   },
   created () {
-    if (!this.source.success) {
-      alert('cannot find')
-    } else {
-      this.calendarOptions.events = []
-      this.message = this.source.Professor_Name
-      for (var i = 0; i < this.source.otLists.length; i++) {
-        if (!this.source.otLists[i].isBooked) {
-          this.calendarOptions.events.push({
-            id: this.source.otLists[i].otID.toString(),
-            title: 'Office Time',
-            start: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otStartTime + ':00',
-            end: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otEndTime + ':00',
-            backgroundColor: '#b0e0e6',
-            overlap: false,
-            extendedProps: {
-              Location: this.source.otLists[i].otLocation,
-              booked_by: this.source.otLists[i].booked_by
-            }
-          })
-        } else {
-          this.calendarOptions.events.push({
-            id: this.source.otLists[i].otID.toString(),
-            title: 'Office Time',
-            start: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otStartTime + ':00',
-            end: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otEndTime + ':00',
-            overlap: true,
-            extendedProps: {
-              Location: this.source.otLists[i].otLocation,
-              booked_by: this.source.otLists[i].booked_by
-            }
-          })
+    prof_id = this.$store.state.user.token
+    profCheckOfficeTime(prof_id)
+    .then(res => {
+      if (res.data['success']){
+        this.$message({
+          message: 'Register Successfully',
+          type: 'success'
+        })
+        this.calendarOptions.events = []
+        this.message = res.data['Professor_Name']
+        for (var i = 0; i < res.data['lists'].length; i++) {
+          if (res.data['lists'][i]['isBooked']) {
+            this.calendarOptions.events.push({
+              id: res.data['lists'][i]['otID'].toString(),
+              title: 'Office Time',
+              start: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otStartTime']+ ':00',
+              end: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otEndTime'] + ':00',
+              backgroundColor: '#b0e0e6',
+              overlap: false,
+              extendedProps: {
+                Location: res.data['lists'][i]['otLocation'],
+                booked_by: res.data['lists'][i]['booked_by']
+              }
+            })
+          } else {
+            this.calendarOptions.events.push({
+              id: this.source.otLists[i].otID.toString(),
+              title: 'Office Time',
+              start: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otStartTime']+ ':00',
+              end: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otEndTime'] + ':00',
+              overlap: true,
+              extendedProps: {
+                Location: res.data['lists'][i]['otLocation'],
+                booked_by: res.data['lists'][i]['booked_by']
+              }
+            })
+          }
         }
+
+      } else{
+        this.$alert("Create post fail!")
       }
-    }
+    })
+    .catch(function (error) { // 请求失败处理
+      console.log(error);
+    })
   },
   methods: {
     handleDateClick: function (arg) {
@@ -146,8 +158,22 @@ export default {
         var location = prompt('Enter the location')
         var startTime = new Date(dateStr + 'T' + startStr + ':00')
         var endTime = new Date(startTime.setMinutes(startTime.getMinutes() + parseInt(length)))
+        otForm={
+          otDate:dateStr,
+          otStartTime: startStr,
+          otEndTime: endTime.substring(11,16),
+          otLocation: location,
+          Professor_userID: this.$store.state.user.token
+        }
+  createOfficeTimeSlot(otForm)
+    .then(res => {
+      if (res.data['status']['success']){
+        this.$message({
+          message: 'Register Successfully',
+          type: 'success'
+        })
         this.calendarOptions.events.push({
-          id: '3',
+          id: res.data['otID'],
           title: 'Office Time',
           start: arg.dateStr,
           end: endTime,
@@ -157,13 +183,35 @@ export default {
             Location: location
           }
         })
+      } else{
+        this.$alert("Create post fail!")
+      }
+    })
+    .catch(function (error) { // 请求失败处理
+      console.log(error);
+    })
+
       }
     },
     handleEventClick: function (info) {
       // alert(info.event.extendedProps.Location)
       if (confirm('您是否要删除' + info.event.start + '的Office Time?')) {
+          deleteOfficeTimeSlot(info.event.id)
+    .then(res => {
+      if (res.data['success']){
+        this.$message({
+          message: 'Register Successfully',
+          type: 'success'
+        })
         let index = this.calendarOptions.events.findIndex(e => e.id === info.event.id)
         this.calendarOptions.events.splice(index, 1)
+      } else{
+        this.$alert("Create post fail!")
+      }
+    })
+    .catch(function (error) { // 请求失败处理
+      console.log(error);
+    })
       }
     },
     handleMouseEnter: function (info) {

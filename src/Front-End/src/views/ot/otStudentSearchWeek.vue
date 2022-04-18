@@ -31,6 +31,7 @@ import DayGridPlugin from '@fullcalendar/daygrid'
 import TimeGridPlugin from '@fullcalendar/timegrid'
 import InteractionPlugin from '@fullcalendar/interaction'
 import ListPlugin from '@fullcalendar/list'
+import { searchWeek } from '@/api/ot'
 
 // import axios from 'axios'
 import tippy from 'tippy.js'
@@ -102,24 +103,35 @@ export default {
     }
   },
   created () {
-    if (!this.source.success) {
-      alert('cannot get')
-    } else {
+    searchWeek()
+    .then(res => {
+      if (res.data['success']){
+        this.$message({
+          message: 'Register Successfully',
+          type: 'success'
+        })
       this.calendarOptions.events = []
-      for (var i = 0; i < this.source.otLists.length; i++) {
+      for (var i = 0; i < res.data['lists'].length; i++) {
+        for (var j = 0; j < res.data['lists'][i]['dates'].length; i++){
         this.calendarOptions.events.push({
-          id: this.source.otLists[i].otID.toString(),
-          title: this.source.otLists[i].prof_name + "'s Office Time",
-          start: this.source.otLists[i].otDate,
+          id: 1,
+          title: res.data['lists'][i]['profName'] + "'s Office Time",
+          start: res.data['lists'][i]['dates'][j],
           allDay: true,
           overlap: true,
           extendedProps: {
-            Location: this.source.otLists[i].otLocation,
-            prof_name: this.source.otLists[i].prof_name
           }
         })
+        }
       }
-    }
+
+      } else{
+        this.$alert("Create post fail!")
+      }
+    })
+    .catch(function (error) { // 请求失败处理
+      console.log(error);
+    })
   },
   methods: {
     handleEventClick: function (info) {
@@ -128,11 +140,11 @@ export default {
         params: {message: info.event.extendedProps.prof_name}
       })
     },
-    handleMouseEnter: function (info) {
-      tippy(info.el, {
-        content: info.event.extendedProps.Location
-      })
-    }
+    // handleMouseEnter: function (info) {
+    //   tippy(info.el, {
+    //     content: info.event.extendedProps.Location
+    //   })
+    // }
   }
 }
 </script>

@@ -46,6 +46,8 @@
 </template>
 
 <script>
+import { showAllPost } from '@/api/forum'
+
 	export default {
 	  data () {
 	    return {
@@ -101,35 +103,49 @@
 		// 	}
 		// },
 	  created () {
-		  this.posts=[{
-					title: '',
-					content: '',
-					tag: 'Top',
-					poster: '',
-					createTime: '2021-02-01T12:22:12',
-					updateTime: '2021-02-01T12:22:12'
-				}]
-			for (var i = 0; i < this.source.postList.length; i++) {
-				if (this.source.postList[i].tag == 'Top') {
+	showAllPost()
+    .then(res => {
+      if (res.data['success']){
+        this.$message({
+          message: 'Register Successfully',
+          type: 'success'
+        })
+		this.posts=[{
+		title: '',
+		content: '',
+		tag: 'Top',
+		poster: '',
+		createTime: '2021-02-01T12:22:12',
+		updateTime: '2021-02-01T12:22:12'
+	}]
+			for (var i = 0; i < res.data['postList'].length; i++) {
+				if (res.data['postList'][i]['postTag'] == 'Top') {
 					this.posts[0] = {
-						title: this.source.postList[i].title,
-						content: this.source.postList[i].content,
-						tag: this.source.postList[i].tag,
-						poster: this.source.postList[i].poster,
-						createTime: this.source.postList[i].createTime,
-						updateTime: this.source.postList[i].updateTime		
+						title:res.data['postList'][i]['postTitle'],
+						content: res.data['postList'][i]['postContent'],
+						tag: res.data['postList'][i]['postTag'],
+						poster: res.data['postList'][i]['posterName'],
+						createTime: res.data['postList'][i]['createTime'],
+						updateTime: res.data['postList'][i]['updateTime']		
 					}
-				} else if (this.source.postList[i].tag == this.webTag || this.webTag == 'All') {
+				} else if (res.data['postList'][i]['postTag'] == this.webTag || this.webTag == 'All') {
 				this.posts.push({
-					title: this.source.postList[i].title,
-					content: this.source.postList[i].content,
-					tag: this.source.postList[i].tag,
-					poster: this.source.postList[i].poster,
-					createTime: this.source.postList[i].createTime,
-					updateTime: this.source.postList[i].updateTime	
+					title:res.data['postList'][i]['postTitle'],
+						content: res.data['postList'][i]['postContent'],
+						tag: res.data['postList'][i]['postTag'],
+						poster: res.data['postList'][i]['posterName'],
+						createTime: res.data['postList'][i]['createTime'],
+						updateTime: res.data['postList'][i]['updateTime']
 				})
 				}
 			}
+      } else{
+        this.$alert("Create post fail!")
+      }
+    })
+    .catch(function (error) { // 请求失败处理
+      console.log(error);
+    })
 	  },
 	  methods: {
 		  clickroute: function (tag) {

@@ -157,7 +157,7 @@ export default {
 
   methods: {
     submitForm() {
-      this.$refs.registerUser.validate((valid) => {
+      this.$refs.registerForm.validate((valid) => {
         if (valid){
           register(this.registerUser).then(res => {
             if (res.data['success']){
@@ -185,8 +185,8 @@ export default {
         this.$alert("Invalid email format!")
       } else {
         sendVerification(this.registerUser.email).then(res => {
-          console.log('---register: get verification code---')
-          console.log(res)
+          console.log('---register: get verification code successfully---')
+          //console.log(res)
           if (res.data['goodMail']){
             this.$alert("We've sent you an email. Please check your email to find the verification code, which is valid in 30 minutes")
             this.verifyCode = res.data['code']
