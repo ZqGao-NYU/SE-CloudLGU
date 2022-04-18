@@ -9,19 +9,19 @@
           </el-form-item>
           <el-row :span="24">
             <el-col :span="14">
-              <el-form-item label="Email" prop="email">
-              <el-input v-model="registerUser.email" placeholder="Please input CUHKSZ email" />
+              <el-form-item label="Email" prop="email" auto-complete="off">
+                <el-input v-model="registerUser.email" placeholder="Please input CUHKSZ email" />
               </el-form-item>
             </el-col>
             <el-col :span="10">
-              <el-button type="primary" class="code-btn" @click="getCode()" :disabled="!show"> 
+              <el-button type="primary" class="code-btn" :disabled="!show" @click="getCode()">
                 <span v-show="show">Get verification code </span>
-                <span v-show="!show"> Resend in {{ count }} s </span>  
+                <span v-show="!show"> Resend in {{ count }} s </span>
               </el-button>
-            </el-col> 
+            </el-col>
           </el-row>
-          <el-form-item label="Code" prop="code">
-            <el-input v-model="registerUser.code" placeholder="Please input the email verification code"/>
+          <el-form-item label="Code" prop="code" auto-complete="off">
+            <el-input v-model="registerUser.code" placeholder="Please input the email verification code" />
           </el-form-item>
           <el-form-item label="Password" prop="password">
             <el-input v-model="registerUser.password" type="password" placeholder="Please input the password" />
@@ -61,7 +61,7 @@ export default {
       }
     }
     var validateCode = (rule, value, callback) => {
-      if (value !== this.verifyCode){
+      if (value !== this.verifyCode) {
         callback(new Error('Wrong email verification code'))
       } else {
         callback()
@@ -74,7 +74,7 @@ export default {
         email: '',
         code: '',
         password: '',
-        password2: '',
+        password2: ''
       },
       verifyCode: '',
       show: true,
@@ -158,16 +158,16 @@ export default {
   methods: {
     submitForm() {
       this.$refs['registerForm'].validate((valid) => {
-        if (valid){
+        if (valid) {
           register(this.registerUser).then(res => {
-            if (res.data['success']){
+            if (res.data['success']) {
               this.$message({
                 message: 'Register Successfully',
                 type: 'success'
               })
-              this.$router.push("/login")
-            } else{
-              this.$alert("Email alerady registered!")
+              this.$router.push('/login')
+            } else {
+              this.$alert('Email alerady registered!')
             }
           })
         }
@@ -177,43 +177,53 @@ export default {
       this.$router.push('/login')
     },
 
-    getCode(){
-      let value = this.registerUser.email
+    getCode() {
+      const value = this.registerUser.email
       var end1 = value.slice(value.length - 17, value.length)
       var end2 = value.slice(value.length - 12, value.length)
       if (end1 !== '@link.cuhk.edu.cn' && end2 !== '@cuhk.edu.cn') {
-        this.$alert("Invalid email format!")
+        this.$alert('Invalid email format!')
       } else {
         sendVerification(this.registerUser.email).then(res => {
           console.log('---register: get verification code successfully---')
-          //console.log(res)
-          if (res.data['goodMail']){
+          // console.log(res)
+          if (res.data['goodMail']) {
             this.$alert("We've sent you an email. Please check your email to find the verification code")
             this.verifyCode = res.data['code']
-            if (!this.timer){
-              this.count = 60;
-              this.show = false;
-              this.timer = setInterval(()=> {
-                if (this.count > 0 && this.count <= 60){
-                  this.count --;
-                } else{
-                  this.show = true;
-                  clearInterval(this.timer);
-                  this.timer = null;
+            if (!this.timer) {
+              this.count = 60
+              this.show = false
+              this.timer = setInterval(() => {
+                if (this.count > 0 && this.count <= 60) {
+                  this.count--
+                } else {
+                  this.show = true
+                  clearInterval(this.timer)
+                  this.timer = null
                 }
-              },1000)
+              }, 1000)
             }
           } else {
             this.$alert('Email has already been registered!')
           }
-        })        
+        })
       }
-    },
-  },
+    }
+  }
 }
 </script>
 
 <style lang="scss">
+$bg:#283443;
+$light_gray:#fff;
+$cursor: #fff;
+
+@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
+  .login-container .el-input input {
+    color: $cursor;
+  }
+}
+
   .register{
     input {
       background: transparent;
@@ -223,6 +233,11 @@ export default {
       color: #fff;
       height: 47px;
       caret-color: #fff;
+
+      &:-webkit-autofill {
+        box-shadow: 0 0 0px 1000px $bg inset !important;
+        -webkit-text-fill-color: $cursor !important;
+      }
     }
     label {
       color:#fff;
@@ -236,7 +251,6 @@ export default {
   }
 </style>
 
-
 <style lang="scss" scoped>
 .register {
   position: relative;
@@ -245,14 +259,14 @@ export default {
 /*    background: url(url) no-repeat center center;*/
   background-size: 100% 100%;
   text-align: center;
-  background: #283443;
+  background: #2d3a4b;
 }
 
 .form-container {
   width: 50%;
   height: 210px;
   position: absolute;
-  background-color: #283443; 
+  background-color: #2d3a4b;
   top: 10%;
   left: 30%;
   padding: 25px;
@@ -299,6 +313,5 @@ font-size:14px;
 .el-form-item {
     color: #454545;
 }
-
 
 </style>

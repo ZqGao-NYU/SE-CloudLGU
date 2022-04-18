@@ -1,25 +1,25 @@
 <template>
   <div>
     <el-form label="query" style="text-align: left;margin-left:5%;margin-top:2%;">
-    <el-input
-      v-model="message"
-      style="width: 220px"
-      placeholder="Input Faculty's name"
-      prefix-icon="el-icon-search"
-      clearable>
-    </el-input>
-    <el-button >
-       <router-link :to="{name:'studentSearchProf', params:{message: message}}">Search</router-link>
-    </el-button>
-    <el-button style="margin-left: 63%">
-        <router-link to="/officetime/student/my" > My Reservations</router-link>
-    </el-button>
+      <el-input
+        v-model="message"
+        style="width: 220px"
+        placeholder="Input Faculty's name"
+        prefix-icon="el-icon-search"
+        clearable
+      />
+      <el-button>
+        <router-link :to="{name:'studentSearchProf', params:{message: message}}">Search</router-link>
+      </el-button>
+      <el-button style="margin-left: 63%">
+        <router-link to="/officetime/student/my"> My Reservations</router-link>
+      </el-button>
     </el-form>
     <p style="margin-left:35%; font-size:2rem;">Available Office Time</p>
     <div style="margin-left:5%; width:90%;">
-    <FullCalendar
-      :options="calendarOptions"
-    />
+      <FullCalendar
+        :options="calendarOptions"
+      />
     </div>
   </div>
 </template>
@@ -34,7 +34,7 @@ import ListPlugin from '@fullcalendar/list'
 import { searchWeek } from '@/api/ot'
 
 // import axios from 'axios'
-import tippy from 'tippy.js'
+// import tippy from 'tippy.js'
 // import 'tippy.js/dist/tippy.css'
 // import 'tippy.js/themes/light.css';
 // import 'tippy.js/animations/scale.css';
@@ -44,8 +44,8 @@ require('@fullcalendar/daygrid/main.min.css')
 require('@fullcalendar/timegrid/main.min.css')
 
 export default {
-  components: {FullCalendar},
-  data () {
+  components: { FullCalendar },
+  data() {
     return {
       message: 'prof1',
       source: {
@@ -75,7 +75,7 @@ export default {
         ]
       },
       calendarOptions: {
-        plugins: [ DayGridPlugin, InteractionPlugin, TimeGridPlugin, ListPlugin ],
+        plugins: [DayGridPlugin, InteractionPlugin, TimeGridPlugin, ListPlugin],
         initialView: 'dayGridWeek',
         // backgroundColor: '#D3D3D3',
         headerToolbar: { // 日历头部按钮位置
@@ -83,7 +83,7 @@ export default {
           center: '',
           right: 'prev today next'
         },
-        height:660,
+        height: 660,
         slotLabelFormat: {
           hour: '2-digit',
           minute: '2-digit',
@@ -102,52 +102,51 @@ export default {
       }
     }
   },
-  created () {
+  created() {
     searchWeek()
-    .then(res => {
-      if (res.data['success']){
-        this.$message({
-          message: 'Search Successfully',
-          type: 'success'
-        })
-        // console.log('here')
-        // console.log(res.data)
-        // console.log(res.data['lists'][0])
-      this.calendarOptions.events = []
-      for (var key in res.data['lists']) {
-        for (var j = 0; j < res.data['lists'][key].length; j++){
-        this.calendarOptions.events.push({
-          id: 1,
-          title: key + "'s Office Time",
-          start: res.data['lists'][key][j],
-          allDay: true,
-          overlap: true,
-          extendedProps: {
-            prof_name: key
+      .then(res => {
+        if (res.data['success']) {
+          this.$message({
+            message: 'Search Successfully',
+            type: 'success'
+          })
+          // console.log('here')
+          // console.log(res.data)
+          // console.log(res.data['lists'][0])
+          this.calendarOptions.events = []
+          for (var key in res.data['lists']) {
+            for (var j = 0; j < res.data['lists'][key].length; j++) {
+              this.calendarOptions.events.push({
+                id: 1,
+                title: key + "'s Office Time",
+                start: res.data['lists'][key][j],
+                allDay: true,
+                overlap: true,
+                extendedProps: {
+                  prof_name: key
+                }
+              })
+              // console.log(this.calendarOptions.events[0])
+            }
           }
-        })
-        // console.log(this.calendarOptions.events[0])
+        } else {
+          this.$alert('No available OfficeTime this week!')
         }
-      }
-
-      } else{
-        this.$alert("No available OfficeTime this week!")
-      }
-    })
-    .catch(function (error) { // 请求失败处理
-      console.log(error);
-    })
+      })
+      .catch(function(error) { // 请求失败处理
+        console.log(error)
+      })
   },
   methods: {
-    handleEventClick: function (info) {
-            // alert(info.event.extendedProps.prof_name)
+    handleEventClick: function(info) {
+      // alert(info.event.extendedProps.prof_name)
 
       this.$router.push({
         name: 'studentSearchProf',
-        params: {message: info.event.extendedProps.prof_name}
+        params: { message: info.event.extendedProps.prof_name }
       })
       // alert(info.event.extendedProps.prof_name)
-    },
+    }
     // handleMouseEnter: function (info) {
     //   tippy(info.el, {
     //     content: info.event.extendedProps.Location

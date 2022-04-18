@@ -52,16 +52,15 @@
       <el-row :span="24">
         <el-col :span="13">
           <el-form-item prop="code">
-            <el-input ref="code" v-model="loginForm.code" auto-complete="off" placeholder="Please enter the code" size="" @keyup.enter.native="handleLogin">
-            </el-input>
-          </el-form-item>  
+            <el-input ref="code" v-model="loginForm.code" auto-complete="off" placeholder="Please enter the code" size="" @keyup.enter.native="handleLogin" />
+          </el-form-item>
         </el-col>
         <el-col :span="11">
           <div style="width:100%;margin-left:15px;margin-top:5px;" @click="refreshCode">
-            <validation-code :identifyCode="identifyCode"></validation-code>
-            </div>
+            <validation-code :identify-code="identifyCode" />
+          </div>
         </el-col>
-        </el-row>
+      </el-row>
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">
         LOGIN
@@ -84,7 +83,7 @@ import ValidationCode from './validationcode.vue'
 
 export default {
   name: 'Login',
-  components: {ValidationCode},
+  components: { ValidationCode },
   data() {
     const validateEmail = (rule, value, callback) => {
       const end1 = value.slice(value.length - 17, value.length)
@@ -119,13 +118,13 @@ export default {
       loginRules: {
         email: [{ required: true, trigger: 'blur', validator: validateEmail }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-        code: [{required: true, message: 'Verification code can not be empty', trigger: 'blur'}, {validator: validateCode, trigger: 'blur'}]
+        code: [{ required: true, message: 'Verification code can not be empty', trigger: 'blur' }, { validator: validateCode, trigger: 'blur' }]
       },
       loading: false,
       passwordType: 'password',
       redirect: undefined,
       identifyCodes: '012345679abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-      identifyCode: '',
+      identifyCode: ''
     }
   },
   watch: {
@@ -166,30 +165,31 @@ export default {
             this.$router.push('/') // 登录成功之后重定向到首页
             this.loading = false
           }).catch((error) => {
-            this.$alert("Invalid user email or password")
-            console.log(error);
+            this.$alert('Invalid user email or password')
+            console.log(error)
             this.loading = false
             this.refreshCode()
           })
         } else {
           console.log('error submit!!')
           this.refreshCode()
+          this.passwordType = ''
           return false // 登录失败提示错误
         }
       })
     },
-    refreshCode () {
+    refreshCode() {
       this.identifyCode = ''
       this.makeCode(this.identifyCodes, 4)
     },
-    makeCode (o, l) {
+    makeCode(o, l) {
       for (let i = 0; i < l; i++) {
         this.identifyCode += this.identifyCodes[this.randomNum(0, this.identifyCodes.length)]
       }
     },
-    randomNum (min, max) {
+    randomNum(min, max) {
       return Math.floor(Math.random() * (max - min) + min)
-    },
+    }
   }
 }
 </script>

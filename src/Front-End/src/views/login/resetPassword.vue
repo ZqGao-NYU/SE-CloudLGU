@@ -1,113 +1,112 @@
 <template>
-  <div class='login-container'>
-  <div class="login-container" v-show="!showReset">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+  <div class="login-container">
+    <div v-show="!showReset" class="login-container">
+      <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
-      <div class="title-container">
-        <h1 class="title">Reset Password</h1>
-      </div>
+        <div class="title-container">
+          <h1 class="title">Reset Password</h1>
+        </div>
 
-      <div class="title-input">
-        <h3 class="title">Email:</h3>
-      </div>
-      <el-form-item prop="email">
-        <span class="svg-container">
-          <svg-icon icon-class="email" />
-        </span>
-        <el-input
-          ref="email"
-          v-model="loginForm.email"
-          placeholder="@(link.)cuhk.edu.cn"
-          name="email"
-          type="text"
-          tabindex="1"
-          auto-complete="on"
-        />
-      </el-form-item>
+        <div class="title-input">
+          <h3 class="title">Email:</h3>
+        </div>
+        <el-form-item prop="email">
+          <span class="svg-container">
+            <svg-icon icon-class="email" />
+          </span>
+          <el-input
+            ref="email"
+            v-model="loginForm.email"
+            placeholder="@(link.)cuhk.edu.cn"
+            name="email"
+            type="text"
+            tabindex="1"
+            auto-complete="on"
+          />
+        </el-form-item>
 
-      <div class="title-input">
-        <h3 class="title">Verification Code:</h3>
-      </div>
+        <div class="title-input">
+          <h3 class="title">Verification Code:</h3>
+        </div>
 
-      <el-row :span="24">
-        <el-col :span="13">
-          <el-form-item prop="code">
-            <el-input ref="code" v-model="loginForm.code" auto-complete="off" placeholder="Please enter the code" size="" @keyup.enter.native="handleLogin">
-            </el-input>
-          </el-form-item>  
-        </el-col>
-        <el-col :span="11">
-          <el-button type="primary" class="code-btn" @click="getCode()" :disabled="!show" >
-            <span v-show="show">Get verification code </span>
-            <span v-show="!show"> Resend in {{ count }} s </span> 
-          </el-button>
-        </el-col>
+        <el-row :span="24">
+          <el-col :span="13">
+            <el-form-item prop="code">
+              <el-input ref="code" v-model="loginForm.code" auto-complete="off" placeholder="Please enter the code" size="" @keyup.enter.native="handleLogin" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-button type="primary" class="code-btn" :disabled="!show" @click="getCode()">
+              <span v-show="show">Get verification code </span>
+              <span v-show="!show"> Resend in {{ count }} s </span>
+            </el-button>
+          </el-col>
         </el-row>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">
-        Next Step
-      </el-button>
+        <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">
+          Next Step
+        </el-button>
 
-      <el-button type="primary" style="width:100%;margin-left:-1px;" @click.native.prevent="cancel()">
-        Cancel
-      </el-button>
-    </el-form>
-  </div>
+        <el-button type="primary" style="width:100%;margin-left:-1px;" @click.native.prevent="cancel()">
+          Cancel
+        </el-button>
+      </el-form>
+    </div>
 
-  <div class="login-container" v-show="showReset">
-    <el-form ref="pswForm" :model="pswForm" :rules="pswRules" class="login-form" auto-complete="on" label-position="left">
+    <div v-show="showReset" class="login-container">
+      <el-form ref="pswForm" :model="pswForm" :rules="pswRules" class="login-form" auto-complete="on" label-position="left">
 
-      <div class="title-container">
-        <h1 class="title">Change Password</h1>
-      </div>
+        <div class="title-container">
+          <h1 class="title">Change Password</h1>
+        </div>
 
-      <div class="title-input">
-        <h3 class="title">New Password:</h3>
-      </div>
-      <el-form-item prop="password">
-        <span class="svg-container">
-          <svg-icon icon-class="password" />
-        </span>
-        <el-input
-          :key="passwordType"
-          ref="password"
-          v-model="pswForm.password"
-          :type="passwordType"
-          placeholder="Please enter the new password"
-          name="password"
-          tabindex="2"
-          auto-complete="on"
-        />
-      </el-form-item>
+        <div class="title-input">
+          <h3 class="title">New Password:</h3>
+        </div>
+        <el-form-item prop="password">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            :key="passwordType"
+            ref="password"
+            v-model="pswForm.password"
+            :type="passwordType"
+            placeholder="Please enter the new password"
+            name="password"
+            tabindex="2"
+            auto-complete="on"
+          />
+        </el-form-item>
 
-      <div class="title-input">
-        <h3 class="title">Repeat Password:</h3>
-      </div>
-      <el-form-item prop="password2">
-        <span class="svg-container">
-          <svg-icon icon-class="password" />
-        </span>
-        <el-input
-          :key="passwordType"
-          ref="password2"
-          v-model="pswForm.password2"
-          :type="passwordType"
-          placeholder="Please repeat the password"
-          name="password2"
-          tabindex="2"
-          auto-complete="on"
-        />
-      </el-form-item>
+        <div class="title-input">
+          <h3 class="title">Repeat Password:</h3>
+        </div>
+        <el-form-item prop="password2">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            :key="passwordType"
+            ref="password2"
+            v-model="pswForm.password2"
+            :type="passwordType"
+            placeholder="Please repeat the password"
+            name="password2"
+            tabindex="2"
+            auto-complete="on"
+          />
+        </el-form-item>
 
-      <el-button type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleReset()">
-        Confirm
-      </el-button>
+        <el-button type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleReset()">
+          Confirm
+        </el-button>
 
-      <el-button type="primary" style="width:100%;margin-left:-1px;" @click.native.prevent="cancel()">
-        Cancel
-      </el-button>
-    </el-form>
-  </div>
+        <el-button type="primary" style="width:100%;margin-left:-1px;" @click.native.prevent="cancel()">
+          Cancel
+        </el-button>
+      </el-form>
+    </div>
 
   </div>
 
@@ -117,7 +116,7 @@
 import { sendVerification, resetPassword } from '@/api/resetPassword'
 
 export default {
-  name: 'resetPassword',
+  name: 'ResetPassword',
   data() {
     var validatePass2 = (rule, value, callback) => {
       if (value !== this.pswForm.password) {
@@ -149,7 +148,7 @@ export default {
       },
       loginRules: {
         email: [{ required: true, trigger: 'blur', validator: validateemail }],
-        code: [{required: true, message: 'Verification code can not be empty', trigger: 'blur'}, {validator: validateCode, trigger: 'blur'}]
+        code: [{ required: true, message: 'Verification code can not be empty', trigger: 'blur' }, { validator: validateCode, trigger: 'blur' }]
       },
       pswForm: {
         password: '',
@@ -194,7 +193,7 @@ export default {
       show: true,
       count: '',
       timer: null,
-      showReset : false,
+      showReset: false
     }
   },
   watch: {
@@ -222,8 +221,8 @@ export default {
     handleReset() {
       this.$refs.pswForm.validate(valid => {
         if (valid) {
-          resetPassword(this.loginForm.email, this.pswForm.password).then(res =>{
-            if (res.data['success']){
+          resetPassword(this.loginForm.email, this.pswForm.password).then(res => {
+            if (res.data['success']) {
               this.$message({
                 message: 'Reset Password Successfully',
                 type: 'success'
@@ -232,7 +231,7 @@ export default {
             } else {
               this.$alert('Reset Password Failed. Please Try Again')
             }
-          }).catch(error =>{
+          }).catch(error => {
             console.log(error)
           })
         } else {
@@ -240,31 +239,31 @@ export default {
         }
       })
     },
-    getCode(){
-      let value = this.loginForm.email
+    getCode() {
+      const value = this.loginForm.email
       var end1 = value.slice(value.length - 17, value.length)
       var end2 = value.slice(value.length - 12, value.length)
       if (end1 !== '@link.cuhk.edu.cn' && end2 !== '@cuhk.edu.cn') {
-        this.$alert("Invalid email format!")
+        this.$alert('Invalid email format!')
       } else {
         sendVerification(this.loginForm.email).then(res => {
           console.log('---reset password: get verification code successfully---')
           console.log(res)
-          if (res.data['success']){
+          if (res.data['success']) {
             this.$alert("We've sent you an email. Please check your email to find the verification code")
             this.identifyCode = res.data['code']
-            if (!this.timer){
-              this.count = 60;
-              this.show = false;
-              this.timer = setInterval(()=> {
-                if (this.count > 0 && this.count <= 60){
-                  this.count --;
-                } else{
-                  this.show = true;
-                  clearInterval(this.timer);
-                  this.timer = null;
+            if (!this.timer) {
+              this.count = 60
+              this.show = false
+              this.timer = setInterval(() => {
+                if (this.count > 0 && this.count <= 60) {
+                  this.count--
+                } else {
+                  this.show = true
+                  clearInterval(this.timer)
+                  this.timer = null
                 }
-              },1000)
+              }, 1000)
             }
           } else {
             this.$alert('Invalid Email!')
@@ -272,7 +271,7 @@ export default {
         })
       }
     },
-    cancel(){
+    cancel() {
       this.$router.back()
     }
   }

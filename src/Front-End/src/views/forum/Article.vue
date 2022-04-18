@@ -1,79 +1,79 @@
 <template>
-	<div class="ArticleSection">
-	    <div class="loading" v-if="loading">
-	        Loading...
-	    </div>
-	    <div class="article" v-else>
-			<div style="float:left;width:100%;margin-left:-2.5%;margin-top:-2%;margin-bottom:2%">
-				<router-link :to="{ name: 'forum/All'}">
-					<el-button size='mini'>Back</el-button>
-				</router-link>
-			</div>
-			<h1 style="font-size:2rem;">{{this.postTitle}}</h1>
-			<ul>
-				<li>• Tag: {{ this.postTag }}</li>
-				<li>  • public: {{ this.createTime}}</li>
-				<li>  • Auther: {{ this.posterName }}</li>
-			</ul>
-			<div id="content"> {{this.postContent}}</div>
-		<el-button style="margin-left:87%; margin-bottom: 10px" @click="docomment()"> Comment</el-button>
-		</div>
-        <div id='reply'>
-			<div v-if="commenting">
-			<div class='replySec'>
-				<el-input v-model="message" placeholder="comment" clearable> </el-input>
-				<el-form style="margin-left: 77%; margin-top: 10px">
-				<el-button @click="sendComment()"> comment</el-button>
-				<el-button @click="docomment()"> cancel</el-button>
-				</el-form>
-			</div>
-		</div>
+  <div class="ArticleSection">
+    <div v-if="loading" class="loading">
+      Loading...
+    </div>
+    <div v-else class="article">
+      <div style="float:left;width:100%;margin-left:-2.5%;margin-top:-2%;margin-bottom:2%">
+        <router-link :to="{ name: 'forum/All'}">
+          <el-button size="mini">Back</el-button>
+        </router-link>
+      </div>
+      <h1 style="font-size:2rem;">{{ this.postTitle }}</h1>
+      <ul>
+        <li>• Tag: {{ this.postTag }}</li>
+        <li>  • public: {{ this.createTime }}</li>
+        <li>  • Auther: {{ this.posterName }}</li>
+      </ul>
+      <div id="content"> {{ this.postContent }}</div>
+      <el-button style="margin-left:87%; margin-bottom: 10px" @click="docomment()"> Comment</el-button>
+    </div>
+    <div id="reply">
+      <div v-if="commenting">
+        <div class="replySec">
+          <el-input v-model="message" placeholder="comment" clearable />
+          <el-form style="margin-left: 77%; margin-top: 10px">
+            <el-button @click="sendComment()"> comment</el-button>
+            <el-button @click="docomment()"> cancel</el-button>
+          </el-form>
+        </div>
+      </div>
 
-            <div v-for='(comment, index) in this.commentList' class='replySec' :key="comment.commentID">
-                <div >
-					<span style="font-size:0.9rem;font-weight: 600;">{{comment.commenterName}}</span>
-       			    <span style="font-size:0.7rem;color:#a8a3a3 ;">
-       			    	{{index + 1}}楼
-       			    </span>
-                </div>
-                <p>{{comment.commentContent}}</p>
-				<div v-if="comment.userID==ID">
-				<el-button type="text" style="float:right; font-size:0.8rem;margin-top:-3%;" @click="deletiComment(comment.commentID)"> Detele</el-button>
-				</div>
-            </div>
-    	</div>
-	</div>
+      <div v-for="(comment, index) in this.commentList" :key="comment.commentID" class="replySec">
+        <div>
+          <span style="font-size:0.9rem;font-weight: 600;">{{ comment.commenterName }}</span>
+          <span style="font-size:0.7rem;color:#a8a3a3 ;">
+            {{ index + 1 }}
+          </span>
+        </div>
+        <p>{{ comment.commentContent }}</p>
+        <div v-if="comment.userID==ID">
+          <el-button type="text" style="float:right; font-size:0.8rem;margin-top:-3%;" @click="deletiComment(comment.commentID)"> Detele</el-button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { showPost,createComment,deleteComment } from '@/api/forum'
+import { showPost, createComment, deleteComment } from '@/api/forum'
 
-	export default {
-		name: 'Article',
-	    data () {
+export default {
+  name: 'Article',
+	    data() {
 		    return {
 			  message: '',
 			  userID: 122,
-			  source:{
+			  source: {
 				    success: true,
-					postTitle: 'Title of the post (String)',
-					postContent: 'Content of the post (String)',
-					postTag: 'study',
-					posterName: 'Name of the poster(String)',
-					createTime: '2022-02-02T11:12:12',
-					updateTime: '2022-02-02T11:12:12',
-					commentList: [{
-						commentID: 999,
-						userID: 1676,
-						commentContent:'commentttttt'
-					},{
-						commentID: 199,
-						userID: 1676,
-						commentContent:'commentttttt'
-					}]
+        postTitle: 'Title of the post (String)',
+        postContent: 'Content of the post (String)',
+        postTag: 'study',
+        posterName: 'Name of the poster(String)',
+        createTime: '2022-02-02T11:12:12',
+        updateTime: '2022-02-02T11:12:12',
+        commentList: [{
+          commentID: 999,
+          userID: 1676,
+          commentContent: 'commentttttt'
+        }, {
+          commentID: 199,
+          userID: 1676,
+          commentContent: 'commentttttt'
+        }]
 			  },
 		    postID: 0,
-			ID:'',
+      ID: '',
 			  postTitle: 'hh',
 			  postContent: '',
 			  postTag: '',
@@ -81,117 +81,116 @@ import { showPost,createComment,deleteComment } from '@/api/forum'
 			  createTime: '',
 			  updateTime: '',
 			  commentList: [],
-	  	      loading:false,
+	  	      loading: false,
 			  commenting: false,
-			createTime: ''
+      createTime: ''
 		    }
-		},
-		created () {
-			var id=this.$store.state.user.token
-			this.ID=id
-		console.log(this.$route.params)
-			var postID = this.$route.params.postID
-			console.log(postID)
-  showPost(postID)
-    .then(res => {
-    console.log('here')
-	console.log(res.data['commentList'])
-      if (res.data['success']){
-			this.postTitle = res.data['postTitle']
-			this.postTag = res.data['postTag']
-			this.posterName = res.data['posterName']
-			this.postContent = res.data['postContent']			
-			this.createTime = res.data['createTime'].substring(0,10)+ '  '+res.data['createTime'].substring(11,16)
-			this.updateTime = res.data['updateTime']
-			this.commentList = res.data['commentList']
-      } else{
-        this.$alert("Create post fail!")
-      }
-    })
-    .catch(function (error) { // 请求失败处理
-      console.log(error);
-    })
-			// loading: true
-		},
+  },
+  created() {
+    var id = this.$store.state.user.token
+    this.ID = id
+    console.log(this.$route.params)
+    var postID = this.$route.params.postID
+    console.log(postID)
+    showPost(postID)
+      .then(res => {
+        console.log('here')
+        console.log(res.data['commentList'])
+        if (res.data['success']) {
+          this.postTitle = res.data['postTitle']
+          this.postTag = res.data['postTag']
+          this.posterName = res.data['posterName']
+          this.postContent = res.data['postContent']
+          this.createTime = res.data['createTime'].substring(0, 10) + '  ' + res.data['createTime'].substring(11, 16)
+          this.updateTime = res.data['updateTime']
+          this.commentList = res.data['commentList']
+        } else {
+          this.$alert('Create post fail!')
+        }
+      })
+      .catch(function(error) { // 请求失败处理
+        console.log(error)
+      })
+    // loading: true
+  },
 	  	methods: {
-			docomment: function () {
-				this.commenting = !this.commenting
-				this.message=''
-			},
-			sendComment: function () {
-			console.log(this.message)
-				var commentForm={postID: this.$route.params.postID,
-				userID: this.$store.state.user.token,
-				commentContent: this.message}
-createComment(commentForm)
-    .then(res => {
-      if (res.data['success']){
-        this.$message({
-          message: 'Comment Successfully',
-          type: 'success'
-        })
+    docomment: function() {
+      this.commenting = !this.commenting
+      this.message = ''
+    },
+    sendComment: function() {
+      console.log(this.message)
+      var commentForm = { postID: this.$route.params.postID,
+        userID: this.$store.state.user.token,
+        commentContent: this.message }
+      createComment(commentForm)
+        .then(res => {
+          if (res.data['success']) {
+            this.$message({
+              message: 'Comment Successfully',
+              type: 'success'
+            })
 
-		this.message=''
-				this.commenting = false
-				this.$router.go(0)
-      } else{
-        this.$alert("Create post fail!")
-      }
-    })
-    .catch(function (error) { // 请求失败处理
-      console.log(error);
-    })
-
-			},
-			deletiComment: function (id) {
-deleteComment(id)
-    .then(res => {
-		console.log(id)
-      if (res.data['success']){
-        this.$message({
-          message: 'Delete Successfully',
-          type: 'success'
+            this.message = ''
+            this.commenting = false
+            this.$router.go(0)
+          } else {
+            this.$alert('Create post fail!')
+          }
         })
-		let index = this.commentList.findIndex(e => e.commentID === id)
-		this.commentList.splice(index, 1)
-      } else{
-        this.$alert("Create post fail!")
-      }
-    })
-    .catch(function (error) { // 请求失败处理
-      console.log(error);
-    })
-			}
+        .catch(function(error) { // 请求失败处理
+          console.log(error)
+        })
+    },
+    deletiComment: function(id) {
+      deleteComment(id)
+        .then(res => {
+          console.log(id)
+          if (res.data['success']) {
+            this.$message({
+              message: 'Delete Successfully',
+              type: 'success'
+            })
+            const index = this.commentList.findIndex(e => e.commentID === id)
+            this.commentList.splice(index, 1)
+          } else {
+            this.$alert('Create post fail!')
+          }
+        })
+        .catch(function(error) { // 请求失败处理
+          console.log(error)
+        })
+    }
 		  	// getData(){
 		  	// 	//获取文章信息
-			// 	this.$http({
+    // 	this.$http({
 		    //         url: `https://cnodejs.org/api/v1/topic/${this.$route.params.id}`,   //ES6语法，引入组件内的 route object（路由信息对象）
 		    //         method: 'get',
 		    //         params:{
 		    //         	mdrender:true
 		    //         }
 		    //       })
-			// 	  .then( (response) => {
-			// 	  	if( response.data.success === true ){
-			// 	  		this.post = response.data.data;
-			// 	  		this.loading = false;
-			// 	  	}
-			// 	  })
-			// 	  .catch(function (error) {
-			// 	  	console.log(error);
-			// 	  });
+    // 	  .then( (response) => {
+    // 	  	if( response.data.success === true ){
+    // 	  		this.post = response.data.data;
+    // 	  		this.loading = false;
+    // 	  	}
+    // 	  })
+    // 	  .catch(function (error) {
+    // 	  	console.log(error);
+    // 	  });
 		  	// }
-		// },
+    // },
 	    // beforeMount() {
 	    // 	this.loading = true;
 	    //     this.getData();
 	    // },
 	    // watch:{
-		// 	$route(){
-		// 		this.getData();
-		// 	}
-		}
-	}
+    // 	$route(){
+    // 		this.getData();
+    // 	}
+  }
+}
 </script>
 
 <style>

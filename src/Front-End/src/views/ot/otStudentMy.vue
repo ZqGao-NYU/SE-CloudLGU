@@ -1,26 +1,26 @@
 <template>
   <div>
     <el-form label="query" style="text-align: left; margin-left:5%;margin-top:2%;">
-    <el-input
-      v-model="message"
-      style="width: 220px"
-      placeholder="Input Faculty's name"
-      prefix-icon="el-icon-search"
-      clearable>
-    </el-input>
-    <el-button >
-       <router-link :to="{name:'studentSearchProf', params:{message: message}}"> Search</router-link>
-    </el-button>
-    <el-button style="margin-left:63%">
-        <router-link to="/officetime/student/my" > My Reservations</router-link>
-    </el-button>
+      <el-input
+        v-model="message"
+        style="width: 220px"
+        placeholder="Input Faculty's name"
+        prefix-icon="el-icon-search"
+        clearable
+      />
+      <el-button>
+        <router-link :to="{name:'studentSearchProf', params:{message: message}}"> Search</router-link>
+      </el-button>
+      <el-button style="margin-left:63%">
+        <router-link to="/officetime/student/my"> My Reservations</router-link>
+      </el-button>
     </el-form>
     <p style="margin-left:40%; font-size:2rem;">My Booked Office Time</p>
-        <div style="margin-left:5%; width:90%;">
-    <FullCalendar
-      :options="calendarOptions"
-    />
-        </div>
+    <div style="margin-left:5%; width:90%;">
+      <FullCalendar
+        :options="calendarOptions"
+      />
+    </div>
   </div>
 </template>
 
@@ -44,8 +44,8 @@ require('@fullcalendar/daygrid/main.min.css')
 require('@fullcalendar/timegrid/main.min.css')
 
 export default {
-  components: {FullCalendar},
-  data () {
+  components: { FullCalendar },
+  data() {
     return {
       message: '',
       source: {
@@ -72,7 +72,7 @@ export default {
         ]
       },
       calendarOptions: {
-        plugins: [ DayGridPlugin, InteractionPlugin, TimeGridPlugin, ListPlugin ],
+        plugins: [DayGridPlugin, InteractionPlugin, TimeGridPlugin, ListPlugin],
         initialView: 'timeGridWeek',
         height: 660,
         // backgroundColor: '#D3D3D3',
@@ -105,33 +105,31 @@ export default {
       }
     }
   },
-  created () {
-var id=this.$store.state.user.token
+  created() {
+    var id = this.$store.state.user.token
     studentCheckOfficeTime(id)
-    .then(res => {
-      if (res.data['success']){
-      this.calendarOptions.events = []
-      for (var i = 0; i < res.data['lists'].length; i++) {
-        this.calendarOptions.events.push({
-          id: res.data['lists'][i]['otID'].toString(),
-          title: res.data['lists'][i]['prof_name'] + "'s Office Time",
-          start: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otStartTime'],
-          end: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otEndTime'],
-          overlap: true,
-          extendedProps: {
-            Location: res.data['lists'][i]['otLocation']
+      .then(res => {
+        if (res.data['success']) {
+          this.calendarOptions.events = []
+          for (var i = 0; i < res.data['lists'].length; i++) {
+            this.calendarOptions.events.push({
+              id: res.data['lists'][i]['otID'].toString(),
+              title: res.data['lists'][i]['prof_name'] + "'s Office Time",
+              start: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otStartTime'],
+              end: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otEndTime'],
+              overlap: true,
+              extendedProps: {
+                Location: res.data['lists'][i]['otLocation']
+              }
+            })
           }
-        })
-      }
-  
-      
-      } else{
-        this.$alert("Search your reservations fail!")
-      }
-    })
-    .catch(function (error) { // 请求失败处理
-      console.log(error);
-    })
+        } else {
+          this.$alert('You do not have any reservation currently!')
+        }
+      })
+      .catch(function(error) { // 请求失败处理
+        console.log(error)
+      })
   },
   methods: {
     // handleDateClick: function (arg) {
@@ -192,10 +190,10 @@ var id=this.$store.state.user.token
     //     }
     //   }
     // },
-    handleMouseEnter: function (info) {
+    handleMouseEnter: function(info) {
       // alert('Event: ' + info.event.title)
       tippy(info.el, {
-        content: "Location: "+ info.event.extendedProps.Location
+        content: 'Location: ' + info.event.extendedProps.Location
       })
     }
   }

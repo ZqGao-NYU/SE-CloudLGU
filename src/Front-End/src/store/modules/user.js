@@ -45,15 +45,15 @@ const actions = {
     return new Promise((resolve, reject) => {
       login(loginForm).then(res => {
         console.log('---login---store/user.js:login---')
-        console.log(res);
-        if (res.data['success']){
+        console.log(res)
+        if (res.data['success']) {
           commit('SET_TOKEN', res.data['token'])
           setToken(res.data['token'])
           resolve()
-        } else{
+        } else {
           reject('login failed')
         }
-      }).catch(error =>{
+      }).catch(error => {
         reject(error)
       })
     })
@@ -63,8 +63,8 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(res => {
-        console.log('---store/user.js: getInfo---');
-        console.log(res);
+        console.log('---store/user.js: getInfo---')
+        console.log(res)
 
         if (!res.data) {
           reject('Verification failed, please Login again.')
@@ -72,7 +72,7 @@ const actions = {
 
         var role = [res.data['userIdentity']]
 
-        //roles must be a non-empty array
+        // roles must be a non-empty array
         if (!role || role.length <= 0) {
           reject('getInfo: roles must be a non-null array!')
         }
@@ -90,7 +90,7 @@ const actions = {
   },
 
   // user logout
-  logout({ commit}) {
+  logout({ commit }) {
     return new Promise(resolve => {
       removeToken() // must remove  token  first
       resetRouter()
@@ -106,7 +106,7 @@ const actions = {
       commit('RESET_STATE')
       resolve()
     })
-  },
+  }
 }
 
 export default {
