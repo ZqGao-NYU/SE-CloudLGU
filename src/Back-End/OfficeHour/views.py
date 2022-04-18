@@ -4,7 +4,7 @@ from django.core import serializers
 from django.http import JsonResponse
 from django.shortcuts import render
 from .models import TimeSlot
-from django.db.models import Q
+from django.db.models import Q, F
 from datetime import datetime, timedelta
 from accounts.models import my_user
 from .utils import getStartEnd, converter
@@ -191,11 +191,6 @@ def Search_By_Time(request):
         response['slots'] = list(get_slots)
         return JsonResponse(response)
 
-    response = {}
-    if len(otLists):
-        response['success'] = True
-        response['otLists'] = otLists
-        return JsonResponse(response)
     else:
         response['success'] = False
         response['otLists'] = []
@@ -206,20 +201,19 @@ def Search_By_Time(request):
 def Student_Check(request):
     today = datetime.today().date()
     Sunday, Saturday = getStartEnd(today)
-    profID = request.POST.get('Professor_ID')
-    get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(Professor_id = profID), Q(booked=False))
+    data = json.loads(request.body)
+    studentID =data['Student_ID']
+    get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(booked_by=studentID)).annotate(otID=F("pk"), prof_name = F("Professor__username")
+                                                                                                              ).values("otID", "otDate", "otStartTime","otEndTime","otLocation","prof_name")
     response = {}
-    if len(get_slots):
+    if get_slots.exists():
         response['success'] = True
-        response['otLists'] = [json.dumps({'otID': slot.id,
-                                         'otStarTime': slot.otStartTime,
-                                         'otEndTime': slot.otEndTime,
-                                         'otLocation': slot.otLocation,
-                                         'prof_name': slot.Professor.username}) for slot in get_slots]
+        response['lists'] = list(get_slots)
+
         return JsonResponse(response)
     else:
         response['success'] = False
-        response['list'] = []
+        response['lists'] = []
         return JsonResponse(response)
 
 

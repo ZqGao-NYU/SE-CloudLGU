@@ -49,7 +49,7 @@ export default {
     return {
       message: '',
       source: {
-        Student_ID: 123,
+        Student_ID: '123',
         success: true,
         otLists:
         [
@@ -106,11 +106,11 @@ export default {
     }
   },
   created () {
-Student_ID=this.$store.state.user.token
-
-    studentCheckOfficeTime(Student_ID)
+var id=this.$store.state.user.token
+    studentCheckOfficeTime(id)
     .then(res => {
       if (res.data['success']){
+        alert('success')
         this.$message({
           message: 'Register Successfully',
           type: 'success'
@@ -120,14 +120,16 @@ Student_ID=this.$store.state.user.token
         this.calendarOptions.events.push({
           id: res.data['lists'][i]['otID'].toString(),
           title: res.data['lists'][i]['prof_name'] + "'s Office Time",
-          start: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otStartTime'] + ':00',
-          end: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otEndTime'] + ':00',
+          start: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otStartTime'],
+          end: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otEndTime'],
           overlap: true,
           extendedProps: {
             Location: res.data['lists'][i]['otLocation']
           }
         })
       }
+  
+      
       } else{
         this.$alert("Create post fail!")
       }

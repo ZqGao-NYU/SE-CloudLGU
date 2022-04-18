@@ -48,7 +48,7 @@ export function createOfficeTimeSlot(otForm) {
   export function searchWeek() {
     return request({
       url: '/api/officetime/student/searchtime',
-      method: 'post'
+      method: 'get'
     })
   }
 
@@ -62,12 +62,12 @@ export function createOfficeTimeSlot(otForm) {
     })
   } 
   
-  export function studentCheckOfficeTime(Student_ID) {
+  export function studentCheckOfficeTime(id) {
     return request({
       url: '/api/officetime/student/show',
       method: 'post',
       data: {
-        Student_ID:Student_ID
+        Student_ID:id
       }
     })
   }
