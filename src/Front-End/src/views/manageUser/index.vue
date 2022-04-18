@@ -192,6 +192,7 @@
 </template>
 
 <script>
+import { getAllUsers, resetProfile, adminDeleteUser } from '@/api/admin'
 
 export default {
   name: 'ChangePassword',
@@ -259,16 +260,15 @@ export default {
       pagesize: 6
     }
   },
-  created (){
-    this.getMockUsersData()
-  },
+
   mounted () {
     this.getUsersData()
   },
   methods: {
     getUsersData () {
-      this.tableData = this.tableDataShow
-      console.log(this.tableDataShow);
+      getAllUsers().then(res=> {
+        //handle response
+      })
     },
 
     getMockUsersData () {
@@ -394,35 +394,27 @@ export default {
       // eslint-disable-next-line camelcase
       var new_index = this.edit_index + (this.curPage - 1) * this.pagesize
       this.$refs[formName].validate((valid) => {
-        if (valid) {/*
-          var params = {
-            // id: this.tableDataShow[new_index].ID,
-            username: this.edit_user.username,
-            role: this.roles[this.edit_user.role_radio], // 0: Admin 1: Staff Level1 2: Staff Level2 3: Staff Level3 4: Staff Level4 5: Teacher 6:Student
-            email: this.edit_user.email,
-            password: this.edit_user.password
-            intro: this.edit_user.intro
-          }
-          this.$axios.request({
-            url: '/django_api/admin_edit_user/',
-            method: 'post',
-            headers: {
-              'Content-type': 'application/json'
-            },
-            data: params
+        if (valid) {
+          resetProfile(this.edit_user).then(res => {
+            if (res.data['success']){
+              this.$message({
+                message: "Edit Successfully",
+                type: 'success'
+              })
+            } else {
+              this.$message({
+                message: 'Edit Failed',
+                type: 'error'
+              })
+            }
           })
-            .then(res => {
-              if (res.data.status === 1) {
-                this.dialogVisibleTrue = true
-              } else if (res.data.status === 0) {
-                this.dialogVisibleFalse = true
-              }
-            })*/
+          /*
           this.tableDataShow[new_index].Username = this.edit_user.username,
           this.tableDataShow[new_index].Role = this.roles[this.edit_user.role_radio],
           this.tableDataShow[new_index].Email = this.edit_user.email,
           this.tableDataShow[new_index].Password = this.edit_user.password,
           this.tableDataShow[new_index].Intro = this.edit_user.intro
+          */
         }
         this.edit_user.username = ''
         this.edit_user.role_radio = 0
@@ -436,15 +428,19 @@ export default {
     deleteUser () {
       // eslint-disable-next-line camelcase
       var new_index = this.delete_index + (this.curPage - 1) * this.pagesize
-      /*var params = {
-        id: this.tableDataShow[new_index].ID
-      }
-      this.$axios.get('/django_api/admin_delete_user/?' + this.$qs.stringify(params))
-        .then(res => {
-          this.deletedialogVisible = false
-          this.getUsersData()
-        })*/
-      this.tableDataShow.splice(new_index, 1)
+      adminDeleteUser(this.tableDataShow[new_index].Email).then(res => {
+        if (res.data['success']){
+          this.$message({
+            message: 'Successfully Deleted',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: 'Deletion Failed',
+            type: 'error'
+          })
+        }
+      })     
       this.deletedialogVisible = false
       this.getUsersData()
     },

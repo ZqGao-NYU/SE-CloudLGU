@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { createPost } from '@/api/forum'
 import axios from "axios";
 
 export default {
@@ -62,34 +63,29 @@ export default {
         alert("有未填写项，无法发布")
       }
       else {
-          alert('succss')
-        // const self = this;
-        // self.$axios({
-        //   method:'post',
-        //   url:'/post',
-        //   data:{
-        //     category:self.form.category,
-        //     title:self.form.title,
-        //     content:self.form.content
-        //   }
-        // })
-        // .then(res=>{
-        //   if(res.data.data.flag===true)
-        //   {
-        //    alert(res.data.message)
-        //     console.log(res)
-        //     self.postsId=res.data.postsId
-        //   }
-        //   else {
-        //    // alert(res.data.message)
-        //     alert(res.data.message)
-        //     console.log(res)
-        //   }
-
-        // })
+        form={
+        postTitle：this.form.title,
+        content：this.form.content,
+        tag：this.form.category,
+        userID：this.$store.state.user.token
+        }
+          // alert('succss')
+          createPost(form).then(res => {
+            if (res.data['success']){
+              this.$message({
+                message: 'Register Successfully',
+                type: 'success'
+              })
+              this.$router.push("/forum/all")
+            } else{
+              this.$alert("Create post fail!")
+            }
+        })
+        .catch(function (error) { // 请求失败处理
+        console.log(error);
+      })
       }
     }
-
   }
 }
 </script>
