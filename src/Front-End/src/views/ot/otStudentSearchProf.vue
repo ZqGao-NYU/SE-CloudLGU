@@ -9,7 +9,7 @@
       clearable>
     </el-input>
     <el-button @click.native=studentSearchProf()>Search</el-button>
-    <el-button style="margin-left: 80%">
+    <el-button style="margin-left: 63%">
         <router-link to="/officetime/student/my" >My Reservations</router-link>
     </el-button>
     </el-form>
@@ -153,7 +153,7 @@ export default {
         }
 
       } else{
-        this.$alert("Please enter professor's name")
+        this.$alert("The professor does not have office time this week")
       }
     })
     .catch(function (error) { // 请求失败处理

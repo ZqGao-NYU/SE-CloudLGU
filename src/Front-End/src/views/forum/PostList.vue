@@ -1,5 +1,5 @@
 <template>
-<div style="width:80%;margin-left:10%;margin-top:3%">
+<div style="width:80%;margin-left:10%;margin-top:3%;">
 	<div>
 			<div v-for="tag in tagsList" :key="tag">
 				<div class="tag">
@@ -36,7 +36,7 @@
 					</router-link>
 					</span>
 					<div style="font-size:0.8rem ;color:#a8a3a3 ;float: right; margin-right:2%">
-						{{ post.updateTime}}
+						{{ post.updateTime.substring(0,10)}}  {{ post.updateTime.substring(11,16)}} 
 					</div>
 				</li>
 			</ul>
@@ -106,18 +106,14 @@ import { showAllPost } from '@/api/forum'
 	showAllPost()
     .then(res => {
       if (res.data['success']){
-        this.$message({
-          message: 'Register Successfully',
-          type: 'success'
-        })
 		this.posts=[{
 		title: '',
 		content: '',
 		tag: 'Top',
 		poster: '',
 		postID: 0,
-		createTime: '2021-02-01T12:22:12',
-		updateTime: '2021-02-01T12:22:12'
+		createTime: '',
+		updateTime: ''
 	}]
 	console.log(res.data)
 			for (var i = 0; i < res.data['postList'].length; i++) {

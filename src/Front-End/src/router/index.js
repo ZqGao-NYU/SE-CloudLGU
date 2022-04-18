@@ -71,13 +71,13 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/forum/all',
     name: 'forum',
-    meta: { title: 'Forum', icon: 'user' },
+    meta: { title: 'Forum', icon: 'message' },
     children: [
       {
         path: 'all',
         name: 'forum/All',
         component: () => import('@/views/forum/PostList'),
-        meta: { title: 'All Posts', icon: 'form' }
+        meta: { title: 'All Posts', icon: 'list' }
       },
       {path: 'addPost',
       name: 'add_post',
@@ -105,19 +105,19 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/officetime/student/searchWeek',
     name: 'officetime',
-    meta: { title: 'Office Time', icon: 'user', roles: ['admin','faculty','student'] },
+    meta: { title: 'Office Time', icon: 'education', roles: ['admin','faculty','student'] },
     children: [
       {
         path: 'student/searchWeek',
         name: 'studentSearchWeek',
         component: () => import('@/views/ot/otStudentSearchWeek'),
-        meta: { title: 'search by week', icon: 'form',roles: ['admin','student'] }
+        meta: { title: 'Search Week', icon: 'table',roles: ['admin','student'] }
       },
       {
         path: 'student/seachProf',
         name: 'studentSearchProf',
         component: () => import('@/views/ot/otStudentSearchProf'),
-        meta: { title: 'search faculty', icon: 'form',roles: ['admin','student'] },
+        meta: { title: 'Search Faculty', icon: 'search',roles: ['admin','student'] },
         params: {message: 'p1'}
 
       },
@@ -125,13 +125,13 @@ export const asyncRoutes = [
         path: 'faculty',
         name: 'faculty',
         component: () => import('@/views/ot/otProfessor'),
-        meta: { title: 'My Office Time', icon: 'form',roles: ['admin','faculty'] }
+        meta: { title: 'My Office Time', icon: 'eye-open',roles: ['admin','faculty'] }
       },
       {
         path: 'student/my',
         name: 'studentMy',
         component: () => import('@/views/ot/otStudentMy'),
-        meta: { title: 'My', icon: 'password',roles: ['admin','student'] }
+        meta: { title: 'My', icon: 'people',roles: ['admin','student'] }
       }
     ]
   },

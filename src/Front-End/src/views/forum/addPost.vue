@@ -21,10 +21,10 @@
       <el-input type="textarea" v-model="form.content" :rows="20"></el-input>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="onSubmit">提交</el-button>
+      <el-button type="primary" @click="onSubmit">Post</el-button>
       <el-button>
         <router-link :to="{ name: 'forum/All'}">
-            取消
+            cancel
 		</router-link>
       </el-button>
     </el-form-item>
@@ -49,9 +49,9 @@ export default {
         content: ''
       },
       rules:{
-        title:[{required : true,message: '请输入标题',trigger:'blur'}],
-        content:[{required : true,message: '请输入内容',trigger:'blur'}],
-        category:[{required : true,message: '请选择分类',trigger:'change'}],
+        title:[{required : true,message: 'please enter title',trigger:'blur'}],
+        content:[{required : true,message: 'please enter content',trigger:'blur'}],
+        category:[{required : true,message: 'please choose tag',trigger:'change'}],
       }
     }
   },
@@ -60,7 +60,7 @@ export default {
       //alert('submit!');
       if(this.form.content===''||this.form.title===''||this.form.category==="")
       {
-        alert("有未填写项，无法发布")
+        alert("Post it by filling in all required fields")
       }
       else {
         var form={
