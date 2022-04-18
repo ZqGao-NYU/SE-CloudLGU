@@ -157,9 +157,6 @@ export default {
 
   methods: {
     submitForm() {
-<<<<<<< Updated upstream
-      this.$refs.registerForm.validate((valid) => {
-=======
       this.$refs['registerForm'].validate((valid) => {
         if (valid){
           register(this.registerUser).then(res => {
