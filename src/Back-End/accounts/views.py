@@ -14,7 +14,8 @@ from django.conf import settings
 
 from .models import my_user, ConfirmString, Profile
 from .forms import UserForm
-from .utils import send_activation_email, check_identification, get_verification
+from .utils import send_activation_email, check_identification, get_verification, send_Inform
+
 
 def reg_Verification(request):
     if(request.method == 'POST'):
@@ -323,6 +324,16 @@ def resetProfile(request):
     user.password = password
     user.save()
 
+    response = {}
+    response['success'] = True
+    return JsonResponse(response)
+
+def deleteUser(request):
+    data = json.loads(request.body)
+    userEmail = data['userEmail']
+    user = my_user.objects.get(email=userEmail)
+    user.delete()
+    send_Inform()
     response = {}
     response['success'] = True
     return JsonResponse(response)

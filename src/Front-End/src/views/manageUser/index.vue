@@ -224,12 +224,19 @@ export default {
       roles: ['admin', 'faculty', 'student'],
       user_role: { 0: 'Student', 1: 'Teacher', 2: 'Administrator' },
       edit_rules: {
-        username: [{
-          min: 5,
-          max: 12,
-          message: 'Range within 5 to 12 characters',
-          trigger: 'blur'
-          }],
+        username: [
+          {
+            min: 5,
+            max: 12,
+            message: 'Range within 5 to 12 characters',
+            trigger: 'blur'
+          },
+          {
+            required: true,
+            message: 'User name cannot be empty',
+            trigger: 'blur'
+          }
+        ],
         password: [
           {
             required: true,
@@ -267,78 +274,23 @@ export default {
   methods: {
     getUsersData () {
       getAllUsers().then(res=> {
-        //handle response
+        console.log('---admin get all users successfully---')
+        console.log(res.data)
+        this.tableData = []
+        this.tableDataShow = []
+        var i = 0
+        while (i < res.data['lists'].length){
+          this.tableData[i] = {
+            Username : res.data['lists'][i]['userName'],
+            Role: res.data['lists'][i]['userIdentity'],
+            Email: res.data['lists'][i]['userEmail'],
+            Password: res.data['lists'][i]['userPassword'],
+            Intro: res.data['lists'][i]['userIntro']
+          }
+          i ++
+        }
+        this.tableDataShow = this.tableData
       })
-    },
-
-    getMockUsersData () {
-      this.tableDataShow = [
-        {
-          Username: 'admin1',
-          Role: 'admin',
-          Email: 'admin@cuhk.edu.cn',
-          Password: '123456',
-          Intro: 'I am a super admin'
-        },
-        {
-          Username: 'admin2',
-          Role: 'admin',
-          Email: 'adminTest@cuhk.edu.cn',
-          Password: '123456aaaa',
-          Intro: 'I am an admin'
-        },
-        {
-          Username: 'faculty',
-          Role: 'faculty',
-          Email: 'faculty@cuhk.edu.cn',
-          Password: '123456',
-          Intro: 'I am a faculty'
-        },
-        {
-          Username: 'Amy',
-          Role: 'student',
-          Email: '119000000@link.cuhk.edu.cn',
-          Password: 'aaaaaa',
-          Intro: 'I am a student'
-        },
-        {
-          Username: 'Bob',
-          Role: 'student',
-          Email: '119000001@link.cuhk.edu.cn',
-          Password: 'aaaaaa',
-          Intro: 'I am a student'
-        },
-        {
-          Username: 'Cissy',
-          Role: 'student',
-          Email: '119000002@link.cuhk.edu.cn',
-          Password: 'aaaaaa',
-          Intro: 'I am a student'
-        },
-        {
-          Username: 'Daniel',
-          Role: 'student',
-          Email: '119000003@link.cuhk.edu.cn',
-          Password: 'aaaaaa',
-          Intro: 'I am a student'
-        },
-        {
-          Username: 'Emily',
-          Role: 'student',
-          Email: '119000004@link.cuhk.edu.cn',
-          Password: 'aaaaaa',
-          Intro: 'I am a student'
-        },
-        {
-          Username: 'Fred',
-          Role: 'student',
-          Email: '119000005@link.cuhk.edu.cn',
-          Password: 'aaaaaa',
-          Intro: 'I am a student'
-        },
-      ]
-
-    
     },
 
     doFilter () {
@@ -401,6 +353,7 @@ export default {
                 message: "Edit Successfully",
                 type: 'success'
               })
+              this.getUsersData()
             } else {
               this.$message({
                 message: 'Edit Failed',
@@ -416,13 +369,7 @@ export default {
           this.tableDataShow[new_index].Intro = this.edit_user.intro
           */
         }
-        this.edit_user.username = ''
-        this.edit_user.role_radio = 0
-        this.edit_user.password = ''
-        this.edit_user.email = ''
-        this.edit_user.intro = ''
         this.editdialogVisible = false
-        this.getUsersData()
       })
     },
     deleteUser () {
@@ -434,6 +381,7 @@ export default {
             message: 'Successfully Deleted',
             type: 'success'
           })
+          this.getUsersData()
         } else {
           this.$message({
             message: 'Deletion Failed',
@@ -442,7 +390,6 @@ export default {
         }
       })     
       this.deletedialogVisible = false
-      this.getUsersData()
     },
     cancelEdit () {
       this.edit_user.username = ''

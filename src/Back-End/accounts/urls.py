@@ -4,4 +4,6 @@ from . import views
 urlpatterns = [
     path('resetProfile', views.resetProfile),
     path('getList', views.getUserList),
+    path('deleteUser', views.deleteUser),
+
 ]
