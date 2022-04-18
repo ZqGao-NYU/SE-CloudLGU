@@ -242,7 +242,8 @@ API Address: /api/officetime/student/show
 **Return**
 - lists: [{  
   otID,  
-  otStartTime,  
+  otStartTime,
+  otDate,
   otEndTime,  
   otLocation,  
   prof_name
