@@ -6,3 +6,4 @@ class UserForm(forms.Form):
     userEmail = forms.CharField(label = 'Email Address', widget=forms.EmailInput(attrs={'class':'form-control'}))
     password1 = forms.CharField(label = 'password', max_length=128, widget=forms.PasswordInput(attrs={'class':'form-control'}))
     password2 = forms.CharField(label = 'password_confirm', max_length=128, widget=forms.PasswordInput(attrs={'class':'form-control'}))
+

@@ -9,15 +9,22 @@ from django.urls import reverse
 
 
 def send_mail(to, template, context):
-    html_content = render_to_string(f'emails/{template}.html', context)
-    text_content = render_to_string(f'emails/{template}.txt', context)
+    text_content = '''
+    Thank you for using CloudLGU. Here is your verification code. Please use it to finish your operation!
+    '''
+    html_content = '''
+    <p>
+    Thank you for using CloudLGU. Here is your verification code. Please use it to finish your operation!
+    Verification Code:<em>{}</em> 
+    </p>
+    '''.format(context['code'])
     msg = EmailMultiAlternatives(context['subject'], text_content, settings.DEFAULT_FROM_EMAIL, [to])
     msg.attach_alternative(html_content, 'text/html')
     msg.send()
 
 def send_activation_email(request, email, code):
     context = {
-        'subject': 'Profile activation',
+        'subject': f'{request}',
         # 'uri': request.build_absolute_uri(reverse('activate', kwargs={'code': code})),
         'code': code,
         'confirm_time': settings.CONFIRM_TIME

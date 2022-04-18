@@ -33,7 +33,6 @@ urlpatterns = [
     path('api/forum/', include('forum.urls')),
     path('api/forget/', Reset_Pwd_Code, name='forget'),
     path('api/officetime/', include('OfficeHour.urls')),
-    path('', TemplateView.as_view(template_name="index.html"), name='Index')
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

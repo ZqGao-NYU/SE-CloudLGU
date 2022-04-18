@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.conf import settings
 from rest_framework.decorators import api_view
 
-from .models import my_user, ConfirmString
+from .models import my_user, ConfirmString, Profile
 from .forms import UserForm
 from .utils import send_activation_email, check_identification, get_verification
 
@@ -31,13 +31,13 @@ def reg_Verification(request):
 
         # Generate Verification Code
         code = get_verification(settings.VERIFICATION_BITS)
-        new_user = my_user()
-        new_user.email = userEmail
-        new_user.save()
+        # new_user = my_user()
+        # new_user.email = userEmail
+        # new_user.save()
         # Create Confirmation Model
         # ConfirmString.objects.create(user=new_user, code=code)
         # Send Confirmation Email
-        send_activation_email(request, userEmail, code)
+        send_activation_email("Account Activation", userEmail, code)
         # response['success'] = True
         # response['status'] = "Verification Code Has Already Been Sent to Your Email {Mail}".format(Mail=userEmail)
         response['code'] = code
@@ -53,7 +53,7 @@ def Reset_Pwd_Code(request):
         try:
             user = my_user.objects.get(email=userEmail)
             code = get_verification(settings.VERFICATION_BITS)
-            send_activation_email(request, user.email, code)
+            send_activation_email("Password Reset", user.email, code)
             response['code'] = code
             response['success'] = True
             return JsonResponse(response)
@@ -65,11 +65,15 @@ def Reset_Pwd_Code(request):
 def Modify_Pwd_By_Old(request):
     if(request.method == 'POST'):
         response = {}
-        userEmail = request.POST.get('userEmail')
-        oldPwd = request.POST.get('oldPassword')
-        newPwd = request.POST.get('newPassword')
+        data = json.loads(request.body)
+        userEmail = data['userEmail']
+        oldPwd = data['oldPassword']
+        newPwd = data['newPassword']
         try:
             uLists = my_user.objects.filter(email = userEmail)
+            if not uLists.exists():
+                response['success'] = False
+                return JsonResponse(response)
             user = uLists.get(password=oldPwd)
             user.password=newPwd
             user.save()
@@ -83,8 +87,9 @@ def Modify_Pwd_By_Old(request):
 def Modify_Pwd(request):
     if(request.method == 'POST'):
         response = {}
-        userEmail = request.POST.get('userEmail')
-        password = request.POST.get('password') # User's new password
+        data = json.loads(request.body)
+        userEmail = data['userEmail']
+        password = data['password'] # User's new password
         try:
             user = my_user.objects.get(email = userEmail)
             user.password = password
@@ -111,9 +116,9 @@ def register(request):
         password = data['password']
         # code = request.POST.get('code')
         # identify = utils.check_identification(userEmail)
-        new_user = my_user.objects.get(email = userEmail)
+        new_user = my_user()
         new_user.username = userName
-
+        new_user.email = userEmail
         new_user.password = password
         identity = check_identification(new_user.email)
         if identity == 'student':
@@ -128,6 +133,9 @@ def register(request):
             return JsonResponse(response)
         # Administer?
         new_user.has_confirmed = True
+        profile = Profile()
+        profile.save()
+        new_user.profile = profile
         new_user.save()
         response['success'] = True
         return JsonResponse(response)
@@ -232,11 +240,13 @@ def login(request):
 
 def updateProfile(request):
     if (request.method == 'POST'):
-        userEmail = request.session['userEmail']#session不知道可不可以这么用，不行的话让前端传id
-        user = my_user.objects.get(email=userEmail)
+        data = json.loads(request.body)
+        # userEmail = request.session['userEmail']#session不知道可不可以这么用，不行的话让前端传id
+        uID = data['token']
+        user = my_user.objects.get(id=uID)
 
-        user.Profile.userIntro = request.POST.get('userIntro')
-        user.username = request.POST.get('username')
+        user.Profile.userIntro = data['userIntro']
+        user.username = data['userName']
 
         # Save Photo
         photo = request.FILES.get('userPhoto')

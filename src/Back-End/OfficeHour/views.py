@@ -1,12 +1,13 @@
 import json
 
+from django.core import serializers
 from django.http import JsonResponse
 from django.shortcuts import render
 from .models import TimeSlot
 from django.db.models import Q
 from datetime import datetime, timedelta
 from accounts.models import my_user
-from utils import getStartEnd, converter
+from .utils import getStartEnd, converter
 from itertools import groupby
 import pandas as pd
 # Create your views here.
@@ -29,16 +30,17 @@ def CreateSlot(request):
         context = {}
         # Search whether the time slot was taken up
         today_slots = TimeSlot.objects.filter(otDate=Date)
-        if today_slots.exists():
+        if not today_slots.exists():
             # Empty Day, Every Time is OK
             pass
         else:
-            check_slots = today_slots.get(Q(ProfID = profID),
-                Q(otStartTime__range=(StartTime, EndTime)) | Q(otEndTime__range=(StartTime, EndTime)) |
-                                          Q(otStartTime__lt=StartTime, otEndTime=EndTime))
+            check_slots = today_slots.filter(Q(Professor_id = profID),
+                                             Q(otStartTime__range=(StartTime, EndTime)) |
+                                             Q(otEndTime__range=(StartTime, EndTime)) |
+                                             Q(otStartTime__lt=StartTime, otEndTime=EndTime))
             if check_slots.exists():
                 context['status'] = {}
-                context['status']['response'] = "The Time Period from {start} to {end} Has Already Been. Please Try Again!".format(start=StartTime, end=EndTime)
+                context['status']['response'] = "The Time Period from {start} to {end} Has Already Been Taken Up. Please Try Another Time!".format(start=StartTime, end=EndTime)
                 context['status']['success'] = False
                 context['otID'] = -1
                 return JsonResponse(context)
@@ -71,25 +73,24 @@ def UpdateSlot(request):
     StartTime = request.POST.get('otStartTime')
     EndTime = request.POST.get('otEndTime')
     Location = request.POST.get('otLocation')
-    profID = request.POST.get('Professor_userID')
     Date = request.POST.get('otDate')
 
-
-    today_slots = TimeSlot.objects.filter(otDate=Date)
+    profID = slot.Professor.id
+    today_slots = TimeSlot.objects.filter(Q(otDate=Date), Q(Professor_id=profID))
 
     context = {}
     context['status'] = {}
-    if today_slots.exists():
+    if not today_slots.exists():
         # Empty Day, Every Time is OK
         pass
     else:
-        check_slots = today_slots.get(Q(ProfID = profID), ~Q(id = otID),
+        check_slots = today_slots.filter(~Q(id = otID),
             Q(otStartTime__range=(StartTime, EndTime)) | Q(otEndTime__range=(StartTime, EndTime)) |
             Q(otStartTime__lt=StartTime, otEndTime=EndTime))
         if check_slots.exists():
             context['status'] = {}
             context['status'][
-                'response'] = "The Time Period from {start} to {end} Has Already Been. Please Try Again!".format(
+                'response'] = "The Time Period from {start} to {end} Has Already Been Taken Up. Please Try Another Time!".format(
                 start=StartTime, end=EndTime)
             context['status']['success'] = False
             context['otID'] = -1
@@ -110,8 +111,14 @@ def UpdateSlot(request):
 
 
 def DeleteSlot(request):
+    context = {}
     slotID = request.POST.get('otID')
-    slot = TimeSlot.objects.get(id=slotID)
+    try:
+        slot = TimeSlot.objects.get(id=slotID)
+    except TimeSlot.DoesNotExist:
+        context['success'] = False
+        context['response'] = f"Cannot Find The Slot with ID: {slotID}"
+        return JsonResponse(context)
 
     StartTime = slot.otStartTime
     EndTime = slot.otEndTime
@@ -119,8 +126,6 @@ def DeleteSlot(request):
     Date = slot.otDate
 
 
-    context = {}
-    context['status'] = {}
     try:
         slot.delete()
         context['response'] = "The Time Period from {start} to {end} at {location} is successfully deleted.".format(start=StartTime,
@@ -137,32 +142,36 @@ def DeleteSlot(request):
 
 
 def BookSlot(request):
+    context = {}
     slotID = request.POST.get('otID')
     StudentID = request.POST.get('StudentID')
-
-    slot = TimeSlot.objects.get(id=slotID)
-
-    context = {}
-    if slot:
-        slot.booked = True
-        slot.booked_by = my_user.objects.get(id=StudentID)
-        context['success'] = True
-        return JsonResponse(context)
-    else:
+    try:
+        slot = TimeSlot.objects.get(id=slotID)
+    except TimeSlot.DoesNotExist:
+        context['response'] = f"Cannot Find The Slot with id:{slotID}"
         context['success'] = False
-        context['response'] = "Cannot Find The Student or Cannot Find the Specified Time Slot!"
         return JsonResponse(context)
+
+    slot.booked = True
+    slot.booked_by = my_user.objects.get(id=StudentID)
+    slot.save()
+    context['success'] = True
+    context['response'] = f"You have successfully booked the office time from {slot.otStartTime} to {slot.otEndTime} at {slot.otLocation} on {slot.otDate}"
+    return JsonResponse(context)
 
 def Search_By_Prof_Name(request):
+    response = {}
     prof_Name = request.POST.get('Professor_Name')
     today = datetime.today().date()
     Sunday, Saturday = getStartEnd(today)
-    get_slots = TimeSlot.objects.filter(Q(Professor__username__contains=prof_Name), Q(otDate__in=(Sunday, Saturday)))
-    profs = [Prof['Professor'] for Prof in get_slots.only('Professor')]
-    response = {}
-    if len(profs):
+    get_slots = TimeSlot.objects.filter(Q(Professor__username=prof_Name), Q(otDate__range=(Sunday, Saturday)), Q(booked=False)).values("otStartTime", "otEndTime", "otDate",
+                                                                                        "otLocation")
+
+    if get_slots.exists():
         response['success'] = True
-        response['list'] = [json.dumps({'profID': prof.id, 'profName':prof.username}) for prof in profs]
+        # response['slots'] = json.loads(serializers.serialize("json", get_slots, fields=("otStartTime", "otEndTime", "otDate",
+        #                                                                                 "otLocation", "Professor", "booked", "booked_by")))
+        response['slots'] = list(get_slots)
         return JsonResponse(response)
     else:
         response['success'] = False
