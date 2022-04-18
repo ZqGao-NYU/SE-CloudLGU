@@ -126,7 +126,7 @@ var id=this.$store.state.user.token
   
       
       } else{
-        this.$alert("Search your reservations fail!")
+        this.$alert("You do not have any reservation currently!")
       }
     })
     .catch(function (error) { // 请求失败处理

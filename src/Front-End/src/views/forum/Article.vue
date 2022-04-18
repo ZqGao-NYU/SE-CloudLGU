@@ -33,7 +33,7 @@
                 <div >
 					<span style="font-size:0.9rem;font-weight: 600;">{{comment.commenterName}}</span>
        			    <span style="font-size:0.7rem;color:#a8a3a3 ;">
-       			    	{{index + 1}}楼
+       			    	{{index + 1}}
        			    </span>
                 </div>
                 <p>{{comment.commentContent}}</p>

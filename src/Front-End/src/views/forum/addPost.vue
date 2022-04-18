@@ -73,7 +73,7 @@ export default {
           createPost(form).then(res => {
             if (res.data['success']){
               this.$message({
-                message: 'Register Successfully',
+                message: 'Post Successfully',
                 type: 'success'
               })
               this.$router.push("/forum/all")

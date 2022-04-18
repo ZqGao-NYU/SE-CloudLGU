@@ -159,8 +159,8 @@ import { showAllPost } from '@/api/forum'
 		tag: 'Top',
 		poster: '',
 		postID: 0,
-		createTime: '2021-02-01T12:22:12',
-		updateTime: '2021-02-01T12:22:12'
+		createTime: '',
+		updateTime: ''
 	}]
 	console.log(res.data)
 			for (var i = 0; i < res.data['postList'].length; i++) {

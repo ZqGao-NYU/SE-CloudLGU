@@ -9,7 +9,7 @@
           </el-form-item>
           <el-row :span="24">
             <el-col :span="14">
-              <el-form-item label="Email" prop="email">
+              <el-form-item label="Email" prop="email" auto-complete="off">
               <el-input v-model="registerUser.email" placeholder="Please input CUHKSZ email" />
               </el-form-item>
             </el-col>
@@ -20,7 +20,7 @@
               </el-button>
             </el-col> 
           </el-row>
-          <el-form-item label="Code" prop="code">
+          <el-form-item label="Code" prop="code" auto-complete="off">
             <el-input v-model="registerUser.code" placeholder="Please input the email verification code"/>
           </el-form-item>
           <el-form-item label="Password" prop="password">
@@ -214,6 +214,16 @@ export default {
 </script>
 
 <style lang="scss">
+$bg:#283443;
+$light_gray:#fff;
+$cursor: #fff;
+
+@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
+  .login-container .el-input input {
+    color: $cursor;
+  }
+}
+
   .register{
     input {
       background: transparent;
@@ -223,6 +233,11 @@ export default {
       color: #fff;
       height: 47px;
       caret-color: #fff;
+
+      &:-webkit-autofill {
+        box-shadow: 0 0 0px 1000px $bg inset !important;
+        -webkit-text-fill-color: $cursor !important;
+      }
     }
     label {
       color:#fff;
@@ -245,14 +260,14 @@ export default {
 /*    background: url(url) no-repeat center center;*/
   background-size: 100% 100%;
   text-align: center;
-  background: #283443;
+  background: #2d3a4b;
 }
 
 .form-container {
   width: 50%;
   height: 210px;
   position: absolute;
-  background-color: #283443; 
+  background-color: #2d3a4b; 
   top: 10%;
   left: 30%;
   padding: 25px;

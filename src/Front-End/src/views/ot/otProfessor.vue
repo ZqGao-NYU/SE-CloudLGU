@@ -111,7 +111,6 @@ export default {
         console.log('---ot professor: get all ot successfully---')
         this.calendarOptions.events = []
         this.message = res.data['Professor_Name']
-        console.log('here')
         console.log(res.data)
         for (var i = 0; i < res.data['lists'].length; i++) {
           // console.log(res.data['lists'][i]['isbooked'])
@@ -144,7 +143,7 @@ export default {
         }
 
       } else{
-        this.$alert("Create post fail!")
+        this.$alert("You do not have office time currently!")
       }
     })
     .catch(function (error) { // 请求失败处理
@@ -152,11 +151,24 @@ export default {
     })
   },
   methods: {
+    isNumber(value){
+      //console.log('---check integer---')
+      if (value === ''){
+        return false
+      }
+      const r = /^\+?[1-9][0-9]*$/
+      return (r.test(value))
+    },
     handleDateClick: function (arg) {
       let dateStr = arg.dateStr.substring(0, 10)
       let startStr = arg.dateStr.substring(11, 16)
       if (confirm('Do you want to create an OfficeTime at ' + dateStr + ' ' + startStr + '?')) {
-        var length = prompt('Enter minutes in format like 20')
+        var length = prompt('Enter the time period in minutes')
+        //console.log(this.isNumber(length))
+        if (!this.isNumber(length)){
+          this.$alert('The time period must in interger form!')
+          return
+        } else {
         var location = prompt('Enter the location')
         var startTime = new Date(dateStr + 'T' + startStr + ':00')
         var endTime = new Date(startTime.setMinutes(startTime.getMinutes() + parseInt(length)))
@@ -189,6 +201,7 @@ export default {
       console.log(error);
     })
 
+      }
       }
     },
     handleEventClick: function (info) {

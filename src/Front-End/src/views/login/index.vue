@@ -174,6 +174,7 @@ export default {
         } else {
           console.log('error submit!!')
           this.refreshCode()
+          this.passwordType = ''
           return false // 登录失败提示错误
         }
       })

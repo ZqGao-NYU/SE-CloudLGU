@@ -391,11 +391,7 @@ $bg:#283443;
 $light_gray:#283443;
 $cursor: #283443;
 
-@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-  .login-container .el-input input {
-    color: $cursor;
-  }
-}
+
 
 /* reset element-ui css */
 .login-container {
@@ -411,6 +407,7 @@ $cursor: #283443;
       border-radius: 0px;
       padding: 12px 5px 12px 15px;
       height: 47px;
+      
 
       &:-webkit-autofill {
         box-shadow: 0 0 0px 1000px $bg inset !important;

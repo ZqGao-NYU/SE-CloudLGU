@@ -35,9 +35,9 @@ def CreateSlot(request):
             pass
         else:
             check_slots = today_slots.filter(Q(Professor_id = profID),
-                                             Q(otStartTime__range=(StartTime, EndTime)) |
-                                             Q(otEndTime__range=(StartTime, EndTime)) |
-                                             Q(otStartTime__lt=StartTime, otEndTime=EndTime))
+                                             Q(otStartTime__gt=StartTime, otStartTime__lt = EndTime) |
+                                             Q(otEndTime__gt=StartTime, otEndTime__lt = EndTime) |
+                                             Q(otStartTime__lt=StartTime, otEndTime__gt =EndTime))
             if check_slots.exists():
                 context['status'] = {}
                 context['status']['response'] = "The Time Period from {start} to {end} Has Already Been Taken Up. Please Try Another Time!".format(start=StartTime, end=EndTime)
@@ -86,8 +86,8 @@ def UpdateSlot(request):
         pass
     else:
         check_slots = today_slots.filter(~Q(id = otID),
-            Q(otStartTime__range=(StartTime, EndTime)) | Q(otEndTime__range=(StartTime, EndTime)) |
-            Q(otStartTime__lt=StartTime, otEndTime=EndTime))
+            Q(otStartTime__gt=StartTime, otStartTime__lt = EndTime) | Q(otEndTime__gt=StartTime, otEndTime__lt = EndTime) |
+            Q(otStartTime__lt=StartTime, otEndTime__gt =EndTime))
         if check_slots.exists():
             context['status'] = {}
             context['status'][
