@@ -228,8 +228,9 @@ API Address: /api/officetime/prof/show
   otStartTime,  
   otEndTime,  
   otLocation,  
-  isbooked,
-  booked_by,
+  otDate,  
+  isbooked,  
+  booked_by,  
 }]     (List of json objects)  
 - success: bool (success or failure of the opearation)  
 - response: string
@@ -242,7 +243,8 @@ API Address: /api/officetime/student/show
 **Return**
 - lists: [{  
   otID,  
-  otStartTime,  
+  otStartTime,
+  otDate,
   otEndTime,  
   otLocation,  
   prof_name

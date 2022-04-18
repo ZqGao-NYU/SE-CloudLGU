@@ -192,7 +192,7 @@ export default {
           console.log('---register: get verification code successfully---')
           //console.log(res)
           if (res.data['goodMail']){
-            this.$alert("We've sent you an email. Please check your email to find the verification code, which is valid in 30 minutes")
+            this.$alert("We've sent you an email. Please check your email to find the verification code")
             this.verifyCode = res.data['code']
             if (!this.timer){
               this.count = 60;
@@ -210,8 +210,7 @@ export default {
           } else {
             this.$alert('Email has already been registered!')
           }
-        })
-        
+        })        
       }
     },
   },
