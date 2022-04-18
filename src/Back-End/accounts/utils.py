@@ -33,6 +33,22 @@ def send_activation_email(request, email, code):
     send_mail(email, 'activate_profile', context)
 
 
+def send_Inform():
+    text_content = '''
+    Thank you for using CloudLGU. Your account has been deleted. Please connect admin(118010339@link.cuhk.edu.cn)!
+    ''',
+    html_content= '''
+    <p>
+    Thank you for using CloudLGU. Your account has been deleted. Please connect admin (118010339@link.cuhk.edu.cn)!
+    </p>
+    '''
+
+
+    msg = EmailMultiAlternatives("Your account has been deleted.", text_content, settings.DEFAULT_FROM_EMAIL, [to])
+    msg.attach_alternative(html_content, 'text/html')
+    msg.send()
+
+
 def check_identification(email):
     student_pattern = re.compile(r'@link.cuhk.edu.cn')
     staff_pattern = re.compile(r'@cuhk.edu.cn')

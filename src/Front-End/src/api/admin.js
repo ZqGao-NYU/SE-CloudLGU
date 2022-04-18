@@ -9,9 +9,9 @@ export function getAllUsers() {
 }
 
 export function resetProfile(editForm){
-  const roles = [ ['admin'], ['faculty'], ['student'] ]
+  const roles = ['admin', 'faculty', 'student']
   return request({
-    url: '/api/admin/resetProflie',
+    url: '/api/admin/resetProfile',
     method: 'post',
     data: {
       userEmail: editForm.email,
