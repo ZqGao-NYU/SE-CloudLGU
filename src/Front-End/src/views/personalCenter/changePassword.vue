@@ -350,9 +350,9 @@ export default {
     },
     getCode(){
       sendVerification(this.email).then(res => {
-        console.log('---register: get verification code successfully---')
+        console.log('---personal center-change password: get verification code successfully---')
         //console.log(res)
-        if (res.data['goodMail']){
+        if (res.data['success']){
           this.$alert("We've sent you an email. Please check your email to find the verification code")
           this.identifyCode = res.data['code']
           if (!this.timer){

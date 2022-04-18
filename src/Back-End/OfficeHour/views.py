@@ -164,8 +164,15 @@ def BookSlot(request):
 
 def Search_By_Prof_Name(request):
     response = {}
+    if(request.method=="GET"):
+        response['success'] = False
+        return JsonResponse(response)
     data = json.loads(request.body)
-    prof_Name = data["Professor_Name"]
+    try:
+        prof_Name = data["Professor_Name"]
+    except:
+        response['success'] = False
+        return JsonResponse(response)
     today = datetime.today().date()
     Sunday, Saturday = getStartEnd(today)
     get_slots = TimeSlot.objects.filter(Q(Professor__username=prof_Name), Q(otDate__range=(Sunday, Saturday)), Q(booked=False)).annotate(otID=F("pk")).values("otID","otStartTime", "otEndTime", "otDate",
@@ -239,10 +246,14 @@ def Professor_Check(request):
     #                                                                                                                                "otStartTime","otEndTime",
     #                                                                                                                                "otLocation",
     #                                                                                                                                "isbooked","booked_by")
-    get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(Professor_id=profID)).annotate(otID=F("pk"), isbooked=F("booked")).values("otID", "otDate",
+    get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(Professor_id=profID)).annotate(otID=F("pk"), isbooked=F("booked"), booked_byName=F("booked_by__username")).values("otID", "otDate",
                                                                                                                                    "otStartTime","otEndTime",
                                                                                                                                    "otLocation",
-                                                                                                                                   "isbooked","booked_by")
+                                                                                                                                   "isbooked","booked_by", "booked_byName")
+    # get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(Professor_id=profID)).annotate(otID=F("pk"), isbooked=F("booked")).values("otID", "otDate",
+    #                                                                                                                                "otStartTime","otEndTime",
+    #                                                                                                                                "otLocation",
+    #                                                                                                                                "isbooked","booked_by")
 
     response = {}
     if get_slots.exists():

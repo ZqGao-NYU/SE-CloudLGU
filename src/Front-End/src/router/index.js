@@ -125,7 +125,7 @@ export const asyncRoutes = [
         path: 'faculty',
         name: 'faculty',
         component: () => import('@/views/ot/otProfessor'),
-        meta: { title: 'Faculty', icon: 'form',roles: ['admin','faculty'] }
+        meta: { title: 'My Office Time', icon: 'form',roles: ['admin','faculty'] }
       },
       {
         path: 'student/my',

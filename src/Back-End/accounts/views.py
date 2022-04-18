@@ -48,11 +48,12 @@ def reg_Verification(request):
 def Reset_Pwd_Code(request):
     if(request.method == 'POST'):
         response = {}
-        userEmail = request.POST.get('userEmail')
+        data = json.loads(request.body)
+        userEmail = data['userEmail']
         # Check the existance of the user's email
         try:
             user = my_user.objects.get(email=userEmail)
-            code = get_verification(settings.VERFICATION_BITS)
+            code = get_verification(settings.VERIFICATION_BITS)
             send_activation_email("Password Reset", user.email, code)
             response['code'] = code
             response['success'] = True
@@ -240,19 +241,38 @@ def login(request):
 
 def updateProfile(request):
     if (request.method == 'POST'):
+        # try:
         data = json.loads(request.body)
         # userEmail = request.session['userEmail']#session不知道可不可以这么用，不行的话让前端传id
-        uID = data['token']
+        uID = data['userID']
         user = my_user.objects.get(id=uID)
 
-        user.Profile.userIntro = data['userIntro']
+        user.profile.userIntro = data['userIntro']
         user.username = data['userName']
 
-        # Save Photo
-        photo = request.FILES.get('userPhoto')
-        user.Profile.userPhoto = photo
+        user.profile.save()
         user.save()
         return JsonResponse({'success':True})
+        # except:
+        #     return JsonResponse({'success':False})
+    else:
+        return JsonResponse({'success':False})
+
+def updateAvatar(request):
+    if (request.method == 'POST'):
+        #data = json.loads(request.body)
+        #photo = data['photo']
+        #uID = data['userID']
+        photo = request.FILES.get('photo')
+        uID = request.POST.get('userID')
+        user = my_user.objects.get(id=uID)
+        # Save Photo
+        user.profile.userPhoto = photo
+        user.profile.save()
+        user.save()
+        return JsonResponse({'success':True})
+    else:
+        return JsonResponse({'success':False})
 
 
 def getProfile(request):
@@ -267,5 +287,7 @@ def getProfile(request):
         response['userEmail'] = user.email
         response['userIdentity'] = user.identity
         return JsonResponse(response)
+
+
 
 

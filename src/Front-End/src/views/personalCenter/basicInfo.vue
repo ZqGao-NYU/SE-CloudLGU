@@ -12,6 +12,7 @@
                   :size="100"
                   :src="valueUrl"
                   align="center"
+                  id="imgage"
                 ></el-avatar>
               </div>
               <div class="block">
@@ -79,7 +80,7 @@
 </template>
 
 <script>
-import { updateProfile } from '@/api/personalCenter' 
+import { updateProfile, updateAvatar } from '@/api/personalCenter' 
 export default {
   name: 'BasicInformation',
   data() {
@@ -126,9 +127,26 @@ export default {
       this.editdialogVisible = true
     },
     handleUpdate(){
-      //send avatar and name, intro together or seperately     
-      this.editdialogVisible = false
-      this.$router.go(0)
+      //send avatar and name, intro seperately     
+      updateProfile(this.$store.state.user.token, this.edit_user).then(res => {
+        console.log('---basic info: send updated profile successfully')
+        if (res.data['success']){
+          this.$message({
+            message: 'Update Profile Successfully',
+            type: 'success'
+          })
+          this.editdialogVisible = false
+          this.$router.go(0)
+        } else {
+          this.$message({
+            message: 'Update Profile Failed! Please try again',
+            type: 'error'
+          })
+          this.edit_user.name = this.name
+          this.edit_user.intro = this.intro
+          this.editdialogVisible = false
+        }
+      })
     },
     uploadFile (el) {
       if (!el.target.files[0].size) return; // if file size = 0, return
@@ -141,16 +159,29 @@ export default {
         reader.onload = function () {
           // after reading, get the url
           that.valueUrl = this.result;
-          console.log(that.valueUrl);
+          //console.log(that.valueUrl);
         };
-        const uid = 'e0c9dd3de0418e698d49984ae035992a'; //uid needed for back-end
-        const formData = new FormData();  // formdata
-        formData.append('res', el.target.files[0]); 
-        formData.append('uid', uid);
+        //const uid = 'e0c9dd3de0418e698d49984ae035992a'; //uid needed for back-end
+        var formData = new FormData();  // formdata
+        // formData.append('res', el.target.files[0]); 
+        formData.append('userID', this.$store.state.user.token)
+        formData.append('photo', el.target.files[0])
         //post the image to back-end
-        console.log(formData);
-        console.log(el.target.files[0]);
-        //this.$router.go(0)
+        updateAvatar(formData).then(res => {
+          if (res.data['success']){
+            this.$message({
+              message: 'Update Profile Successfully',
+              type: 'success'
+            })
+            this.$router.go(0)
+          } else {
+            this.$message({
+              message: 'Update Profile Failed! Please try again',
+              type: 'error'
+            })
+            this.$router.go(0)
+          }
+        })
       }
     },
     cancelEdit () {

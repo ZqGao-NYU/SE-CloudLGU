@@ -20,7 +20,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 
-from accounts.views import register, ActivateView, authenticationView, Reset_Pwd_Code, login, reg_Verification, getProfile
+from accounts.views import register, ActivateView, authenticationView, Reset_Pwd_Code, login, reg_Verification, getProfile, Modify_Pwd, Modify_Pwd_By_Old, updateAvatar, updateProfile
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,8 +31,12 @@ urlpatterns = [
     # path('api/forget',  )
     # path('api/activate/<code>', ActivateView, name='activate'),
     path('api/forum/', include('forum.urls')),
-    path('api/forget/', Reset_Pwd_Code, name='forget'),
+    path('api/reset', Modify_Pwd),
+    path('api/modifyPwd/old', Modify_Pwd_By_Old),
+    path('api/forget', Reset_Pwd_Code, name='forget'),
     path('api/officetime/', include('OfficeHour.urls')),
+    path('api/updateprofile', updateProfile),
+    path('api/updatePhoto', updateAvatar)
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

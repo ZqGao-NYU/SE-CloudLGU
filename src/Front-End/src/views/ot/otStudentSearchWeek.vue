@@ -11,11 +11,11 @@
     <el-button >
        <router-link :to="{name:'studentSearchProf', params:{message: message}}">Search</router-link>
     </el-button>
-    <el-button style="margin-left: 56%">
+    <el-button style="margin-left: 80%">
         <router-link to="/officetime/student/my" > My Reservations</router-link>
     </el-button>
     </el-form>
-    <p style="margin-left:35%; font-size:2rem;">Available Office Time this week</p>
+    <p style="margin-left:35%; font-size:2rem;">Available Office Time</p>
     <div style="margin-left:5%; width:90%;">
     <FullCalendar
       :options="calendarOptions"
@@ -131,7 +131,7 @@ export default {
       }
 
       } else{
-        this.$alert("Create post fail!")
+        this.$alert("No available OfficeTime this week!")
       }
     })
     .catch(function (error) { // 请求失败处理
