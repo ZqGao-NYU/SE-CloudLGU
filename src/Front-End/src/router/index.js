@@ -84,10 +84,10 @@ export const constantRoutes = [
       component: () => import('@/views/forum/addPost')
     },
       {
-        path: 'post',
+        path: 'post:postID',
         name: 'post_content',
         component: () => import('@/views/forum/Article'),
-        params: {postID: 1}
+        params: {postID: '1'}
         }
     ]
   },

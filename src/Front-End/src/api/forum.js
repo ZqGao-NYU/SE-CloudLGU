@@ -37,14 +37,14 @@ export function showPost(id) {
       data: {
         postID: commentForm.postID,
         userID: commentForm.userID,
-        commentContent: commentForm.content
+        commentContent: commentForm.commentContent
       }
     })
   }
 
     export function deleteComment(id) {
       return request({
-        url: '/api/forum/comment/create',
+        url: '/api/forum/comment/delete',
         method: 'post',
         data: {
           commentID: id

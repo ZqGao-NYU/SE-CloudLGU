@@ -19,7 +19,7 @@
 		<el-button style="margin-left:87%; margin-bottom: 10px" @click="docomment()"> Comment</el-button>
 		</div>
         <div id='reply'>
-			<div v-if="commenting"> 
+			<div v-if="commenting">
 			<div class='replySec'>
 				<el-input v-model="message" placeholder="comment" clearable> </el-input>
 				<el-form style="margin-left: 77%; margin-top: 10px">
@@ -31,13 +31,13 @@
 
             <div v-for='(comment, index) in this.commentList' class='replySec' :key="comment.commentID">
                 <div >
-					<span style="font-size:1.2rem;font-weight: 600;">{{comment.userID}}</span>
+					<span style="font-size:1.2rem;font-weight: 600;">{{comment.commenterName}}</span>
        			    <span style="font-size:0.8rem;color:#a8a3a3 ;">
        			    	{{index + 1}}楼
        			    </span>
                 </div>
                 <p>{{comment.commentContent}}</p>
-				<div v-if="comment.userID==userID">
+				<div>
 				<el-button type="text" style="float:right; font-size:0.8rem;margin-top:-5%;" @click="deletiComment(comment.commentID)"> Detele</el-button>
 				</div>
             </div>
@@ -72,7 +72,7 @@ import { showPost,createComment,deleteComment } from '@/api/forum'
 						commentContent:'commentttttt'
 					}]
 			  },
-		      postID: 0,
+		    postID: 0,
 			  postTitle: 'hh',
 			  postContent: '',
 			  postTag: '',
@@ -85,9 +85,13 @@ import { showPost,createComment,deleteComment } from '@/api/forum'
 		    }
 		},
 		created () {
-			postID = this.$router.params.postID
-  showPost(this.postID)
+		console.log(this.$route.params)
+			var postID = this.$route.params.postID
+			console.log(postID)
+  showPost(postID)
     .then(res => {
+    console.log('here')
+	console.log(res.data['commentList'])
       if (res.data['success']){
         this.$message({
           message: 'Register Successfully',
@@ -96,6 +100,7 @@ import { showPost,createComment,deleteComment } from '@/api/forum'
 			this.postTitle = res.data['postTitle']
 			this.postTag = res.data['postTag']
 			this.posterName = res.data['posterName']
+			this.postContent = res.data['postContent']			
 			this.createTime = res.data['createTime']
 			this.updateTime = res.data['updateTime']
 			this.commentList = res.data['commentList']
@@ -114,8 +119,9 @@ import { showPost,createComment,deleteComment } from '@/api/forum'
 				this.message=''
 			},
 			sendComment: function () {
-				commentForm={postID: this.postID,
-				userID: this.this.$store.state.user.token,
+			console.log(this.message)
+				var commentForm={postID: this.$route.params.postID,
+				userID: this.$store.state.user.token,
 				commentContent: this.message}
 createComment(commentForm)
     .then(res => {
@@ -124,13 +130,10 @@ createComment(commentForm)
           message: 'Register Successfully',
           type: 'success'
         })
-   		this.commentList.push ({
-					commentID: res.data['commentID'],
-					userID: this.userID,
-					commentContent:this.message
-				})
+
 		this.message=''
 				this.commenting = false
+				this.$router.go(0)
       } else{
         this.$alert("Create post fail!")
       }
@@ -138,11 +141,12 @@ createComment(commentForm)
     .catch(function (error) { // 请求失败处理
       console.log(error);
     })
-		
+
 			},
 			deletiComment: function (id) {
 deleteComment(id)
     .then(res => {
+		console.log(id)
       if (res.data['success']){
         this.$message({
           message: 'Register Successfully',
@@ -161,7 +165,7 @@ deleteComment(id)
 		  	// getData(){
 		  	// 	//获取文章信息
 			// 	this.$http({
-		    //         url: `https://cnodejs.org/api/v1/topic/${this.$route.params.id}`,   //ES6语法，引入组件内的 route object（路由信息对象） 
+		    //         url: `https://cnodejs.org/api/v1/topic/${this.$route.params.id}`,   //ES6语法，引入组件内的 route object（路由信息对象）
 		    //         method: 'get',
 		    //         params:{
 		    //         	mdrender:true
@@ -198,7 +202,7 @@ deleteComment(id)
 		box-sizing: border-box;
 		display: inline-block;
 		width: 80%;
-		border: 1px solid #ddd;	
+		border: 1px solid #ddd;
 	    padding: 0.8rem 0.4rem;
 	    margin-left: 5%;
 		margin-top:3%;

@@ -115,21 +115,26 @@ import { showAllPost } from '@/api/forum'
 		content: '',
 		tag: 'Top',
 		poster: '',
+		postID: 0,
 		createTime: '2021-02-01T12:22:12',
 		updateTime: '2021-02-01T12:22:12'
 	}]
+	console.log(res.data)
 			for (var i = 0; i < res.data['postList'].length; i++) {
 				if (res.data['postList'][i]['postTag'] == 'Top') {
 					this.posts[0] = {
+					postID:res.data['postList'][i]['postID'],
 						title:res.data['postList'][i]['postTitle'],
 						content: res.data['postList'][i]['postContent'],
 						tag: res.data['postList'][i]['postTag'],
 						poster: res.data['postList'][i]['posterName'],
 						createTime: res.data['postList'][i]['createTime'],
-						updateTime: res.data['postList'][i]['updateTime']		
+						updateTime: res.data['postList'][i]['updateTime']
 					}
 				} else if (res.data['postList'][i]['postTag'] == this.webTag || this.webTag == 'All') {
 				this.posts.push({
+									postID:res.data['postList'][i]['postID'],
+
 					title:res.data['postList'][i]['postTitle'],
 						content: res.data['postList'][i]['postContent'],
 						tag: res.data['postList'][i]['postTag'],
@@ -148,57 +153,53 @@ import { showAllPost } from '@/api/forum'
     })
 	  },
 	  methods: {
-		  clickroute: function (tag) {
-			this.webTag = tag
-			this.posts=[{
-					title: '',
-					content: '',
-					tag: 'Top',
-					poster: '',
-					createTime: '2021-02-01T12:22:12',
-					updateTime: '2021-02-01T12:22:12'
-				}]
-			for (var i = 0; i < this.source.postList.length; i++) {
-				if (this.source.postList[i].tag == 'Top') {
+		  clickroute: function (Tag) {
+		  showAllPost()
+    .then(res => {
+      if (res.data['success']){
+		this.posts=[{
+		title: '',
+		content: '',
+		tag: 'Top',
+		poster: '',
+		postID: 0,
+		createTime: '2021-02-01T12:22:12',
+		updateTime: '2021-02-01T12:22:12'
+	}]
+	console.log(res.data)
+			for (var i = 0; i < res.data['postList'].length; i++) {
+				if (res.data['postList'][i]['postTag'] == 'Top') {
 					this.posts[0] = {
-						title: this.source.postList[i].title,
-						content: this.source.postList[i].content,
-						tag: this.source.postList[i].tag,
-						poster: this.source.postList[i].poster,
-						createTime: this.source.postList[i].createTime,
-						updateTime: this.source.postList[i].updateTime		
+					postID:res.data['postList'][i]['postID'],
+						title:res.data['postList'][i]['postTitle'],
+						content: res.data['postList'][i]['postContent'],
+						tag: res.data['postList'][i]['postTag'],
+						poster: res.data['postList'][i]['posterName'],
+						createTime: res.data['postList'][i]['createTime'],
+						updateTime: res.data['postList'][i]['updateTime']
 					}
-				} else if (this.source.postList[i].tag == this.webTag || this.webTag == 'All') {
+				} else if (res.data['postList'][i]['postTag'] == Tag || Tag == 'All') {
 				this.posts.push({
-					title: this.source.postList[i].title,
-					content: this.source.postList[i].content,
-					tag: this.source.postList[i].tag,
-					poster: this.source.postList[i].poster,
-					createTime: this.source.postList[i].createTime,
-					updateTime: this.source.postList[i].updateTime	
+									postID:res.data['postList'][i]['postID'],
+
+					title:res.data['postList'][i]['postTitle'],
+						content: res.data['postList'][i]['postContent'],
+						tag: res.data['postList'][i]['postTag'],
+						poster: res.data['postList'][i]['posterName'],
+						createTime: res.data['postList'][i]['createTime'],
+						updateTime: res.data['postList'][i]['updateTime']
 				})
 				}
 			}
+      } else{
+        this.$alert("Create post fail!")
+      }
+    })
+    .catch(function (error) { // 请求失败处理
+      console.log(error);
+    })
 		  },
-	  	// getData(){
-		// 	this.$http({
-        //         url: 'https://cnodejs.org/api/v1/topics',
-        //         method: 'get',
-        //         params: {
-        //             page: 1,
-        //             limit:20,
-        //         }
-        //       })
-		// 	  .then( (response) => {
-		// 	  	if( response.data.success === true ){
-		// 	  		this.posts = response.data.data;
-		// 	  		this.loading = false;
-		// 	  	}
-		// 	  })
-		// 	  .catch(function (error) {
-		// 	    console.log(error);
-		// 	  });
-	  	// }
+
 	  }
 	}
 </script>
@@ -221,7 +222,7 @@ import { showAllPost } from '@/api/forum'
 		text-align: center;
 		/* vertical-align:middle; */
 		height: 50px;
-		padding-bottom:0%; 
+		padding-bottom:0%;
 	}
 	.PostList {
 		background-color: #ffffff;

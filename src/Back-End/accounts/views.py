@@ -2,14 +2,15 @@ import json
 import os
 from datetime import datetime
 
+from django.core.serializers.json import DjangoJSONEncoder
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, resolve_url
 from django.contrib import messages
-
+from django.db.models import F
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.conf import settings
-from rest_framework.decorators import api_view
+
 
 from .models import my_user, ConfirmString, Profile
 from .forms import UserForm
@@ -267,5 +268,43 @@ def getProfile(request):
         response['userEmail'] = user.email
         response['userIdentity'] = user.identity
         return JsonResponse(response)
+
+def getUserList(request):
+    response = {}
+    userList = my_user.objects.annotate(userName=F('username'), userEmail=F('email'),
+                                        userPassword=F('password'), userIntro=F('profile__userIntro'),
+                                        userIdentity=F('identity')).values('userName', 'userEmail',
+                                      'userPassword', 'userIdentity', 'userIntro')
+    serialized_q = json.dumps(list(userList), cls=DjangoJSONEncoder)
+    response['lists'] = json.loads(serialized_q)
+    # json_list = serializers.serialize("json", userList)
+    # response['lists'] = json_list
+
+
+    return JsonResponse(response)
+
+def resetProfile(request):
+    data = json.loads(request.body)
+    userEmail = data['userEmail']
+
+    userName = data['userName']
+    userIntro = data['userIntro']
+    password = data['userPassword']
+    userIdentity = data['userIdentity']
+    user = my_user.objects.get(email=userEmail)
+    user.username = userName
+    try:
+        profile = Profile.objects.get(user=user)
+    except:
+        profile = Profile(user=user)
+    profile.userIntro = userIntro
+    profile.save()
+    user.identity = userIdentity
+    user.password = password
+    user.save()
+
+    response = {}
+    response['success'] = True
+    return JsonResponse(response)
 
 

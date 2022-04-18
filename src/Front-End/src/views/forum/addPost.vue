@@ -63,7 +63,7 @@ export default {
         alert("有未填写项，无法发布")
       }
       else {
-        form={
+        var form={
         postTitle:this.form.title,
         content:this.form.content,
         tag:this.form.category,
