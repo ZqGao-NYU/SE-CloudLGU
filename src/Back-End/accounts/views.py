@@ -333,7 +333,7 @@ def deleteUser(request):
     userEmail = data['userEmail']
     user = my_user.objects.get(email=userEmail)
     user.delete()
-    send_Inform()
+    send_Inform(userEmail)
     response = {}
     response['success'] = True
     return JsonResponse(response)
