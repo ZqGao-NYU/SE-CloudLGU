@@ -107,21 +107,26 @@ export default {
     .then(res => {
       if (res.data['success']){
         this.$message({
-          message: 'Register Successfully',
+          message: 'Search Successfully',
           type: 'success'
         })
+        // console.log('here')
+        // console.log(res.data)
+        // console.log(res.data['lists'][0])
       this.calendarOptions.events = []
-      for (var i = 0; i < res.data['lists'].length; i++) {
-        for (var j = 0; j < res.data['lists'][i]['dates'].length; i++){
+      for (var key in res.data['lists']) {
+        for (var j = 0; j < res.data['lists'][key].length; j++){
         this.calendarOptions.events.push({
           id: 1,
-          title: res.data['lists'][i]['profName'] + "'s Office Time",
-          start: res.data['lists'][i]['dates'][j],
+          title: key + "'s Office Time",
+          start: res.data['lists'][key][j],
           allDay: true,
           overlap: true,
           extendedProps: {
+            prof_name: key
           }
         })
+        // console.log(this.calendarOptions.events[0])
         }
       }
 
@@ -135,10 +140,13 @@ export default {
   },
   methods: {
     handleEventClick: function (info) {
+            // alert(info.event.extendedProps.prof_name)
+
       this.$router.push({
         name: 'studentSearchProf',
         params: {message: info.event.extendedProps.prof_name}
       })
+      // alert(info.event.extendedProps.prof_name)
     },
     // handleMouseEnter: function (info) {
     //   tippy(info.el, {

@@ -13,13 +13,14 @@
         <router-link to="/officetime/student/my" >My Reservations</router-link>
     </el-button>
     </el-form>
-    <p style="margin-left:35%; font-size:2rem;">{{ message }}'s Office Time</p>
+    <div v-if="loading">dsa</div>
+      <div v-else>    <p style="margin-left:35%; font-size:2rem;">{{ message }}'s Office Time</p>
         <div style="margin-left:5%; width:90%;">
 
     <FullCalendar
       :options="calendarOptions"
     />
-        </div>
+        </div></div>
   </div>
 </template>
 
@@ -47,7 +48,8 @@ export default {
   data () {
     return {
       value: '',
-      message: 'prof1',
+      message: '',
+      loading: true,
       source: {
         Professor_Name: 'p1',
         success: true,
@@ -113,22 +115,27 @@ export default {
   },
   methods: {
     studentSearchProf: function () {
+      if (this.message==''){this.loading = true}
+      // alert('send'+this.message)
    searchProf(this.message)
     .then(res => {
       if (res.data['success']){
+        this.loading = false
+        alert('success')
         this.$message({
-          message: 'Register Successfully',
+          message: 'Search Successfully',
           type: 'success'
         })
-
         this.calendarOptions.events = []
+        console.log('here')
+        console.log(res.data)
         for (var i = 0; i < res.data['slots'].length; i++) {
           // if (!this.source.otLists[i].isBooked) {
             this.calendarOptions.events.push({
-              id: res.data['slots'][i]['otID'].toString(),
+              id: res.data['slots'][i]['otID'],
               title: 'Office Time',
-              start: res.data['slots'][i]['otDate'] + 'T' + res.data['slots'][i]['otStartTime'] + ':00',
-              end: res.data['slots'][i]['otDate'] + 'T' + res.data['slots'][i]['otEndTime'] + ':00',
+              start: res.data['slots'][i]['otDate'] + 'T' + res.data['slots'][i]['otStartTime'],
+              end: res.data['slots'][i]['otDate'] + 'T' + res.data['slots'][i]['otEndTime'],
               backgroundColor: '#b0e0e6',
               overlap: false,
               extendedProps: {
@@ -170,7 +177,7 @@ export default {
     //       title: 'Office Time',
     //       start: arg.dateStr,
     //       end: endTime,
-    //       backgroundColor: '#b0e0e6',
+    //       s: '#b0e0e6',
     //       overlap: false,
     //       extendedProps: {
     //         Location: 'proplace'
@@ -201,12 +208,12 @@ export default {
       // alert(info.event.extendedProps.Location)
       if (!info.event.overlap) {
         if (confirm('您是否要预约' + info.event.start + '的Office Time?')) {
-            student_id=this.$store.state.user.token
-                bookOfficeTime(info.event.id, student_id)
+            var student_id=this.$store.state.user.token
+              bookOfficeTime(info.event.id, student_id)
     .then(res => {
       if (res.data['success']){
         this.$message({
-          message: 'Register Successfully',
+          message: 'Search Successfully',
           type: 'success'
         })
           this.calendarOptions.events.push({

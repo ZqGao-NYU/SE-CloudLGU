@@ -2,21 +2,21 @@ import request from '@/utils/request'
 
 export function createOfficeTimeSlot(otForm) {
     return request({
-      url: '/api/officetime/prof/create',
+      url: '/api/officetime/professor/create',
       method: 'post',
       data: {
-        otDate: otForm.date,
-        otStartTime: otForm.start,
-        otEndTime: otForm.end,
-        otLocation: otForm.location,
-        Professor_userID: otForm.prof_id
+        otDate: otForm.otDate,
+        otStartTime: otForm.otStartTime,
+        otEndTime: otForm.otEndTime,
+        otLocation: otForm.otLocation,
+        Professor_userID: otForm.Professor_userID
       }
     })
   }
 
   export function deleteOfficeTimeSlot(id) {
     return request({
-      url: '/api/officetime/prof/delete',
+      url: '/api/officetime/professor/delete',
       method: 'post',
       data: {
         otID:id

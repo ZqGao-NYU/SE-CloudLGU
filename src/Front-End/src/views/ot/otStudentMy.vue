@@ -110,9 +110,8 @@ var id=this.$store.state.user.token
     studentCheckOfficeTime(id)
     .then(res => {
       if (res.data['success']){
-        alert('success')
         this.$message({
-          message: 'Register Successfully',
+          message: 'Successfully',
           type: 'success'
         })
       this.calendarOptions.events = []
@@ -200,7 +199,7 @@ var id=this.$store.state.user.token
     handleMouseEnter: function (info) {
       // alert('Event: ' + info.event.title)
       tippy(info.el, {
-        content: info.event.extendedProps.Location
+        content: "Location: "+ info.event.extendedProps.Location
       })
     }
   }

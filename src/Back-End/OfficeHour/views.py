@@ -14,12 +14,12 @@ import pandas as pd
 
 def CreateSlot(request):
     if(request.method == 'POST'):
-
-        StartTime = request.POST.get('otStartTime')
-        EndTime = request.POST.get('otEndTime')
-        Location = request.POST.get('otLocation')
-        profID = request.POST.get('Professor_userID')
-        Date = request.POST.get('otDate')
+        data = json.loads(request.body)
+        StartTime = data['otStartTime']
+        EndTime = data['otEndTime']
+        Location = data['otLocation']
+        profID = data['Professor_userID']
+        Date = data['otDate']
 
 
         Date = datetime.strptime(Date, '%Y-%m-%d')
@@ -70,10 +70,11 @@ def UpdateSlot(request):
     slot = TimeSlot.objects.get(id=otID)
 
     # New Information
-    StartTime = request.POST.get('otStartTime')
-    EndTime = request.POST.get('otEndTime')
-    Location = request.POST.get('otLocation')
-    Date = request.POST.get('otDate')
+    data = json.loads(request.body)
+    StartTime =data['otStartTime']
+    EndTime = data['otEndTime']
+    Location = data['otLocation']
+    Date = data['otDate']
 
     profID = slot.Professor.id
     today_slots = TimeSlot.objects.filter(Q(otDate=Date), Q(Professor_id=profID))
@@ -112,7 +113,8 @@ def UpdateSlot(request):
 
 def DeleteSlot(request):
     context = {}
-    slotID = request.POST.get('otID')
+    data = json.loads(request.body)
+    slotID = data['otID']
     try:
         slot = TimeSlot.objects.get(id=slotID)
     except TimeSlot.DoesNotExist:
@@ -143,8 +145,9 @@ def DeleteSlot(request):
 
 def BookSlot(request):
     context = {}
-    slotID = request.POST.get('otID')
-    StudentID = request.POST.get('StudentID')
+    data = json.loads(request.body)
+    slotID = data['otID']
+    StudentID = data['StudentID']
     try:
         slot = TimeSlot.objects.get(id=slotID)
     except TimeSlot.DoesNotExist:
@@ -161,10 +164,11 @@ def BookSlot(request):
 
 def Search_By_Prof_Name(request):
     response = {}
-    prof_Name = request.POST.get('Professor_Name')
+    data = json.loads(request.body)
+    prof_Name = data["Professor_Name"]
     today = datetime.today().date()
     Sunday, Saturday = getStartEnd(today)
-    get_slots = TimeSlot.objects.filter(Q(Professor__username=prof_Name), Q(otDate__range=(Sunday, Saturday)), Q(booked=False)).values("otStartTime", "otEndTime", "otDate",
+    get_slots = TimeSlot.objects.filter(Q(Professor__username=prof_Name), Q(otDate__range=(Sunday, Saturday)), Q(booked=False)).annotate(otID=F("pk")).values("otID","otStartTime", "otEndTime", "otDate",
                                                                                         "otLocation")
 
     if get_slots.exists():
@@ -183,12 +187,18 @@ def Search_By_Time(request):
     response = {}
     today = datetime.today().date()
     Sunday, Saturday = getStartEnd(today)
-    get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(booked = False)).values('Professor__username',
+    get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(booked = False)).annotate(profName=F("Professor__username")).values_list('profName',
                                                                                                             'otDate').distinct()
     if get_slots.exists():
         response['success'] = True
-
-        response['slots'] = list(get_slots)
+        result = {}
+        for data in get_slots.values('profName', 'otDate'):
+            if data['profName'] in result:
+                result[data['profName']].append(data['otDate'])
+            else:
+                result[data['profName']] = []
+                result[data['profName']].append(data['otDate'])
+        response['lists'] = result
         return JsonResponse(response)
 
     else:
@@ -222,21 +232,25 @@ def Student_Check(request):
 def Professor_Check(request):
     today = datetime.today().date()
     Sunday, Saturday = getStartEnd(today)
-    profID = request.POST.get('Professor_ID')
-    get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(Professor_id = profID))
+    data = json.loads(request.body)
+    profID = data['Professor_ID']
+    # get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(Professor_id=profID)).annotate(otID=F("pk"), isbooked=F("booked"),
+    #                                                                                                           Professor_Name=F("Professor__username")).values("Professor_Name", "otID", "otDate",
+    #                                                                                                                                "otStartTime","otEndTime",
+    #                                                                                                                                "otLocation",
+    #                                                                                                                                "isbooked","booked_by")
+    get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(Professor_id=profID)).annotate(otID=F("pk"), isbooked=F("booked")).values("otID", "otDate",
+                                                                                                                                   "otStartTime","otEndTime",
+                                                                                                                                   "otLocation",
+                                                                                                                                   "isbooked","booked_by")
+
     response = {}
-    if len(get_slots):
+    if get_slots.exists():
         response['success'] = True
-        response['lists'] = [json.dumps({'otID': slot.id,
-                                         'otStarTime': slot.otStartTime,
-                                         'otEndTime': slot.otEndTime,
-                                         'otLocation': slot.otLocation,
-                                         'isbooked': slot.booked,
-                                         'booked_by': slot.booked_by}) for slot in get_slots]
+        response['lists'] = list(get_slots)
         response['Professor_Name'] = my_user.objects.get(id=profID).username
         return JsonResponse(response)
     else:
         response['success'] = False
         response['list'] = []
-        response['Professor_Name'] = ""
         return JsonResponse(response)

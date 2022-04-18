@@ -102,9 +102,10 @@ export default {
     }
   },
   created () {
-    prof_id = this.$store.state.user.token
+    var prof_id = this.$store.state.user.token
     profCheckOfficeTime(prof_id)
     .then(res => {
+      console.log(res.data)
       if (res.data['success']){
         this.$message({
           message: 'Register Successfully',
@@ -112,14 +113,16 @@ export default {
         })
         this.calendarOptions.events = []
         this.message = res.data['Professor_Name']
+        console.log('here')
+        console.log(res.data)
         for (var i = 0; i < res.data['lists'].length; i++) {
-          if (res.data['lists'][i]['isBooked']) {
+          // console.log(res.data['lists'][i]['isbooked'])
+          if (res.data['lists'][i]['isbooked']) {
             this.calendarOptions.events.push({
-              id: res.data['lists'][i]['otID'].toString(),
+              id: res.data['lists'][i]['otID'],
               title: 'Office Time',
-              start: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otStartTime']+ ':00',
-              end: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otEndTime'] + ':00',
-              backgroundColor: '#b0e0e6',
+              start: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otStartTime'],
+              end: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otEndTime'],
               overlap: false,
               extendedProps: {
                 Location: res.data['lists'][i]['otLocation'],
@@ -128,11 +131,12 @@ export default {
             })
           } else {
             this.calendarOptions.events.push({
-              id: this.source.otLists[i].otID.toString(),
+              id: res.data['lists'][i]['otID'],
               title: 'Office Time',
-              start: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otStartTime']+ ':00',
-              end: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otEndTime'] + ':00',
+              start: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otStartTime'],
+              end: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otEndTime'],
               overlap: true,
+              backgroundColor: '#b0e0e6',
               extendedProps: {
                 Location: res.data['lists'][i]['otLocation'],
                 booked_by: res.data['lists'][i]['booked_by']
@@ -158,13 +162,19 @@ export default {
         var location = prompt('Enter the location')
         var startTime = new Date(dateStr + 'T' + startStr + ':00')
         var endTime = new Date(startTime.setMinutes(startTime.getMinutes() + parseInt(length)))
-        otForm={
+        var hours = endTime.getHours().toString()
+        if (hours.length==1){hours='0'+hours}
+        var minutes = endTime.getMinutes().toString()
+        if (minutes.length==1){minutes='0'+minutes}
+        var end = hours+':'+minutes
+        var otForm={
           otDate:dateStr,
           otStartTime: startStr,
-          otEndTime: endTime.substring(11,16),
+          otEndTime: end,
           otLocation: location,
           Professor_userID: this.$store.state.user.token
         }
+        console.log(otForm)
   createOfficeTimeSlot(otForm)
     .then(res => {
       if (res.data['status']['success']){
@@ -172,17 +182,7 @@ export default {
           message: 'Register Successfully',
           type: 'success'
         })
-        this.calendarOptions.events.push({
-          id: res.data['otID'],
-          title: 'Office Time',
-          start: arg.dateStr,
-          end: endTime,
-          backgroundColor: '#b0e0e6',
-          overlap: false,
-          extendedProps: {
-            Location: location
-          }
-        })
+        this.$router.go(0)
       } else{
         this.$alert("Create post fail!")
       }
