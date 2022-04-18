@@ -64,10 +64,10 @@ export default {
       }
       else {
         form={
-        postTitle=this.form.title,
-        content=this.form.content,
-        tag=this.form.category,
-        userID=this.$store.state.user.token
+        postTitle：this.form.title,
+        content：this.form.content,
+        tag：this.form.category,
+        userID：this.$store.state.user.token
         }
           // alert('succss')
           createPost(form).then(res => {
