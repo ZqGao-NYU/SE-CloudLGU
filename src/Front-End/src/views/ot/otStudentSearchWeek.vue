@@ -11,7 +11,7 @@
     <el-button >
        <router-link :to="{name:'studentSearchProf', params:{message: message}}">Search</router-link>
     </el-button>
-    <el-button style="margin-left: 80%">
+    <el-button style="margin-left: 63%">
         <router-link to="/officetime/student/my" > My Reservations</router-link>
     </el-button>
     </el-form>

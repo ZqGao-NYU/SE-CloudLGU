@@ -88,9 +88,9 @@ WSGI_APPLICATION = 'Back_End.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', #数据库类型
-        'NAME': 'csc4002', #所使用的数据库的名字
+        'NAME': 'csc4001', #所使用的数据库的名字
         'USER': 'root', #数据库服务的用户
-        'PASSWORD': 'root', #密码
+        'PASSWORD': 'GgGg657199', #密码
         'HOST': '127.0.0.1', #主机
         'PORT': '3306', #端口
     }

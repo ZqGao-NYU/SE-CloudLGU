@@ -9,11 +9,11 @@
 					<el-button size='mini'>Back</el-button>
 				</router-link>
 			</div>
-			<h1>{{this.postTitle}}</h1>
+			<h1 style="font-size:2rem;">{{this.postTitle}}</h1>
 			<ul>
-				<li>• 分类: {{ this.postTag }}</li>
-				<li>• 发布于: {{ this.createTime }}</li>
-				<li>• 作者: {{ this.posterName }}</li>
+				<li>• Tag: {{ this.postTag }}</li>
+				<li>  • public: {{ this.createTime}}</li>
+				<li>  • Auther: {{ this.posterName }}</li>
 			</ul>
 			<div id="content"> {{this.postContent}}</div>
 		<el-button style="margin-left:87%; margin-bottom: 10px" @click="docomment()"> Comment</el-button>
@@ -31,14 +31,14 @@
 
             <div v-for='(comment, index) in this.commentList' class='replySec' :key="comment.commentID">
                 <div >
-					<span style="font-size:1.2rem;font-weight: 600;">{{comment.commenterName}}</span>
-       			    <span style="font-size:0.8rem;color:#a8a3a3 ;">
+					<span style="font-size:0.9rem;font-weight: 600;">{{comment.commenterName}}</span>
+       			    <span style="font-size:0.7rem;color:#a8a3a3 ;">
        			    	{{index + 1}}楼
        			    </span>
                 </div>
                 <p>{{comment.commentContent}}</p>
-				<div>
-				<el-button type="text" style="float:right; font-size:0.8rem;margin-top:-5%;" @click="deletiComment(comment.commentID)"> Detele</el-button>
+				<div v-if="comment.userID==ID">
+				<el-button type="text" style="float:right; font-size:0.8rem;margin-top:-3%;" @click="deletiComment(comment.commentID)"> Detele</el-button>
 				</div>
             </div>
     	</div>
@@ -73,6 +73,7 @@ import { showPost,createComment,deleteComment } from '@/api/forum'
 					}]
 			  },
 		    postID: 0,
+			ID:'',
 			  postTitle: 'hh',
 			  postContent: '',
 			  postTag: '',
@@ -81,10 +82,13 @@ import { showPost,createComment,deleteComment } from '@/api/forum'
 			  updateTime: '',
 			  commentList: [],
 	  	      loading:false,
-			  commenting: false
+			  commenting: false,
+			createTime: ''
 		    }
 		},
 		created () {
+			var id=this.$store.state.user.token
+			this.ID=id
 		console.log(this.$route.params)
 			var postID = this.$route.params.postID
 			console.log(postID)
@@ -93,15 +97,11 @@ import { showPost,createComment,deleteComment } from '@/api/forum'
     console.log('here')
 	console.log(res.data['commentList'])
       if (res.data['success']){
-        this.$message({
-          message: 'Register Successfully',
-          type: 'success'
-        })
 			this.postTitle = res.data['postTitle']
 			this.postTag = res.data['postTag']
 			this.posterName = res.data['posterName']
 			this.postContent = res.data['postContent']			
-			this.createTime = res.data['createTime']
+			this.createTime = res.data['createTime'].substring(0,10)+ '  '+res.data['createTime'].substring(11,16)
 			this.updateTime = res.data['updateTime']
 			this.commentList = res.data['commentList']
       } else{
@@ -127,7 +127,7 @@ createComment(commentForm)
     .then(res => {
       if (res.data['success']){
         this.$message({
-          message: 'Register Successfully',
+          message: 'Comment Successfully',
           type: 'success'
         })
 
@@ -149,7 +149,7 @@ deleteComment(id)
 		console.log(id)
       if (res.data['success']){
         this.$message({
-          message: 'Register Successfully',
+          message: 'Delete Successfully',
           type: 'success'
         })
 		let index = this.commentList.findIndex(e => e.commentID === id)
