@@ -228,8 +228,9 @@ API Address: /api/officetime/prof/show
   otStartTime,  
   otEndTime,  
   otLocation,  
-  isbooked,
-  booked_by,
+  otDate,  
+  isbooked,  
+  booked_by,  
 }]     (List of json objects)  
 - success: bool (success or failure of the opearation)  
 - response: string
