@@ -180,12 +180,16 @@ def Search_By_Prof_Name(request):
 
 
 def Search_By_Time(request):
+    response = {}
     today = datetime.today().date()
     Sunday, Saturday = getStartEnd(today)
-    # get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday), Q(ot)))
+    get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(booked = False)).values('Professor__username',
+                                                                                                            'otDate').distinct()
+    if get_slots.exists():
+        response['success'] = True
 
-    otLists = [dict(Professor_Name = key, otLists=list(map(converter, group))) for key, group in groupby(get_slots, key=get_slots.values_list('Professor_username'))]
-
+        response['slots'] = list(get_slots)
+        return JsonResponse(response)
 
     response = {}
     if len(otLists):
