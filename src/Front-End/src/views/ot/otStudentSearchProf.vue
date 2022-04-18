@@ -30,6 +30,7 @@ import DayGridPlugin from '@fullcalendar/daygrid'
 import TimeGridPlugin from '@fullcalendar/timegrid'
 import InteractionPlugin from '@fullcalendar/interaction'
 import ListPlugin from '@fullcalendar/list'
+import { bookOfficeTime, searchProf } from '@/api/ot'
 
 // import axios from 'axios'
 import tippy from 'tippy.js'
@@ -112,38 +113,50 @@ export default {
   },
   methods: {
     studentSearchProf: function () {
-      if (!this.source.success) {
-        alert('cannot find')
-      } else {
+   searchProf(this.message)
+    .then(res => {
+      if (res.data['success']){
+        this.$message({
+          message: 'Register Successfully',
+          type: 'success'
+        })
+
         this.calendarOptions.events = []
-        this.message = this.source.Professor_Name
-        for (var i = 0; i < this.source.otLists.length; i++) {
-          if (!this.source.otLists[i].isBooked) {
+        for (var i = 0; i < res.data['slots'].length; i++) {
+          // if (!this.source.otLists[i].isBooked) {
             this.calendarOptions.events.push({
-              id: this.source.otLists[i].otID.toString(),
+              id: res.data['slots'][i]['otID'].toString(),
               title: 'Office Time',
-              start: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otStartTime + ':00',
-              end: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otEndTime + ':00',
+              start: res.data['slots'][i]['otDate'] + 'T' + res.data['slots'][i]['otStartTime'] + ':00',
+              end: res.data['slots'][i]['otDate'] + 'T' + res.data['slots'][i]['otEndTime'] + ':00',
               backgroundColor: '#b0e0e6',
               overlap: false,
               extendedProps: {
-                Location: this.source.otLists[i].otLocation
+                Location: res.data['slots'][i]['otLocation']
               }
             })
-          } else {
-            this.calendarOptions.events.push({
-              id: this.source.otLists[i].otID.toString(),
-              title: 'Office Time',
-              start: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otStartTime + ':00',
-              end: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otEndTime + ':00',
-              overlap: true,
-              extendedProps: {
-                Location: this.source.otLists[i].otLocation
-              }
-            })
-          }
+          // } else {
+          //   this.calendarOptions.events.push({
+          //     id: this.source.otLists[i].otID.toString(),
+          //     title: 'Office Time',
+          //     start: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otStartTime + ':00',
+          //     end: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otEndTime + ':00',
+          //     overlap: true,
+          //     extendedProps: {
+          //       Location: this.source.otLists[i].otLocation
+          //     }
+          //   })
+          // }
         }
+
+      } else{
+        this.$alert("Create post fail!")
       }
+    })
+    .catch(function (error) { // 请求失败处理
+      console.log(error);
+    })
+      
     },
     // handleDateClick: function (arg) {
     //   let dateStr = arg.dateStr.substring(0, 10)
@@ -188,6 +201,14 @@ export default {
       // alert(info.event.extendedProps.Location)
       if (!info.event.overlap) {
         if (confirm('您是否要预约' + info.event.start + '的Office Time?')) {
+            student_id=this.$store.state.user.token
+                bookOfficeTime(info.event.id, student_id)
+    .then(res => {
+      if (res.data['success']){
+        this.$message({
+          message: 'Register Successfully',
+          type: 'success'
+        })
           this.calendarOptions.events.push({
             id: info.event.id,
             title: info.event.title,
@@ -200,6 +221,13 @@ export default {
           })
           let index = this.calendarOptions.events.findIndex(e => e.id === info.event.id)
           this.calendarOptions.events.splice(index, 1)
+      } else{
+        this.$alert("Create post fail!")
+      }
+    })
+    .catch(function (error) { // 请求失败处理
+      console.log(error);
+    })
         }
       }
     },

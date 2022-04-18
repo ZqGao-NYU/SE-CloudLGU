@@ -86,7 +86,8 @@ export const constantRoutes = [
       {
         path: 'post',
         name: 'post_content',
-        component: () => import('@/views/forum/Article')
+        component: () => import('@/views/forum/Article'),
+        params: {postID: 1}
         }
     ]
   },

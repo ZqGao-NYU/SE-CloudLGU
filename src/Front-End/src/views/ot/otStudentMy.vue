@@ -31,6 +31,7 @@ import DayGridPlugin from '@fullcalendar/daygrid'
 import TimeGridPlugin from '@fullcalendar/timegrid'
 import InteractionPlugin from '@fullcalendar/interaction'
 import ListPlugin from '@fullcalendar/list'
+import { studentCheckOfficeTime } from '@/api/ot'
 
 // import axios from 'axios'
 import tippy from 'tippy.js'
@@ -105,23 +106,35 @@ export default {
     }
   },
   created () {
-    if (!this.source.success) {
-      alert('cannot get')
-    } else {
+Student_ID=this.$store.state.user.token
+
+    studentCheckOfficeTime(Student_ID)
+    .then(res => {
+      if (res.data['success']){
+        this.$message({
+          message: 'Register Successfully',
+          type: 'success'
+        })
       this.calendarOptions.events = []
-      for (var i = 0; i < this.source.otLists.length; i++) {
+      for (var i = 0; i < res.data['lists'].length; i++) {
         this.calendarOptions.events.push({
-          id: this.source.otLists[i].otID.toString(),
-          title: this.source.otLists[i].prof_name + "'s Office Time",
-          start: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otStartTime + ':00',
-          end: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otEndTime + ':00',
+          id: res.data['lists'][i]['otID'].toString(),
+          title: res.data['lists'][i]['prof_name'] + "'s Office Time",
+          start: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otStartTime'] + ':00',
+          end: res.data['lists'][i]['otDate'] + 'T' + res.data['lists'][i]['otEndTime'] + ':00',
           overlap: true,
           extendedProps: {
-            Location: this.source.otLists[i].otLocation
+            Location: res.data['lists'][i]['otLocation']
           }
         })
       }
-    }
+      } else{
+        this.$alert("Create post fail!")
+      }
+    })
+    .catch(function (error) { // 请求失败处理
+      console.log(error);
+    })
   },
   methods: {
     // handleDateClick: function (arg) {

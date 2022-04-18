@@ -26,8 +26,8 @@ export function register(registerForm) {
 export function sendVerification(inemail) {
   return request({
     url: '/api/sendverification',
-    methond: 'post',
-    data: { email: inemail }
+    method: 'post',
+    data: { email: inemail.trim() }
   })
 }
 

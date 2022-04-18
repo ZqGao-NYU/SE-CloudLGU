@@ -79,7 +79,7 @@
 </template>
 
 <script>
-
+import { updateProfile } from '@/api/personalCenter' 
 export default {
   name: 'BasicInformation',
   data() {
@@ -118,14 +118,16 @@ export default {
     this.identity = this.$store.state.user.roles[0]
   },
   methods: {
+
     toggleModify(){
       this.edit_user.username = this.name
       this.edit_user.intro = this.intro
       this.editdialogVisible = true
     },
     handleUpdate(){
-      this.$alert('handleUpdate() ')
+      //send avatar and name, intro together or seperately     
       this.editdialogVisible = false
+      this.$router.go(0)
     },
     uploadFile (el) {
       if (!el.target.files[0].size) return; // if file size = 0, return
@@ -151,8 +153,8 @@ export default {
       }
     },
     cancelEdit () {
-      this.edit_user.username = ''
-      this.edit_user.intro = ''
+      this.edit_user.username = this.name
+      this.edit_user.intro = this.intro
       this.editdialogVisible = false
     },
     goChangePassword() {
