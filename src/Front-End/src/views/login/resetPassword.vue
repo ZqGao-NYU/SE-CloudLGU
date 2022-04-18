@@ -114,6 +114,7 @@
 </template>
 
 <script>
+import { sendVerification, resetPassword } from '@/api/resetPassword'
 
 export default {
   name: 'resetPassword',
@@ -221,10 +222,20 @@ export default {
     handleReset() {
       this.$refs.pswForm.validate(valid => {
         if (valid) {
-          this.$alert("handle reset password!")
-
+          resetPassword(this.loginForm.email, this.pswForm.password).then(res =>{
+            if (res.data['success']){
+              this.$message({
+                message: 'Reset Password Successfully',
+                type: 'success'
+              })
+              this.$router.push('/login')
+            } else {
+              this.$alert('Reset Password Failed. Please Try Again')
+            }
+          }).catch(error =>{
+            console.log(error)
+          })
         } else {
-          this.$alert("invalid")
           return false
         }
       })
@@ -236,22 +247,29 @@ export default {
       if (end1 !== '@link.cuhk.edu.cn' && end2 !== '@cuhk.edu.cn') {
         this.$alert("Invalid email format!")
       } else {
-        this.$alert("We've sent you an email. Please check your email to find the verification code, which is valid in 30 minutes")
-        this.identifyCode = '1224'
-        // implement this!!!!!
-        if (!this.timer){
-          this.count = 60;
-          this.show = false;
-          this.timer = setInterval(()=> {
-            if (this.count > 0 && this.count <= 60){
-              this.count --;
-            } else{
-              this.show = true;
-              clearInterval(this.timer);
-              this.timer = null;
+        sendVerification(this.loginForm.email).then(res => {
+          console.log('---reset password: get verification code successfully---')
+          //console.log(res)
+          if (res.data['goodMail']){
+            this.$alert("We've sent you an email. Please check your email to find the verification code")
+            this.identifyCode = res.data['code']
+            if (!this.timer){
+              this.count = 60;
+              this.show = false;
+              this.timer = setInterval(()=> {
+                if (this.count > 0 && this.count <= 60){
+                  this.count --;
+                } else{
+                  this.show = true;
+                  clearInterval(this.timer);
+                  this.timer = null;
+                }
+              },1000)
             }
-          },1000)
-        }
+          } else {
+            this.$alert('Invalid Email!')
+          }
+        })
       }
     },
     cancel(){
