@@ -182,7 +182,7 @@ def Search_By_Prof_Name(request):
 def Search_By_Time(request):
     today = datetime.today().date()
     Sunday, Saturday = getStartEnd(today)
-    get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)))
+    # get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday), Q(ot)))
 
     otLists = [dict(Professor_Name = key, otLists=list(map(converter, group))) for key, group in groupby(get_slots, key=get_slots.values_list('Professor_username'))]
 

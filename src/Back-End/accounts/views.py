@@ -134,9 +134,9 @@ def register(request):
         # Administer?
         new_user.has_confirmed = True
         profile = Profile()
-        profile.save()
-        new_user.profile = profile
         new_user.save()
+        profile.user = new_user
+        profile.save()
         response['success'] = True
         return JsonResponse(response)
        # # Confirmation (Check Verification Code):
