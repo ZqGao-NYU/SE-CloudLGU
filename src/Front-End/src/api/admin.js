@@ -8,7 +8,7 @@ export function getAllUsers() {
   })
 }
 
-export function resetProfile(editForm){
+export function resetProfile(editForm) {
   const roles = ['admin', 'faculty', 'student']
   return request({
     url: '/api/admin/resetProfile',
@@ -23,7 +23,7 @@ export function resetProfile(editForm){
   })
 }
 
-export function adminDeleteUser(email){
+export function adminDeleteUser(email) {
   return request({
     url: '/api/admin/deleteUser',
     method: 'post',

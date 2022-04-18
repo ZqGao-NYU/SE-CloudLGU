@@ -5,7 +5,7 @@ import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
-  //baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url //process.env.VUE_APP_BASE_API = /dev-api
+  // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url //process.env.VUE_APP_BASE_API = /dev-api
   // withCredentials: true, // send cookies when cross-domain requests
   baseURL: 'http://127.0.0.1:8000',
   timeout: 10000 // request timeout
@@ -39,7 +39,7 @@ service.interceptors.response.use(
    * Please return  response => response
   */
 
-  /**
+/**
    * Determine the request status by custom code
    * Here is just an example
    * You can also judge the status by HTTP Status Code

@@ -1,25 +1,25 @@
 <template>
   <div>
     <el-form label="query" style="text-align: left;margin-left:5%;margin-top:2%;">
-    <el-input
-      v-model="message"
-      style="width: 220px"
-      placeholder="Input Faculty's name"
-      prefix-icon="el-icon-search"
-      clearable>
-    </el-input>
-    <el-button @click.native=studentSearchProf()>Search</el-button>
-    <el-button style="margin-left: 63%">
-        <router-link to="/officetime/student/my" >My Reservations</router-link>
-    </el-button>
+      <el-input
+        v-model="message"
+        style="width: 220px"
+        placeholder="Input Faculty's name"
+        prefix-icon="el-icon-search"
+        clearable
+      />
+      <el-button @click.native="studentSearchProf()">Search</el-button>
+      <el-button style="margin-left: 63%">
+        <router-link to="/officetime/student/my">My Reservations</router-link>
+      </el-button>
     </el-form>
-      <div >    <p style="margin-left:35%; font-size:2rem;">{{ message }} Office Time</p>
-        <div style="margin-left:5%; width:90%;">
+    <div>    <p style="margin-left:35%; font-size:2rem;">{{ message }} Office Time</p>
+      <div style="margin-left:5%; width:90%;">
 
-    <FullCalendar
-      :options="calendarOptions"
-    />
-        </div></div>
+        <FullCalendar
+          :options="calendarOptions"
+        />
+      </div></div>
   </div>
 </template>
 
@@ -43,8 +43,8 @@ require('@fullcalendar/daygrid/main.min.css')
 require('@fullcalendar/timegrid/main.min.css')
 
 export default {
-  components: {FullCalendar},
-  data () {
+  components: { FullCalendar },
+  data() {
     return {
       value: '',
       message: '',
@@ -74,7 +74,7 @@ export default {
         ]
       },
       calendarOptions: {
-        plugins: [ DayGridPlugin, InteractionPlugin, TimeGridPlugin, ListPlugin ],
+        plugins: [DayGridPlugin, InteractionPlugin, TimeGridPlugin, ListPlugin],
         initialView: 'timeGridWeek',
         // backgroundColor: '#D3D3D3',
         headerToolbar: { // 日历头部按钮位置
@@ -82,7 +82,7 @@ export default {
           center: '',
           right: 'prev today next'
         },
-        height:660,
+        height: 660,
         slotLabelFormat: {
           hour: '2-digit',
           minute: '2-digit',
@@ -107,91 +107,91 @@ export default {
       }
     }
   },
-  created () {
-    this.studentSearchProf()
+  created() {
     this.message = this.$route.params.message
-    },
+  },
+  mounted() {
+    this.studentSearchProf()
+  },
   methods: {
-    studentSearchProf: function () {
+    studentSearchProf: function() {
       // alert('send'+this.message)
-   searchProf(this.message)
-    .then(res => {
-      console.log('---student get office time---')
-      console.log(this.message)
-      console.log(res.data)
-      this.calendarOptions.events = []
-      if (res.data['success']){
-        this.$message({
-          message: 'Search Successfully',
-          type: 'success'
-        })
-        for (var i = 0; i < res.data['slots'].length; i++) {
-          // if (!this.source.otLists[i].isBooked) {
-            this.calendarOptions.events.push({
-              id: res.data['slots'][i]['otID'],
-              title: 'Office Time',
-              start: res.data['slots'][i]['otDate'] + 'T' + res.data['slots'][i]['otStartTime'],
-              end: res.data['slots'][i]['otDate'] + 'T' + res.data['slots'][i]['otEndTime'],
-              backgroundColor: '#b0e0e6',
-              overlap: false,
-              extendedProps: {
-                Location: res.data['slots'][i]['otLocation']
-              }
+      searchProf(this.message)
+        .then(res => {
+          console.log('---student get office time---')
+          console.log(this.message)
+          console.log(res.data)
+          this.calendarOptions.events = []
+          if (res.data['success']) {
+            this.$message({
+              message: 'Search Successfully',
+              type: 'success'
             })
-          // } else {
-          //   this.calendarOptions.events.push({
-          //     id: this.source.otLists[i].otID.toString(),
-          //     title: 'Office Time',
-          //     start: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otStartTime + ':00',
-          //     end: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otEndTime + ':00',
-          //     overlap: true,
-          //     extendedProps: {
-          //       Location: this.source.otLists[i].otLocation
-          //     }
-          //   })
-          // }
-        }
-
-      } else{
-        this.$alert("The professor does not have office time this week")
-      }
-    })
-    .catch(function (error) { // 请求失败处理
-      console.log(error);
-    })
-      
-    },
-    handleEventClick: function (info) {
-      // alert(info.event.extendedProps.Location)
-      var flag=false
-      if (!info.event.overlap) {
-          var hours = info.event.start.getHours().toString()
-        if (hours.length==1){hours='0'+hours}
-        var minutes = info.event.start.getMinutes().toString()
-        if (minutes.length==1){minutes='0'+minutes}
-        var times = hours+':'+minutes
-        if (confirm('Do you want to book the OfficeTime at ' + times + '?')) {
-            var student_id=this.$store.state.user.token
-              bookOfficeTime(info.event.id, student_id).then(res => {
-                if (res.data['success']){
-                  this.$message({
-                    message: 'Book Successfully',
-                    type: 'success'
-                  })
-                  this.studentSearchProf()
-                } else{
-                  this.$alert("Book fail!")
+            for (var i = 0; i < res.data['slots'].length; i++) {
+              // if (!this.source.otLists[i].isBooked) {
+              this.calendarOptions.events.push({
+                id: res.data['slots'][i]['otID'],
+                title: 'Office Time',
+                start: res.data['slots'][i]['otDate'] + 'T' + res.data['slots'][i]['otStartTime'],
+                end: res.data['slots'][i]['otDate'] + 'T' + res.data['slots'][i]['otEndTime'],
+                backgroundColor: '#b0e0e6',
+                overlap: false,
+                extendedProps: {
+                  Location: res.data['slots'][i]['otLocation']
                 }
-              }).catch(error => { // 请求失败处理
-                console.log(error);
               })
+              // } else {
+              //   this.calendarOptions.events.push({
+              //     id: this.source.otLists[i].otID.toString(),
+              //     title: 'Office Time',
+              //     start: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otStartTime + ':00',
+              //     end: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otEndTime + ':00',
+              //     overlap: true,
+              //     extendedProps: {
+              //       Location: this.source.otLists[i].otLocation
+              //     }
+              //   })
+              // }
+            }
+          } else {
+            this.$alert('The professor does not have office time this week')
+          }
+        })
+        .catch(function(error) { // 请求失败处理
+          console.log(error)
+        })
+    },
+    handleEventClick: function(info) {
+      // alert(info.event.extendedProps.Location)
+      var flag = false
+      if (!info.event.overlap) {
+        var hours = info.event.start.getHours().toString()
+        if (hours.length == 1) { hours = '0' + hours }
+        var minutes = info.event.start.getMinutes().toString()
+        if (minutes.length == 1) { minutes = '0' + minutes }
+        var times = hours + ':' + minutes
+        if (confirm('Do you want to book the OfficeTime at ' + times + '?')) {
+          var student_id = this.$store.state.user.token
+          bookOfficeTime(info.event.id, student_id).then(res => {
+            if (res.data['success']) {
+              this.$message({
+                message: 'Book Successfully',
+                type: 'success'
+              })
+              this.studentSearchProf()
+            } else {
+              this.$alert('Book fail!')
+            }
+          }).catch(error => { // 请求失败处理
+            console.log(error)
+          })
         }
       }
     },
-    handleMouseEnter: function (info) {
+    handleMouseEnter: function(info) {
       // alert('Event: ' + info.event.title)
       tippy(info.el, {
-        content: 'Location: '+info.event.extendedProps.Location
+        content: 'Location: ' + info.event.extendedProps.Location
       })
     }
   }

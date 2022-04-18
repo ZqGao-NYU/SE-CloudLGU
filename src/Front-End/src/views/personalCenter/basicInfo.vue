@@ -5,50 +5,50 @@
       <el-container style="height:650px">
         <el-aside width="400px">
           <el-col :span="12">
-            <div class="sub-title"></div>
+            <div class="sub-title" />
             <div class="demo-basic--circle">
               <div class="img">
                 <el-avatar
+                  id="imgage"
                   :size="100"
                   :src="valueUrl"
                   align="center"
-                  id="imgage"
-                ></el-avatar>
+                />
               </div>
               <div class="block">
-                <span> {{name}} </span>
+                <span> {{ name }} </span>
               </div>
             </div>
           </el-col>
-          
+
           <el-button-group style="float: right; padding: 3px 0" type="text">
-            <v-btn color="#50A75E" class = "submit white--text" @click="$refs.inputFile.click()" height="30" style="margin-left:20px;">Upload Avatar</v-btn>
-            <input v-show='false' ref='inputFile' @change="uploadFile($event)" type="file" accept="image/*"/>  
+            <v-btn color="#50A75E" class="submit white--text" height="30" style="margin-left:20px;" @click="$refs.inputFile.click()">Upload Avatar</v-btn>
+            <input v-show="false" ref="inputFile" type="file" accept="image/*" @change="uploadFile($event)">
           </el-button-group>
         </el-aside>
         <el-container>
-          <el-main>            
+          <el-main>
             <el-card class="box-card">
               <div>
                 <span style="float: left" shadow="hover"><b>Name</b></span>
-                <br/>
+                <br>
                 <span> {{ name }} </span>
-                <el-divider></el-divider>
+                <el-divider />
                 <span style="float: left" shadow="hover"><b>Email</b></span>
-                <br/>
+                <br>
                 <span> {{ email }} </span>
-                <el-divider></el-divider>
+                <el-divider />
                 <span style="float: left" shadow="hover"><b>Self Introduction</b></span>
-                <br/>
+                <br>
                 <span> {{ intro }} </span>
-                <el-divider></el-divider>
+                <el-divider />
                 <span style="float: left" shadow="hover"><b>Identity</b></span>
-                <br/>
+                <br>
                 <span> {{ identity }} </span>
-                <el-divider></el-divider>
+                <el-divider />
               </div>
-              <v-btn color="#64d978" class = "submit white--text" @click="toggleModify" height="30">Modify</v-btn>
-              <v-btn color="#64d9d6" class = "submit white--text" @click="goChangePassword" height="30" style="margin-left:20px;">Change Password</v-btn>
+              <v-btn color="#64d978" class="submit white--text" height="30" @click="toggleModify">Modify</v-btn>
+              <v-btn color="#64d9d6" class="submit white--text" height="30" style="margin-left:20px;" @click="goChangePassword">Change Password</v-btn>
             </el-card>
           </el-main>
         </el-container>
@@ -60,27 +60,28 @@
         :visible.sync="editdialogVisible"
         width="50%"
         style="font-family: Lucida Sans; color:#000000"
-        append-to-body>
-          <el-form label-width="100px" :model="edit_user" :rules="edit_rules" ref="edit_user">
-            <el-form-item label="Username" prop="username">
-            <el-input v-model="edit_user.username" placeholder=""></el-input>
-            </el-form-item>
-            
-            <el-form-item label="Intro" prop="intro">
-            <el-input v-model="edit_user.intro" placeholder=""></el-input>
-            </el-form-item>
-            <el-form-item el-form-item>
-              <v-btn color="#FBE87985" class = "cancel#AAAAAA--text" @click="cancelEdit" height="30">Cancel</v-btn>
-              <v-btn color="#50A75E" class = "submit white--text" @click="handleUpdate" height="30" style="margin-left:20px;">Submit</v-btn>
-            </el-form-item>
-          </el-form>
+        append-to-body
+      >
+        <el-form ref="edit_user" label-width="100px" :model="edit_user" :rules="edit_rules">
+          <el-form-item label="Username" prop="username">
+            <el-input v-model="edit_user.username" placeholder="" />
+          </el-form-item>
+
+          <el-form-item label="Intro" prop="intro">
+            <el-input v-model="edit_user.intro" placeholder="" />
+          </el-form-item>
+          <el-form-item el-form-item>
+            <v-btn color="#FBE87985" class="cancel#AAAAAA--text" height="30" @click="cancelEdit">Cancel</v-btn>
+            <v-btn color="#50A75E" class="submit white--text" height="30" style="margin-left:20px;" @click="handleUpdate">Submit</v-btn>
+          </el-form-item>
+        </el-form>
       </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-import { updateProfile, updateAvatar } from '@/api/personalCenter' 
+import { updateProfile, updateAvatar } from '@/api/personalCenter'
 export default {
   name: 'BasicInformation',
   data() {
@@ -101,17 +102,17 @@ export default {
           max: 12,
           message: 'Range within 5 to 12 characters',
           trigger: 'blur'
-          }],
+        }],
         intro: [{
           min: 0,
           max: 40,
           message: 'maximum 40 characters',
           trigger: 'blur'
         }]
-      },
+      }
     }
   },
-  created(){
+  created() {
     this.valueUrl = this.$store.state.user.avatar
     this.name = this.$store.state.user.name.replace(/\s*/g, '')
     this.email = this.$store.state.user.email
@@ -121,16 +122,16 @@ export default {
   },
   methods: {
 
-    toggleModify(){
+    toggleModify() {
       this.edit_user.username = this.name
       this.edit_user.intro = this.intro
       this.editdialogVisible = true
     },
-    handleUpdate(){
-      //send avatar and name, intro seperately     
+    handleUpdate() {
+      // send avatar and name, intro seperately
       updateProfile(this.$store.state.user.token, this.edit_user).then(res => {
         console.log('---basic info: send updated profile successfully')
-        if (res.data['success']){
+        if (res.data['success']) {
           this.$message({
             message: 'Update Profile Successfully',
             type: 'success'
@@ -148,27 +149,27 @@ export default {
         }
       })
     },
-    uploadFile (el) {
-      if (!el.target.files[0].size) return; // if file size = 0, return
-      if (el.target.files[0].type.indexOf('image') === -1) { //make sure an image is selected
-      return
+    uploadFile(el) {
+      if (!el.target.files[0].size) return // if file size = 0, return
+      if (el.target.files[0].type.indexOf('image') === -1) { // make sure an image is selected
+        return
       } else {
-        const that = this;
-        const reader = new FileReader(); // read file
-        reader.readAsDataURL(el.target.files[0]); // read file
-        reader.onload = function () {
+        const that = this
+        const reader = new FileReader() // read file
+        reader.readAsDataURL(el.target.files[0]) // read file
+        reader.onload = function() {
           // after reading, get the url
-          that.valueUrl = this.result;
-          //console.log(that.valueUrl);
-        };
-        //const uid = 'e0c9dd3de0418e698d49984ae035992a'; //uid needed for back-end
-        var formData = new FormData();  // formdata
-        // formData.append('res', el.target.files[0]); 
+          that.valueUrl = this.result
+          // console.log(that.valueUrl);
+        }
+        // const uid = 'e0c9dd3de0418e698d49984ae035992a'; //uid needed for back-end
+        var formData = new FormData() // formdata
+        // formData.append('res', el.target.files[0]);
         formData.append('userID', this.$store.state.user.token)
         formData.append('photo', el.target.files[0])
-        //post the image to back-end
+        // post the image to back-end
         updateAvatar(formData).then(res => {
-          if (res.data['success']){
+          if (res.data['success']) {
             this.$message({
               message: 'Update Profile Successfully',
               type: 'success'
@@ -184,7 +185,7 @@ export default {
         })
       }
     },
-    cancelEdit () {
+    cancelEdit() {
       this.edit_user.username = this.name
       this.edit_user.intro = this.intro
       this.editdialogVisible = false
@@ -192,10 +193,9 @@ export default {
     goChangePassword() {
       this.$router.push('/personalCenter/changePassword')
     }
-  },
-}  
+  }
+}
 </script>
-
 
 <style lang="scss" scoped>
 .dashboard {
@@ -268,7 +268,7 @@ export default {
   .box-card {
     margin-left: 10%;
     min-height: 100%;
-    
+
     width: 80%;
     border-radius: 30px;
   }

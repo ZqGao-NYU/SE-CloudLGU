@@ -79,18 +79,18 @@ export const constantRoutes = [
         component: () => import('@/views/forum/PostList'),
         meta: { title: 'All Posts', icon: 'list' }
       },
-      {path: 'addPost',
-      name: 'add_post',
-      component: () => import('@/views/forum/addPost')
-    },
+      { path: 'addPost',
+        name: 'add_post',
+        component: () => import('@/views/forum/addPost')
+      },
       {
         path: 'post:postID',
         name: 'post_content',
         component: () => import('@/views/forum/Article'),
-        params: {postID: '1'}
-        }
+        params: { postID: '1' }
+      }
     ]
-  },
+  }
   // forum here, every one can access the forum
 
 ]
@@ -105,33 +105,33 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/officetime/student/searchWeek',
     name: 'officetime',
-    meta: { title: 'Office Time', icon: 'education', roles: ['admin','faculty','student'] },
+    meta: { title: 'Office Time', icon: 'education', roles: ['admin', 'faculty', 'student'] },
     children: [
       {
         path: 'student/searchWeek',
         name: 'studentSearchWeek',
         component: () => import('@/views/ot/otStudentSearchWeek'),
-        meta: { title: 'Search Week', icon: 'table',roles: ['admin','student'] }
+        meta: { title: 'Search Week', icon: 'table', roles: ['admin', 'student'] }
       },
       {
         path: 'student/seachProf',
         name: 'studentSearchProf',
         component: () => import('@/views/ot/otStudentSearchProf'),
-        meta: { title: 'Search Faculty', icon: 'search',roles: ['admin','student'] },
-        params: {message: 'p1'}
+        meta: { title: 'Search Faculty', icon: 'search', roles: ['admin', 'student'] },
+        params: { message: 'p1' }
 
       },
       {
         path: 'faculty',
         name: 'faculty',
         component: () => import('@/views/ot/otProfessor'),
-        meta: { title: 'My Office Time', icon: 'eye-open',roles: ['admin','faculty'] }
+        meta: { title: 'My Office Time', icon: 'eye-open', roles: ['admin', 'faculty'] }
       },
       {
         path: 'student/my',
         name: 'studentMy',
         component: () => import('@/views/ot/otStudentMy'),
-        meta: { title: 'My', icon: 'people',roles: ['admin','student'] }
+        meta: { title: 'My', icon: 'people', roles: ['admin', 'student'] }
       }
     ]
   },
@@ -140,19 +140,19 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/personalCenter/basicInfo',
     name: 'PersonalCenter',
-    meta: { title: 'Personal Center', icon: 'user', roles: ['admin','faculty','student'] },
+    meta: { title: 'Personal Center', icon: 'user', roles: ['admin', 'faculty', 'student'] },
     children: [
       {
         path: 'basicInfo',
         name: 'BasicInfo',
         component: () => import('@/views/personalCenter/basicInfo'),
-        meta: { title: 'Basic Infomation', icon: 'form', roles: ['admin','faculty','student'] }
+        meta: { title: 'Basic Infomation', icon: 'form', roles: ['admin', 'faculty', 'student'] }
       },
       {
         path: 'changePassword',
         name: 'ChangePassword',
         component: () => import('@/views/personalCenter/changePassword'),
-        meta: { title: 'Change Password', icon: 'password', roles: ['admin','faculty','student'] }
+        meta: { title: 'Change Password', icon: 'password', roles: ['admin', 'faculty', 'student'] }
       }
     ]
   },
@@ -171,7 +171,7 @@ export const asyncRoutes = [
         path: 'manage',
         name: 'Manage',
         component: () => import('@/views/manageUser/index'),
-        meta: { title: 'Manage Users', icon: 'peoples'}
+        meta: { title: 'Manage Users', icon: 'peoples' }
       }
     ]
   },

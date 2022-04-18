@@ -1,162 +1,161 @@
 <template>
-<div class='login-container'>
-  <div class="login-container" v-show="!showEmail">
-    <el-form ref="pswForm" :model="pswForm" :rules="pswRules" class="login-form" auto-complete="off" label-position="left">
+  <div class="login-container">
+    <div v-show="!showEmail" class="login-container">
+      <el-form ref="pswForm" :model="pswForm" :rules="pswRules" class="login-form" auto-complete="off" label-position="left">
 
-      <div class="title-container">
-        <h1 class="title">Change Password</h1>
-      </div>
+        <div class="title-container">
+          <h1 class="title">Change Password</h1>
+        </div>
 
-      <div class="title-input">
-        <h3 class="title">Old Password:</h3>
-      </div>
-      <el-form-item prop="oldPassword">
-        <span class="svg-container">
-          <svg-icon icon-class="password" />
-        </span>
-        <el-input
-          :key="passwordType"
-          ref="oldPassword"
-          v-model="pswForm.oldPassword"
-          :type="passwordType"
-          placeholder="Please enter the old password"
-          name="password"
-          tabindex="2"
-          auto-complete="on"
-        />
-      </el-form-item>
+        <div class="title-input">
+          <h3 class="title">Old Password:</h3>
+        </div>
+        <el-form-item prop="oldPassword">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            :key="passwordType"
+            ref="oldPassword"
+            v-model="pswForm.oldPassword"
+            :type="passwordType"
+            placeholder="Please enter the old password"
+            name="password"
+            tabindex="2"
+            auto-complete="on"
+          />
+        </el-form-item>
 
-      <div class="title-input">
-        <h3 class="title">New Password:</h3>
-      </div>
-      <el-form-item prop="password">
-        <span class="svg-container">
-          <svg-icon icon-class="password" />
-        </span>
-        <el-input
-          :key="passwordType"
-          ref="password"
-          v-model="pswForm.password"
-          :type="passwordType"
-          placeholder="Please enter the new password"
-          name="password"
-          tabindex="2"
-          auto-complete="on"
-        />
-      </el-form-item>
+        <div class="title-input">
+          <h3 class="title">New Password:</h3>
+        </div>
+        <el-form-item prop="password">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            :key="passwordType"
+            ref="password"
+            v-model="pswForm.password"
+            :type="passwordType"
+            placeholder="Please enter the new password"
+            name="password"
+            tabindex="2"
+            auto-complete="on"
+          />
+        </el-form-item>
 
-      <div class="title-input">
-        <h3 class="title">Repeat Password:</h3>
-      </div>
-      <el-form-item prop="password2">
-        <span class="svg-container">
-          <svg-icon icon-class="password" />
-        </span>
-        <el-input
-          :key="passwordType"
-          ref="password2"
-          v-model="pswForm.password2"
-          :type="passwordType"
-          placeholder="Please repeat the password"
-          name="password2"
-          tabindex="2"
-          auto-complete="on"
-        />
-      </el-form-item>
+        <div class="title-input">
+          <h3 class="title">Repeat Password:</h3>
+        </div>
+        <el-form-item prop="password2">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            :key="passwordType"
+            ref="password2"
+            v-model="pswForm.password2"
+            :type="passwordType"
+            placeholder="Please repeat the password"
+            name="password2"
+            tabindex="2"
+            auto-complete="on"
+          />
+        </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handlePasswordReset()">
-        Confirm
-      </el-button>
+        <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handlePasswordReset()">
+          Confirm
+        </el-button>
 
-      <el-button type="primary" style="width:100%;margin-left:-1px;" @click.native.prevent="cancel()">
-        Cancel
-      </el-button>
+        <el-button type="primary" style="width:100%;margin-left:-1px;" @click.native.prevent="cancel()">
+          Cancel
+        </el-button>
 
-      <div class="tips" style="margin-left: 30px;">
-        <span style="margin-right:30px;">Forgot your password?</span>
-        <a class="asp" @click="changeMethod()">Use email verification</a>
-      </div>
-    </el-form>
+        <div class="tips" style="margin-left: 30px;">
+          <span style="margin-right:30px;">Forgot your password?</span>
+          <a class="asp" @click="changeMethod()">Use email verification</a>
+        </div>
+      </el-form>
+    </div>
+
+    <div v-show="showEmail" class="login-container">
+      <el-form ref="codeForm" :model="codeForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+
+        <div class="title-container">
+          <h1 class="title">Change Password</h1>
+        </div>
+
+        <div class="title-input">
+          <h3 class="title">Verification Code:</h3>
+        </div>
+
+        <el-row :span="24">
+          <el-col :span="13">
+            <el-form-item prop="code">
+              <el-input ref="code" v-model="codeForm.code" auto-complete="off" placeholder="Please enter the code" size="" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="11">
+            <el-button type="primary" class="code-btn" :disabled="!show" @click="getCode()">
+              <span v-show="show">Get verification code </span>
+              <span v-show="!show"> Resend in {{ count }} s </span>
+            </el-button>
+          </el-col>
+        </el-row>
+
+        <div class="title-input">
+          <h3 class="title">New Password:</h3>
+        </div>
+        <el-form-item prop="epassword">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            :key="passwordType"
+            ref="epassword"
+            v-model="codeForm.epassword"
+            :type="passwordType"
+            placeholder="Please enter the new password"
+            name="epassword"
+            tabindex="2"
+            auto-complete="on"
+          />
+        </el-form-item>
+
+        <div class="title-input">
+          <h3 class="title">Repeat Password:</h3>
+        </div>
+        <el-form-item prop="epassword2">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            :key="passwordType"
+            ref="epassword2"
+            v-model="codeForm.epassword2"
+            :type="passwordType"
+            placeholder="Please repeat the password"
+            name="epassword2"
+            tabindex="2"
+            auto-complete="on"
+          />
+        </el-form-item>
+
+        <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleResetByCode">
+          Confirm
+        </el-button>
+
+        <el-button type="primary" style="width:100%;margin-left:-1px;" @click.native.prevent="cancel()">
+          Cancel
+        </el-button>
+        <div class="tips" style="margin-left: 30px;">
+          <span style="margin-right:70px;">Email not available?</span>
+          <a class="asp" @click="changeMethod()">Use password</a>
+        </div>
+      </el-form>
+    </div>
   </div>
-
-  <div class="login-container" v-show="showEmail">
-    <el-form ref="codeForm" :model="codeForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-
-      <div class="title-container">
-        <h1 class="title">Change Password</h1>
-      </div>
-
-      <div class="title-input">
-        <h3 class="title">Verification Code:</h3>
-      </div>
-
-      <el-row :span="24">
-        <el-col :span="13">
-          <el-form-item prop="code">
-            <el-input ref="code" v-model="codeForm.code" auto-complete="off" placeholder="Please enter the code" size="">
-            </el-input>
-          </el-form-item>  
-        </el-col>
-        <el-col :span="11">
-          <el-button type="primary" class="code-btn" @click="getCode()" :disabled="!show" >
-            <span v-show="show">Get verification code </span>
-            <span v-show="!show"> Resend in {{ count }} s </span> 
-          </el-button>
-        </el-col>
-      </el-row>
-
-      <div class="title-input">
-        <h3 class="title">New Password:</h3>
-      </div>
-      <el-form-item prop="epassword">
-        <span class="svg-container">
-          <svg-icon icon-class="password" />
-        </span>
-        <el-input
-          :key="passwordType"
-          ref="epassword"
-          v-model="codeForm.epassword"
-          :type="passwordType"
-          placeholder="Please enter the new password"
-          name="epassword"
-          tabindex="2"
-          auto-complete="on"
-        />
-      </el-form-item>
-
-      <div class="title-input">
-        <h3 class="title">Repeat Password:</h3>
-      </div>
-      <el-form-item prop="epassword2">
-        <span class="svg-container">
-          <svg-icon icon-class="password" />
-        </span>
-        <el-input
-          :key="passwordType"
-          ref="epassword2"
-          v-model="codeForm.epassword2"
-          :type="passwordType"
-          placeholder="Please repeat the password"
-          name="epassword2"
-          tabindex="2"
-          auto-complete="on"
-        />
-      </el-form-item>
-
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleResetByCode">
-        Confirm
-      </el-button>
-
-      <el-button type="primary" style="width:100%;margin-left:-1px;" @click.native.prevent="cancel()">
-        Cancel
-      </el-button>
-      <div class="tips" style="margin-left: 30px;">
-        <span style="margin-right:70px;">Email not available?</span>
-        <a class="asp" @click="changeMethod()">Use password</a>
-      </div>
-    </el-form>
-  </div>
-</div>
 </template>
 
 <script>
@@ -180,7 +179,7 @@ export default {
       }
     }
     const validateePass2 = (rule, value, callback) => {
-      if (value !== this.codeForm.epassword){
+      if (value !== this.codeForm.epassword) {
         callback(new Error('Password does not match!'))
       } else {
         callback()
@@ -194,8 +193,8 @@ export default {
       },
       loginRules: {
         code: [
-          {required: true, message: 'Verification code can not be empty', trigger: 'blur'},
-          {validator: validateCode, trigger: 'blur'}
+          { required: true, message: 'Verification code can not be empty', trigger: 'blur' },
+          { validator: validateCode, trigger: 'blur' }
         ],
         epassword: [
           {
@@ -279,7 +278,7 @@ export default {
       show: true,
       count: '',
       timer: null,
-      showEmail : false,
+      showEmail: false,
       email: ''
     }
   },
@@ -301,9 +300,9 @@ export default {
       this.$refs.codeForm.validate(valid => {
         if (valid) {
           this.loading = true
-          resetPassword(this.email, this.codeForm.epassword).then(res =>{
+          resetPassword(this.email, this.codeForm.epassword).then(res => {
             this.loading = false
-            if (res.data['success']){
+            if (res.data['success']) {
               this.$message({
                 message: 'Reset Password Successfully',
                 type: 'success'
@@ -313,7 +312,7 @@ export default {
             } else {
               this.$alert('Reset Password Failed. Please Try Again')
             }
-          }).catch(error =>{
+          }).catch(error => {
             console.log(error)
             this.loading = false
           })
@@ -328,7 +327,7 @@ export default {
           this.loading = true
           resetPasswordWithOld(this.email, this.pswForm).then(res => {
             this.loading = false
-            if (res.data['success']){
+            if (res.data['success']) {
               this.$message({
                 message: 'Reset Password Successfully',
                 type: 'success'
@@ -348,37 +347,37 @@ export default {
         }
       })
     },
-    getCode(){
+    getCode() {
       sendVerification(this.email).then(res => {
         console.log('---personal center-change password: get verification code successfully---')
-        //console.log(res)
-        if (res.data['success']){
+        // console.log(res)
+        if (res.data['success']) {
           this.$alert("We've sent you an email. Please check your email to find the verification code")
           this.identifyCode = res.data['code']
-          if (!this.timer){
-            this.count = 60;
-            this.show = false;
-            this.timer = setInterval(()=> {
-              if (this.count > 0 && this.count <= 60){
-                this.count --;
-              } else{
-                this.show = true;
-                clearInterval(this.timer);
-                this.timer = null;
+          if (!this.timer) {
+            this.count = 60
+            this.show = false
+            this.timer = setInterval(() => {
+              if (this.count > 0 && this.count <= 60) {
+                this.count--
+              } else {
+                this.show = true
+                clearInterval(this.timer)
+                this.timer = null
               }
-            },1000)
+            }, 1000)
           }
-          } else {
-            this.$alert('System Busy! Please try again')
-          }
-        })
+        } else {
+          this.$alert('System Busy! Please try again')
+        }
+      })
     },
-    cancel(){
+    cancel() {
       this.$router.back()
     },
     changeMethod() {
-      this.showEmail = ! this.showEmail
-    },
+      this.showEmail = !this.showEmail
+    }
   }
 }
 </script>
@@ -390,8 +389,6 @@ export default {
 $bg:#283443;
 $light_gray:#283443;
 $cursor: #283443;
-
-
 
 /* reset element-ui css */
 .login-container {
@@ -407,7 +404,6 @@ $cursor: #283443;
       border-radius: 0px;
       padding: 12px 5px 12px 15px;
       height: 47px;
-      
 
       &:-webkit-autofill {
         box-shadow: 0 0 0px 1000px $bg inset !important;
