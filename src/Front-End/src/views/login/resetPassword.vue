@@ -249,8 +249,8 @@ export default {
       } else {
         sendVerification(this.loginForm.email).then(res => {
           console.log('---reset password: get verification code successfully---')
-          //console.log(res)
-          if (res.data['goodMail']){
+          console.log(res)
+          if (res.data['success']){
             this.$alert("We've sent you an email. Please check your email to find the verification code")
             this.identifyCode = res.data['code']
             if (!this.timer){

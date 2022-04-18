@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
+    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="off" label-position="left">
 
       <div class="title-container">
         <h1 class="title">Cloud LGU</h1>
@@ -26,7 +26,7 @@
       <div class="title-input">
         <h3 class="title">Password:</h3>
       </div>
-      <el-form-item prop="password">
+      <el-form-item prop="password" auto-complete="off">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
@@ -38,7 +38,7 @@
           placeholder="Please enter password"
           name="password"
           tabindex="2"
-          auto-complete="on"
+          auto-complete="off"
         />
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
@@ -163,12 +163,13 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' }) // 登录成功之后重定向到首页
+            this.$router.push('/') // 登录成功之后重定向到首页
             this.loading = false
           }).catch((error) => {
             this.$alert("Invalid user email or password")
             console.log(error);
             this.loading = false
+            this.refreshCode()
           })
         } else {
           console.log('error submit!!')

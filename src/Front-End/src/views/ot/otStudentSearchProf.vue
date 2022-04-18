@@ -9,12 +9,11 @@
       clearable>
     </el-input>
     <el-button @click.native=studentSearchProf()>Search</el-button>
-    <el-button style="margin-left: 56%">
+    <el-button style="margin-left: 80%">
         <router-link to="/officetime/student/my" >My Reservations</router-link>
     </el-button>
     </el-form>
-    <div v-if="loading">dsa</div>
-      <div v-else>    <p style="margin-left:35%; font-size:2rem;">{{ message }}'s Office Time</p>
+      <div >    <p style="margin-left:35%; font-size:2rem;">{{ message }} Office Time</p>
         <div style="margin-left:5%; width:90%;">
 
     <FullCalendar
@@ -49,7 +48,6 @@ export default {
     return {
       value: '',
       message: '',
-      loading: true,
       source: {
         Professor_Name: 'p1',
         success: true,
@@ -110,25 +108,23 @@ export default {
     }
   },
   created () {
-    this.message = this.$route.params.message
     this.studentSearchProf()
-  },
+    this.message = this.$route.params.message
+    },
   methods: {
     studentSearchProf: function () {
-      if (this.message==''){this.loading = true}
       // alert('send'+this.message)
    searchProf(this.message)
     .then(res => {
+      console.log('---student get office time---')
+      console.log(this.message)
+      console.log(res.data)
+      this.calendarOptions.events = []
       if (res.data['success']){
-        this.loading = false
-        alert('success')
         this.$message({
           message: 'Search Successfully',
           type: 'success'
         })
-        this.calendarOptions.events = []
-        console.log('here')
-        console.log(res.data)
         for (var i = 0; i < res.data['slots'].length; i++) {
           // if (!this.source.otLists[i].isBooked) {
             this.calendarOptions.events.push({
@@ -157,7 +153,7 @@ export default {
         }
 
       } else{
-        this.$alert("Create post fail!")
+        this.$alert("Please enter professor's name")
       }
     })
     .catch(function (error) { // 请求失败处理
@@ -165,83 +161,37 @@ export default {
     })
       
     },
-    // handleDateClick: function (arg) {
-    //   let dateStr = arg.dateStr.substring(0, 10)
-    //   let startStr = arg.dateStr.substring(11, 16)
-    //   if (confirm('您是否要在' + dateStr + ' ' + startStr + '添加Office Time?')) {
-    //     var length = prompt('Enter minutes in format like 20')
-    //     var startTime = new Date(dateStr + 'T' + startStr + ':00')
-    //     var endTime = new Date(startTime.setMinutes(startTime.getMinutes() + parseInt(length)))
-    //     this.calendarOptions.events.push({
-    //       id: '3',
-    //       title: 'Office Time',
-    //       start: arg.dateStr,
-    //       end: endTime,
-    //       s: '#b0e0e6',
-    //       overlap: false,
-    //       extendedProps: {
-    //         Location: 'proplace'
-    //       }
-    //     })
-    //   }
-    // },
-    handleButtonClick: function () {
-      var dateStr = prompt('Enter a date in format 2022-04-01')
-      var startStr = prompt('Enter start time in format 10:00')
-      var endStr = prompt('Enter end time in format 22:00')
-      var startTime = new Date(dateStr + 'T' + startStr + ':00')
-      var endTime = new Date(dateStr + 'T' + endStr + ':00')
-
-      if (!isNaN(startTime.valueOf())) { // valid?
-        this.calendarOptions.events.push({
-          id: '4',
-          title: 'dynamic event',
-          start: startTime,
-          end: endTime
-        })
-        alert('Great. Now, update your database...')
-      } else {
-        alert('Invalid date.')
-      }
-    },
     handleEventClick: function (info) {
       // alert(info.event.extendedProps.Location)
+      var flag=false
       if (!info.event.overlap) {
-        if (confirm('您是否要预约' + info.event.start + '的Office Time?')) {
+          var hours = info.event.start.getHours().toString()
+        if (hours.length==1){hours='0'+hours}
+        var minutes = info.event.start.getMinutes().toString()
+        if (minutes.length==1){minutes='0'+minutes}
+        var times = hours+':'+minutes
+        if (confirm('Do you want to book the OfficeTime at ' + times + '?')) {
             var student_id=this.$store.state.user.token
-              bookOfficeTime(info.event.id, student_id)
-    .then(res => {
-      if (res.data['success']){
-        this.$message({
-          message: 'Search Successfully',
-          type: 'success'
-        })
-          this.calendarOptions.events.push({
-            id: info.event.id,
-            title: info.event.title,
-            start: info.event.start,
-            end: info.event.end,
-            overlap: true,
-            extendedProps: {
-              Location: info.event.extendedProps.Location
-            }
-          })
-          let index = this.calendarOptions.events.findIndex(e => e.id === info.event.id)
-          this.calendarOptions.events.splice(index, 1)
-      } else{
-        this.$alert("Create post fail!")
-      }
-    })
-    .catch(function (error) { // 请求失败处理
-      console.log(error);
-    })
+              bookOfficeTime(info.event.id, student_id).then(res => {
+                if (res.data['success']){
+                  this.$message({
+                    message: 'Book Successfully',
+                    type: 'success'
+                  })
+                  this.studentSearchProf()
+                } else{
+                  this.$alert("Book fail!")
+                }
+              }).catch(error => { // 请求失败处理
+                console.log(error);
+              })
         }
       }
     },
     handleMouseEnter: function (info) {
       // alert('Event: ' + info.event.title)
       tippy(info.el, {
-        content: info.event.extendedProps.Location
+        content: 'Location: '+info.event.extendedProps.Location
       })
     }
   }

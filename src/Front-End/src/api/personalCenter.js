@@ -1,14 +1,24 @@
 import request from '@/utils/request'
 
-export function updateProfile(token, editForm, file){
+export function updateProfile(token, editForm){
     return request({
         url: '/api/updateprofile',
         method: 'post',
         data:{
-            token,
+            userID: token,
             userName: editForm.username,
             userIntro: editForm.intro,
-            userPhoto: file
         }
+    })
+}
+
+export function updateAvatar(file){
+    return request({
+        url: '/api/updatePhoto',
+        method: 'post',
+        data: file,
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }       
     })
 }

@@ -11,7 +11,7 @@
     <el-button >
        <router-link :to="{name:'studentSearchProf', params:{message: message}}"> Search</router-link>
     </el-button>
-    <el-button style="margin-left:56%">
+    <el-button style="margin-left:80%">
         <router-link to="/officetime/student/my" > My Reservations</router-link>
     </el-button>
     </el-form>
@@ -110,10 +110,6 @@ var id=this.$store.state.user.token
     studentCheckOfficeTime(id)
     .then(res => {
       if (res.data['success']){
-        this.$message({
-          message: 'Successfully',
-          type: 'success'
-        })
       this.calendarOptions.events = []
       for (var i = 0; i < res.data['lists'].length; i++) {
         this.calendarOptions.events.push({
@@ -130,7 +126,7 @@ var id=this.$store.state.user.token
   
       
       } else{
-        this.$alert("Create post fail!")
+        this.$alert("Search your reservations fail!")
       }
     })
     .catch(function (error) { // 请求失败处理

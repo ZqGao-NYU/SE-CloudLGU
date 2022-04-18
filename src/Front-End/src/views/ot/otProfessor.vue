@@ -10,7 +10,7 @@
     </el-input>
     <el-button @click.native=studentCheckOT()>查询</el-button>
     </el-form> -->
-    <p style="margin-left:42%; margin-top:3%; font-size:2rem;">{{ this.message }}'s Office Time</p>
+    <p style="margin-left:42%; margin-top:3%; font-size:2rem;">My Office Time</p>
     <div style="margin-left:5%; width:90%;">
     <FullCalendar
       :options="calendarOptions"
@@ -105,12 +105,10 @@ export default {
     var prof_id = this.$store.state.user.token
     profCheckOfficeTime(prof_id)
     .then(res => {
+      // console.log(res.data['lists'][i]['booked_byName'])
       console.log(res.data)
       if (res.data['success']){
-        this.$message({
-          message: 'Register Successfully',
-          type: 'success'
-        })
+        console.log('---ot professor: get all ot successfully---')
         this.calendarOptions.events = []
         this.message = res.data['Professor_Name']
         console.log('here')
@@ -126,7 +124,7 @@ export default {
               overlap: false,
               extendedProps: {
                 Location: res.data['lists'][i]['otLocation'],
-                booked_by: res.data['lists'][i]['booked_by']
+                booked_by: res.data['lists'][i]['booked_byName']
               }
             })
           } else {
@@ -139,7 +137,7 @@ export default {
               backgroundColor: '#b0e0e6',
               extendedProps: {
                 Location: res.data['lists'][i]['otLocation'],
-                booked_by: res.data['lists'][i]['booked_by']
+                booked_by: res.data['lists'][i]['booked_byName']
               }
             })
           }
@@ -157,7 +155,7 @@ export default {
     handleDateClick: function (arg) {
       let dateStr = arg.dateStr.substring(0, 10)
       let startStr = arg.dateStr.substring(11, 16)
-      if (confirm('您是否要在' + dateStr + ' ' + startStr + '添加Office Time?')) {
+      if (confirm('Do you want to create an OfficeTime at ' + dateStr + ' ' + startStr + '?')) {
         var length = prompt('Enter minutes in format like 20')
         var location = prompt('Enter the location')
         var startTime = new Date(dateStr + 'T' + startStr + ':00')
@@ -179,12 +177,12 @@ export default {
     .then(res => {
       if (res.data['status']['success']){
         this.$message({
-          message: 'Register Successfully',
+          message: 'Create OT Successfully',
           type: 'success'
         })
         this.$router.go(0)
       } else{
-        this.$alert("Create post fail!")
+        this.$alert("Create OT fail!")
       }
     })
     .catch(function (error) { // 请求失败处理
@@ -195,18 +193,17 @@ export default {
     },
     handleEventClick: function (info) {
       // alert(info.event.extendedProps.Location)
-      if (confirm('您是否要删除' + info.event.start + '的Office Time?')) {
+      if (confirm('Do you want to delete the OfficeTime at ' + info.event.start + '?')) {
           deleteOfficeTimeSlot(info.event.id)
     .then(res => {
       if (res.data['success']){
         this.$message({
-          message: 'Register Successfully',
+          message: 'Delete OT Successfully',
           type: 'success'
         })
-        let index = this.calendarOptions.events.findIndex(e => e.id === info.event.id)
-        this.calendarOptions.events.splice(index, 1)
+        this.$router.go(0)
       } else{
-        this.$alert("Create post fail!")
+        this.$alert("Delete OT fail!")
       }
     })
     .catch(function (error) { // 请求失败处理
@@ -217,11 +214,11 @@ export default {
     handleMouseEnter: function (info) {
       if (info.event.overlap) {
         tippy(info.el, {
-          content: info.event.extendedProps.Location + ',   booked by: ' + info.event.extendedProps.booked_by
+          content: 'Location: '+info.event.extendedProps.Location 
         })
       } else {
         tippy(info.el, {
-          content: info.event.extendedProps.Location
+          content: 'Location: '+info.event.extendedProps.Location + ',   booked by: ' + info.event.extendedProps.booked_by
         })
       }
     }
