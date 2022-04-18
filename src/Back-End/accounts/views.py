@@ -111,8 +111,6 @@ def register(request):
         return render(request, 'accounts_create.html', context)
     if(request.method == 'POST'):
         response = {}
-        # if not request.is_ajax():
-        #     raise Http404("No Ajax Request")
         data = json.loads(request.body)
         userName = data['userName']
         userEmail = data['userEmail']

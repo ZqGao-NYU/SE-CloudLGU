@@ -20,31 +20,22 @@ def CreateSlot(request):
         Location = data['otLocation']
         profID = data['Professor_userID']
         Date = data['otDate']
-
-
         Date = datetime.strptime(Date, '%Y-%m-%d')
         StartTime = datetime.strptime(StartTime, '%H:%M')
         EndTime = datetime.strptime(EndTime, '%H:%M')
-
-
         context = {}
         # Search whether the time slot was taken up
         today_slots = TimeSlot.objects.filter(otDate=Date)
-        if not today_slots.exists():
-            # Empty Day, Every Time is OK
+        if not today_slots.exists(): # Empty Day, Every Time is OK
             pass
         else:
-            check_slots = today_slots.filter(Q(Professor_id = profID),
-                                             Q(otStartTime__range=(StartTime, EndTime)) |
-                                             Q(otEndTime__range=(StartTime, EndTime)) |
-                                             Q(otStartTime__lt=StartTime, otEndTime=EndTime))
+            check_slots = today_slots.filter(Q(Professor_id = profID), Q(otStartTime__range=(StartTime, EndTime)) | Q(otEndTime__range=(StartTime, EndTime)) | Q(otStartTime__lt=StartTime, otEndTime=EndTime))
             if check_slots.exists():
                 context['status'] = {}
                 context['status']['response'] = "The Time Period from {start} to {end} Has Already Been Taken Up. Please Try Another Time!".format(start=StartTime, end=EndTime)
                 context['status']['success'] = False
                 context['otID'] = -1
                 return JsonResponse(context)
-
         # Create the slot and Return ID
         slot = TimeSlot()
         slot.otDate = Date
@@ -52,12 +43,9 @@ def CreateSlot(request):
         slot.otEndTime = EndTime
         slot.otLocation = Location
         slot.Professor = my_user.objects.get(id=profID)
-        # slot.ProfID = profID
         slot.save()
-
         context['status'] = {}
-        context['status']['response'] = "The Time Period from {start} to {end} at {location} is successfully Created".format(start=StartTime,
-                                                                                                     end=EndTime, location = Location)
+        context['status']['response'] = "The Time Period from {start} to {end} at {location} is successfully Created".format(start=StartTime, end=EndTime, location = Location)
         context['status']['success'] = True
         context['otID'] = slot.id
         return JsonResponse(context)
@@ -68,17 +56,14 @@ def CreateSlot(request):
 def UpdateSlot(request):
     otID = request.POST.get('otID')
     slot = TimeSlot.objects.get(id=otID)
-
     # New Information
     data = json.loads(request.body)
     StartTime =data['otStartTime']
     EndTime = data['otEndTime']
     Location = data['otLocation']
     Date = data['otDate']
-
     profID = slot.Professor.id
     today_slots = TimeSlot.objects.filter(Q(otDate=Date), Q(Professor_id=profID))
-
     context = {}
     context['status'] = {}
     if not today_slots.exists():
@@ -90,22 +75,18 @@ def UpdateSlot(request):
             Q(otStartTime__lt=StartTime, otEndTime=EndTime))
         if check_slots.exists():
             context['status'] = {}
-            context['status'][
-                'response'] = "The Time Period from {start} to {end} Has Already Been Taken Up. Please Try Another Time!".format(
+            context['status']['response'] = "The Time Period from {start} to {end} Has Already Been Taken Up. Please Try Another Time!".format(
                 start=StartTime, end=EndTime)
             context['status']['success'] = False
             context['otID'] = -1
             return JsonResponse(context)
-
     # Update the slot
     slot.otStartTime = StartTime
     slot.otEndTime = EndTime
     slot.otLocation = Location
     slot.otDate = Date
     slot.save()
-    context['status']['response'] = "The Time Period from {start} to {end} at {location} is successfully updated.".format(start=StartTime,
-                                                                                                 end=EndTime,
-                                                                                                 location=Location)
+    context['status']['response'] = "The Time Period from {start} to {end} at {location} is successfully updated.".format(start=StartTime, end=EndTime, location=Location)
     context['status']['success'] = True
     context['otID'] = slot.id
     return JsonResponse(context)
@@ -233,28 +214,15 @@ def Student_Check(request):
         response['lists'] = []
         return JsonResponse(response)
 
-
-
-
 def Professor_Check(request):
     today = datetime.today().date()
     Sunday, Saturday = getStartEnd(today)
     data = json.loads(request.body)
     profID = data['Professor_ID']
-    # get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(Professor_id=profID)).annotate(otID=F("pk"), isbooked=F("booked"),
-    #                                                                                                           Professor_Name=F("Professor__username")).values("Professor_Name", "otID", "otDate",
-    #                                                                                                                                "otStartTime","otEndTime",
-    #                                                                                                                                "otLocation",
-    #                                                                                                                                "isbooked","booked_by")
-    get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(Professor_id=profID)).annotate(otID=F("pk"), isbooked=F("booked"), booked_byName=F("booked_by__username")).values("otID", "otDate",
-                                                                                                                                   "otStartTime","otEndTime",
-                                                                                                                                   "otLocation",
+    get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(Professor_id=profID)).annotate(otID=F("pk"),
+                                                                                                              isbooked=F("booked"), booked_byName=F("booked_by__username")).values("otID", "otDate",
+                                                                                                                                   "otStartTime","otEndTime","otLocation",
                                                                                                                                    "isbooked","booked_by", "booked_byName")
-    # get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(Professor_id=profID)).annotate(otID=F("pk"), isbooked=F("booked")).values("otID", "otDate",
-    #                                                                                                                                "otStartTime","otEndTime",
-    #                                                                                                                                "otLocation",
-    #                                                                                                                                "isbooked","booked_by")
-
     response = {}
     if get_slots.exists():
         response['success'] = True
