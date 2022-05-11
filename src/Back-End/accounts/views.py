@@ -64,11 +64,106 @@ def register(request):
 # def register(request):
 #     response = {}
 
+<<<<<<< Updated upstream
 def ActivateView(request, code):
     if(request.method == 'GET'):
         confirm = get_object_or_404(ConfirmString, code=code)
         user = confirm.user
         user.has_confirmed = True
+=======
+def activate_view(request, code):
+    print("Check")
+    if(request.method == 'GET'):
+        try:
+            confirm = ConfirmString.objects.get(code=code)
+            user = confirm.user
+            user.has_confirmed = True
+            user.save()
+            confirm.delete()
+        except:
+            context = {}
+            context['message'] = 'Invalid Authentication Request. This link may already been used!'
+            context['uri'] = reverse('register')
+            return render(request, 'verification_fail.html', context) #  Replace it with login page or successful inform page after integration
+
+
+
+        messages.success(request, "You have successfully activated your account!")
+        return redirect('register') # Replace it with login page or successful inform page after integration
+
+
+
+def authentication_view(request):
+    return render(request,'auth.html',locals())
+
+
+def login(request):
+    response = {}
+    if request.session.get('is_login', None):  # 不允许重复登录
+        response['success'] = False
+        response['info'] = "Repeat Logins are not allowed！"
+        return JsonResponse(response)
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        userEmail = data['userEmail']
+        password = data['password']
+
+        try:
+            user = my_user.objects.get(email=userEmail)
+            if user.password == password:
+                request.session['is_login'] = True
+                request.session['userID'] = user.id
+                request.session['userEmail'] = user.email
+                response['success'] = True
+                # response['token'] = {"info":"Login Success", "identity":user.identity, "userID":user.id}
+                response['token'] = user.id
+                return JsonResponse(response)
+
+            else:#返回json
+                response['success'] = False
+                response['info'] = "Incompatible Password"
+                return JsonResponse(response)
+        except my_user.DoesNotExist:
+            response['success'] = False
+            # response['info'] = "This Account Does not Exist！Please Try Again"
+            response['token'] = -1
+            return JsonResponse(response)
+
+    # login_form = UserForm()
+    # return render(request, 'login/login.html', locals())
+
+
+def update_profile(request):
+    if (request.method == 'POST'):
+        # try:
+        data = json.loads(request.body)
+        # userEmail = request.session['userEmail']#session不知道可不可以这么用，不行的话让前端传id
+        uID = data['userID']
+        user = my_user.objects.get(id=uID)
+
+        user.profile.userIntro = data['userIntro']
+        user.username = data['userName']
+
+        user.profile.save()
+        user.save()
+        return JsonResponse({'success':True})
+        # except:
+        #     return JsonResponse({'success':False})
+    else:
+        return JsonResponse({'success':False})
+
+def updateAvatar(request):
+    if (request.method == 'POST'):
+        #data = json.loads(request.body)
+        #photo = data['photo']
+        #uID = data['userID']
+        photo = request.FILES.get('photo')
+        uID = request.POST.get('userID')
+        user = my_user.objects.get(id=uID)
+        # Save Photo
+        user.profile.userPhoto = photo
+        user.profile.save()
+>>>>>>> Stashed changes
         user.save()
 
         confirm.delete()

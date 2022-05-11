@@ -1,0 +1,129 @@
+from django.core.serializers.json import DjangoJSONEncoder
+import json
+from django.http import JsonResponse
+from .models import forumPost, forumComment
+from accounts.models import my_user
+import datetime
+from django.db.models import F
+
+
+# Create your views here.
+def create_new_post(request):
+    # 未检测各类非法输入
+    data = json.loads(request.body)
+    post_title = data['postTitle']
+    post_content = data['postContent']
+    post_tag = data['postTag']
+    user_id = data['userID']
+
+    new_post = forumPost(Title=post_title, Content=post_content, Tag=post_tag)
+    poster = my_user.objects.get(id=user_id)
+    new_post.Poster = poster
+    new_post.UpdateTime = datetime.datetime.now()
+    new_post.Ctime = datetime.datetime.now()
+    new_post.save()
+
+    response = {'postID': new_post.id, 'success': True}
+    return JsonResponse(response)
+
+
+def delete_post(request):
+    data = json.loads(request.body)
+    post_id = data['postID']
+    forumPost.objects.get(id=post_id).delete()
+    response = {'success': True}
+    return JsonResponse(response)
+
+
+def update_post(request):
+    data = json.loads(request.body)
+    post_id = data['postID']
+    post_title = data['postTitle']
+    post_content = data['postContent']
+    post_tag = data['postTag']
+    my_post = forumPost.objects.get(id=post_id)
+    my_post.Title = post_title
+    my_post.Content = post_content
+    my_post.Tag = post_tag
+    my_post.UpdateTime = datetime.datetime.now()
+    my_post.save()
+
+    response = {'postID': my_post.id, 'success': True}
+    return JsonResponse(response)
+
+
+def show_post(request):
+    data = json.loads(request.body)
+    post_id = data['postID']
+    my_post = forumPost.objects.get(id=post_id)
+    comment_list = my_post.comments.annotate(userID=F('Commenter__id'),
+                                             commentContent=F('Content'),
+                                             createTime=F('Ctime'), commenterName=F('Commenter__username'),
+                                             commentID=F('id')).values('commenterName',
+                                                                       'userID',
+                                                                       'commentContent',
+                                                                       'createTime',
+                                                                       'commentID')
+    json_list = json.dumps(list(comment_list), cls=DjangoJSONEncoder)
+
+    response = {'success': True, 'postTitle': my_post.Title, 'postContent': my_post.Content, 'postTag': my_post.Tag,
+                'posterName': my_post.Poster.username, 'createTime': my_post.Ctime, 'updateTime': my_post.UpdateTime,
+                'commentList': json.loads(json_list)}
+    return JsonResponse(response)
+
+
+def show_all_post(request):
+    post_list = forumPost.objects.annotate(postID=F('id'), postTitle=F('Title'),
+                                           postContent=F('Content'),
+                                           postTag=F('Tag'), posterName=F('Poster__username'),
+                                           updateTime=F('UpdateTime'), createTime=F('Ctime')).values('postID',
+                                                                                                     'postTitle',
+                                                                                                     'postContent',
+                                                                                                     'postTag',
+                                                                                                     'posterName',
+                                                                                                     'updateTime',
+                                                                                                     'createTime')
+    json_list = json.dumps(list(post_list), cls=DjangoJSONEncoder)
+    response = {'success': True, 'postList': json.loads(json_list)}
+    return JsonResponse(response)
+
+
+def create_new_comment(request):
+    data = json.loads(request.body)
+    post_id = data['postID']
+    user_id = data['userID']
+    comment_content = data['commentContent']
+    commenter = my_user.objects.get(id=user_id)
+    my_post = forumPost.objects.get(id=post_id)
+    new_comment = forumComment(forumPost=my_post, Content=comment_content)
+    new_comment.Commenter = commenter
+    new_comment.Ctime = datetime.datetime.now()
+    my_post.UpdateTime = datetime.datetime.now()
+    my_post.save()
+    new_comment.save()
+
+    response = {'commentID': new_comment.id, 'success': True}
+    return JsonResponse(response)
+
+
+def delete_comment(request):
+    data = json.loads(request.body)
+    commentID = data['commentID']
+    forumComment.objects.get(id=commentID).delete()
+    response = {'success': True}
+    return JsonResponse(response)
+
+
+def update_comment(request):
+    data = json.loads(request.body)
+    comment_id = data['commentID']
+    post_id = data['postID']
+    comment_content = data['commentContent']
+    my_post = forumPost.objects.get(id=post_id)
+    my_comment = forumComment.objects.get(id=comment_id)
+    my_comment.Content = comment_content
+    my_post.UpdateTime = datetime.datetime.now()
+    my_post.save()
+    my_comment.save()
+    response = {'success': True}
+    return JsonResponse(response)
