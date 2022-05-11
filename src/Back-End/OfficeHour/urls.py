@@ -9,6 +9,6 @@ urlpatterns = [
     path('student/searchprof', views.Search_By_Prof_Name),
     path('student/book', views.BookSlot),
     path('professor/delete', views.DeleteSlot),
-    path('professor/update', views.UpdateSlot),
-    path('professor/create', views.CreateSlot),
+    path('professor/update', views.update_slot),
+    path('professor/create', views.create_slot),
 ]

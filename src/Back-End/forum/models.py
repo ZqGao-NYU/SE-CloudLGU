@@ -6,20 +6,18 @@ from accounts.models import my_user
 class forumPost(models.Model):
     Title = models.CharField(max_length=255)  # Required
     Content = models.TextField()
-    Tag = models.CharField(max_length=255) #Discussion, Help, Recruit, Top前端筛选
-    # Poster = models.CharField(max_length=255)
+    Tag = models.CharField(max_length=255)
     Ctime = models.DateTimeField()
     UpdateTime = models.DateTimeField()
     Poster = models.ForeignKey(my_user, related_name='Poster', on_delete=models.CASCADE)
     class Meta:
-        ordering = ['-UpdateTime']#更新时间降序排列
+        ordering = ['-UpdateTime']
 
 
 class forumComment(models.Model):
     forumPost = models.ForeignKey(forumPost, on_delete=models.CASCADE, related_name='comments')
-    # Commenter = models.CharField(max_length=255)
     Commenter = models.ForeignKey(my_user, related_name='Commenter', on_delete=models.CASCADE)
     Content = models.TextField()
-    Ctime = models.DateTimeField()#save后重写post的updatetime forum.forumPost.UpdateTime=forum.Ctime
+    Ctime = models.DateTimeField()
     class Meta:
-        ordering = ['Ctime']#更新时间升序排列
+        ordering = ['Ctime']
