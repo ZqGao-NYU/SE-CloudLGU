@@ -1,14 +1,13 @@
 from django.urls import path
 from . import views
-from .views import *
 
 urlpatterns = [
-    path('student/show', views.Student_Check),
-    path('professor/show', views.Professor_Check),
-    path('student/searchtime', views.Search_By_Time),
-    path('student/searchprof', views.Search_By_Prof_Name),
-    path('student/book', views.BookSlot),
-    path('professor/delete', views.DeleteSlot),
+    path('student/show', views.student_check),
+    path('professor/show', views.professor_check),
+    path('student/searchtime', views.search_by_time),
+    path('student/searchprof', views.search_by_prof_name),
+    path('student/book', views.book_slot),
+    path('professor/delete', views.delete_slot),
     path('professor/update', views.update_slot),
     path('professor/create', views.create_slot),
 ]

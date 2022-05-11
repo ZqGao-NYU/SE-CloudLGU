@@ -1,7 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.files.storage import FileSystemStorage
-# Create your models here.
 
 class my_user(User):
     identity = models.CharField(max_length=16, choices=(('faculty', 'faculty'), ('student', 'student'), ('admin', 'admin')), default='student')
