@@ -1,5 +1,5 @@
 import os
-from django.core.mail import send_mail, EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 if __name__ == '__main__':

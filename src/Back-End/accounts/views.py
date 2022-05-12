@@ -3,15 +3,12 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.contrib import messages
 from django.db.models import F
-from django.shortcuts import redirect
-from django.urls import reverse
 from django.conf import settings
 
-from .models import my_user, ConfirmString, Profile
+from .models import MyUser, Profile
 from .forms import UserForm
-from .utils import send_activation_email, check_identification, get_verification, send_Inform
+from .utils import send_activation_email, check_identification, get_verification, send_inform
 
 
 def reg_verification(request):
@@ -19,26 +16,16 @@ def reg_verification(request):
         response = {}
         data = json.loads(request.body)
         userEmail = data['email']
-        same_user = my_user.objects.filter(email=userEmail)
+        same_user = MyUser.objects.filter(email=userEmail)
         if same_user:
             response['goodMail'] = False
-            # response['goodName'] = False
-            # response['success'] = False
-            # response['message'] = "This Email Has Already Been Used!"
             response['code'] = -1
             return JsonResponse(response)
 
         # Generate Verification Code
         code = get_verification(settings.VERIFICATION_BITS)
-        # new_user = my_user()
-        # new_user.email = userEmail
-        # new_user.save()
-        # Create Confirmation Model
-        # ConfirmString.objects.create(user=new_user, code=code)
         # Send Confirmation Email
         send_activation_email("Account Activation", userEmail, code)
-        # response['success'] = True
-        # response['status'] = "Verification Code Has Already Been Sent to Your Email {Mail}".format(Mail=userEmail)
         response['code'] = code
         response['goodMail'] = True
         return JsonResponse(response)
@@ -51,13 +38,13 @@ def reset_pwd_code(request):
         userEmail = data['userEmail']
         # Check the existance of the user's email
         try:
-            user = my_user.objects.get(email=userEmail)
+            user = MyUser.objects.get(email=userEmail)
             code = get_verification(settings.VERIFICATION_BITS)
             send_activation_email("Password Reset", user.email, code)
             response['code'] = code
             response['success'] = True
             return JsonResponse(response)
-        except my_user.DoesNotExist:
+        except MyUser.DoesNotExist:
             response['success'] = False
             response['code'] = -1
             return JsonResponse(response)
@@ -71,7 +58,7 @@ def modify_pwd_by_old(request):
         oldPwd = data['oldPassword']
         newPwd = data['newPassword']
         try:
-            uLists = my_user.objects.filter(email=userEmail)
+            uLists = MyUser.objects.filter(email=userEmail)
             if not uLists.exists():
                 response['success'] = False
                 return JsonResponse(response)
@@ -80,7 +67,7 @@ def modify_pwd_by_old(request):
             user.save()
             response['success'] = True
             return JsonResponse(response)
-        except my_user.DoesNotExist:
+        except MyUser.DoesNotExist:
             response['success'] = False
             return JsonResponse(response)
 
@@ -92,13 +79,13 @@ def modify_pwd(request):
         userEmail = data['userEmail']
         password = data['password']  # User's new password
         try:
-            user = my_user.objects.get(email=userEmail)
+            user = MyUser.objects.get(email=userEmail)
             user.password = password
             response['success'] = True
             user.save()
             return JsonResponse(response)
 
-        except my_user.DoesNotExist:
+        except MyUser.DoesNotExist:
             response['success'] = False
             return JsonResponse(response)
 
@@ -118,7 +105,7 @@ def register(request):
         password = data['password']
         # code = request.POST.get('code')
         # identify = utils.check_identification(userEmail)
-        new_user = my_user()
+        new_user = MyUser()
         new_user.username = userName
         new_user.email = userEmail
         new_user.password = password
@@ -143,27 +130,7 @@ def register(request):
         return JsonResponse(response)
 
 
-def activate_view(request, code):
-    print("Check")
-    if request.method == 'GET':
-        try:
-            confirm = ConfirmString.objects.get(code=code)
-            user = confirm.user
-            user.has_confirmed = True
-            user.save()
-            confirm.delete()
-        except:
-            context = {'message': 'Invalid Authentication Request. This link may already been used!',
-                       'uri': reverse('register')}
-            return render(request, 'verification_fail.html',
-                          context)  # Replace it with login page or successful inform page after integration
 
-        messages.success(request, "You have successfully activated your account!")
-        return redirect('register')  # Replace it with login page or successful inform page after integration
-
-
-def authentication_view(request):
-    return render(request, 'auth.html', locals())
 
 
 def login(request):
@@ -178,7 +145,7 @@ def login(request):
         password = data['password']
 
         try:
-            user = my_user.objects.get(email=userEmail)
+            user = MyUser.objects.get(email=userEmail)
             if user.password == password:
                 request.session['is_login'] = True
                 request.session['userID'] = user.id
@@ -192,7 +159,7 @@ def login(request):
                 response['success'] = False
                 response['info'] = "Incompatible Password"
                 return JsonResponse(response)
-        except my_user.DoesNotExist:
+        except MyUser.DoesNotExist:
             response['success'] = False
             # response['info'] = "This Account Does not Exist！Please Try Again"
             response['token'] = -1
@@ -208,7 +175,7 @@ def update_profile(request):
         data = json.loads(request.body)
         # userEmail = request.session['userEmail']#session不知道可不可以这么用，不行的话让前端传id
         uID = data['userID']
-        user = my_user.objects.get(id=uID)
+        user = MyUser.objects.get(id=uID)
 
         user.profile.userIntro = data['userIntro']
         user.username = data['userName']
@@ -229,7 +196,7 @@ def update_avatar(request):
         # uID = data['userID']
         photo = request.FILES.get('photo')
         uID = request.POST.get('userID')
-        user = my_user.objects.get(id=uID)
+        user = MyUser.objects.get(id=uID)
         # Save Photo
         user.profile.userPhoto = photo
         user.profile.save()
@@ -244,7 +211,7 @@ def get_profile(request):
         response = {}
         data = json.loads(request.body)
         uID = data['token']
-        user = my_user.objects.get(id=uID)
+        user = MyUser.objects.get(id=uID)
         response['userPhoto'] = "http://" + request.get_host() + user.profile.userPhoto.url
         response['userIntro'] = user.profile.userIntro
         response['userName'] = user.username
@@ -255,9 +222,9 @@ def get_profile(request):
 
 def get_user_list(request):
     response = {}
-    userList = my_user.objects.annotate(userName=F('username'), userEmail=F('email'),
-                                        userPassword=F('password'), userIntro=F('profile__userIntro'),
-                                        userIdentity=F('identity')).values('userName', 'userEmail',
+    userList = MyUser.objects.annotate(userName=F('username'), userEmail=F('email'),
+                                       userPassword=F('password'), userIntro=F('profile__userIntro'),
+                                       userIdentity=F('identity')).values('userName', 'userEmail',
                                                                            'userPassword', 'userIdentity', 'userIntro')
     serialized_q = json.dumps(list(userList), cls=DjangoJSONEncoder)
     response['lists'] = json.loads(serialized_q)
@@ -275,7 +242,7 @@ def reset_profile(request):
     userIntro = data['userIntro']
     password = data['userPassword']
     userIdentity = data['userIdentity']
-    user = my_user.objects.get(email=userEmail)
+    user = MyUser.objects.get(email=userEmail)
     user.username = userName
     try:
         profile = Profile.objects.get(user=user)
@@ -294,8 +261,8 @@ def reset_profile(request):
 def delete_user(request):
     data = json.loads(request.body)
     userEmail = data['userEmail']
-    user = my_user.objects.get(email=userEmail)
+    user = MyUser.objects.get(email=userEmail)
     user.delete()
-    send_Inform(userEmail)
+    send_inform(userEmail)
     response = {'success': True}
     return JsonResponse(response)

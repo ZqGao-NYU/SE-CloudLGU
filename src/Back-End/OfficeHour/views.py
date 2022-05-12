@@ -4,8 +4,8 @@ from django.http import JsonResponse
 from .models import TimeSlot
 from django.db.models import Q, F
 from datetime import datetime
-from accounts.models import my_user
-from .utils import getStartEnd
+from accounts.models import MyUser
+from .utils import get_start_end
 
 
 # Create your views here.
@@ -50,7 +50,7 @@ def create_slot(request):
         slot.otStartTime = StartTime
         slot.otEndTime = EndTime
         slot.otLocation = Location
-        slot.Professor = my_user.objects.get(id=profID)
+        slot.Professor = MyUser.objects.get(id=profID)
         slot.save()
 
         context['status'] = {}
@@ -157,7 +157,7 @@ def book_slot(request):
         return JsonResponse(context)
 
     slot.booked = True
-    slot.booked_by = my_user.objects.get(id=StudentID)
+    slot.booked_by = MyUser.objects.get(id=StudentID)
     slot.save()
     context['success'] = True
     context[
@@ -178,7 +178,7 @@ def search_by_prof_name(request):
         response['success'] = False
         return JsonResponse(response)
     today = datetime.today().date()
-    Sunday, Saturday = getStartEnd(today)
+    Sunday, Saturday = get_start_end(today)
     get_slots = TimeSlot.objects.filter(Q(professor__username=prof_Name), Q(otDate__range=(Sunday, Saturday)),
                                         Q(booked=False)).annotate(otID=F("pk")).values("otID", "otStartTime",
                                                                                        "otEndTime", "otDate",
@@ -197,7 +197,7 @@ def search_by_prof_name(request):
 def search_by_time(request):
     response = {}
     today = datetime.today().date()
-    Sunday, Saturday = getStartEnd(today)
+    Sunday, Saturday = get_start_end(today)
     get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(booked=False)).annotate(
         profName=F("professor__username")).values_list('profName',
                                                        'otDate').distinct()
@@ -221,7 +221,7 @@ def search_by_time(request):
 
 def student_check(request):
     today = datetime.today().date()
-    Sunday, Saturday = getStartEnd(today)
+    Sunday, Saturday = get_start_end(today)
     data = json.loads(request.body)
     studentID = data['Student_ID']
     get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(booked_by=studentID)).annotate(
@@ -241,7 +241,7 @@ def student_check(request):
 
 def professor_check(request):
     today = datetime.today().date()
-    Sunday, Saturday = getStartEnd(today)
+    Sunday, Saturday = get_start_end(today)
     data = json.loads(request.body)
     profID = data['Professor_ID']
     get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(Professor_id=profID)).annotate(
@@ -255,7 +255,7 @@ def professor_check(request):
     if get_slots.exists():
         response['success'] = True
         response['lists'] = list(get_slots)
-        response['Professor_Name'] = my_user.objects.get(id=profID).username
+        response['Professor_Name'] = MyUser.objects.get(id=profID).username
         return JsonResponse(response)
     else:
         response['success'] = False
