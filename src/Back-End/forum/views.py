@@ -1,15 +1,16 @@
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
 from .models import Forumpost, Forumcomment
 from accounts.models import MyUser
 import datetime
 from django.db.models import F
 
 
-# Create your views here.
+@require_POST
 def create_new_post(request):
-    # 未检测各类非法输入
     data = json.loads(request.body)
     postTitle = data['postTitle']
     postContent = data['postContent']
@@ -26,7 +27,7 @@ def create_new_post(request):
     response = {'postID': new_post.id, 'success': True}
     return JsonResponse(response)
 
-
+@require_POST
 def delete_post(request):
     data = json.loads(request.body)
     postID = data['postID']
@@ -35,6 +36,7 @@ def delete_post(request):
     return JsonResponse(response)
 
 
+@require_POST
 def update_post(request):
     data = json.loads(request.body)
     postID = data['postID']

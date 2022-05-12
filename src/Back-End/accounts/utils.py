@@ -50,8 +50,13 @@ def send_inform(to):
 
 
 def check_identification(email):
-    student_pattern = re.compile(r'@link.cuhk.edu.cn')
-    staff_pattern = re.compile(r'@cuhk.edu.cn')
+    """Use email's pattern to check the user's identity
+
+    Keyword Argument:
+    email: User's Email
+    """
+    student_pattern = re.compile(r'@link.cuhk.edu.cn')  # Student's email ends with @link.cuhk.edu.cn
+    staff_pattern = re.compile(r'@cuhk.edu.cn')  #  Staff's email ends with @cuhk.edu.cn
 
     if student_pattern.search(email):
         return 'student'
@@ -62,6 +67,7 @@ def check_identification(email):
 
 
 def get_verification(bits):
+    """Generate the code with specified bits. E.g. Generate a 6-bit verification code with get_verification(6)"""
     code = ""
     for i in range(bits):
         ch = chr(random.randrange(ord('0'), ord('9') + 1))

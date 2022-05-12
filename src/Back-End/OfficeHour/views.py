@@ -1,6 +1,8 @@
 import json
 
 from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
 from .models import TimeSlot
 from django.db.models import Q, F
 from datetime import datetime
@@ -8,62 +10,73 @@ from accounts.models import MyUser
 from .utils import get_start_end
 
 
-# Create your views here.
-
+@require_POST
 def create_slot(request):
+    """Create The Office Hour at a Certain Time
+
+    Key Arguments:
+    start_time: Start time of office hour in HH:MM like 18:00
+    end_time: End time of office hour in HH:MM like 19:00
+    location: Location to host the office hour
+    date: Date of office hour in YYYY-MM-DD like 2022-02-22
+
+    """
     if request.method == 'POST':
         data = json.loads(request.body)
-        StartTime = data['otStartTime']
-        EndTime = data['otEndTime']
-        Location = data['otLocation']
-        profID = data['Professor_userID']
-        Date = data['otDate']
+        start_time = data['otStartTime']
+        end_time = data['otEndTime']
+        location = data['otLocation']
+        prof_id = data['Professor_userID']
+        date = data['otDate']
 
-        Date = datetime.strptime(Date, '%Y-%m-%d')
-        StartTime = datetime.strptime(StartTime, '%H:%M')
-        EndTime = datetime.strptime(EndTime, '%H:%M')
+        # Clean the data sent from the client
+        date = datetime.strptime(date, '%Y-%m-%d')
+        start_time = datetime.strptime(start_time, '%H:%M')
+        end_time = datetime.strptime(end_time, '%H:%M')
 
         context = {}
         # Search whether the time slot was taken up
-        today_slots = TimeSlot.objects.filter(otDate=Date)
+        today_slots = TimeSlot.objects.filter(otDate=date)
         if not today_slots.exists():
             # Empty Day, Every Time is OK
             pass
         else:
-            check_slots = today_slots.filter(Q(Professor_id=profID),
-                                             Q(otStartTime__gt=StartTime, otStartTime__lt=EndTime) |
-                                             Q(otEndTime__gt=StartTime, otEndTime__lt=EndTime) |
-                                             Q(otStartTime__lt=StartTime, otEndTime__gt=EndTime))
+            # Otherwise, check the time conflict with the following ORM
+            check_slots = today_slots.filter(Q(Professor_id=prof_id),
+                                             Q(otStartTime__gt=start_time, otStartTime__lt=end_time) |
+                                             Q(otEndTime__gt=start_time, otEndTime__lt=end_time) |
+                                             Q(otStartTime__lt=start_time, otEndTime__gt=end_time))
             if check_slots.exists():
                 context['status'] = {}
                 context['status'][
                     'response'] = "The Time Period from {start} to {end} Has Already Been Taken Up. Please Try " \
                                   "Another Time!".format(
-                    start=StartTime, end=EndTime)
+                    start=start_time, end=end_time)
                 context['status']['success'] = False
                 context['otID'] = -1
                 return JsonResponse(context)
 
         # Create the slot and Return ID
         slot = TimeSlot()
-        slot.otDate = Date
-        slot.otStartTime = StartTime
-        slot.otEndTime = EndTime
-        slot.otLocation = Location
-        slot.Professor = MyUser.objects.get(id=profID)
-        slot.save()
+        slot.otDate = date
+        slot.otStartTime = start_time
+        slot.otEndTime = end_time
+        slot.otLocation = location
+        slot.Professor = MyUser.objects.get(id=prof_id)
+        slot.save()  # Save the updated entity.
 
         context['status'] = {}
         context['status'][
             'response'] = "The Time Period from {start} to {end} at {location} is successfully Created".format(
-            start=StartTime,
-            end=EndTime, location=Location)
+            start=start_time,
+            end=end_time, location=location)
         context['status']['success'] = True
         context['otID'] = slot.id
         return JsonResponse(context)
 
-
+@require_POST
 def update_slot(request):
+    """ Professor can update their already created time slots"""
     otID = request.POST.get('otID')
     slot = TimeSlot.objects.get(id=otID)
 
@@ -82,6 +95,8 @@ def update_slot(request):
         # Empty Day, Every Time is OK
         pass
     else:
+        # Otherwise, check the time conflict with the following ORM
+        # Also, note that the updated time can overlap with the old time.
         check_slots = today_slots.filter(~Q(id=otID),
                                          Q(otStartTime__gt=StartTime, otStartTime__lt=EndTime) | Q(
                                              otEndTime__gt=StartTime, otEndTime__lt=EndTime) |
@@ -112,12 +127,14 @@ def update_slot(request):
     return JsonResponse(context)
 
 
+@require_POST
 def delete_slot(request):
+    """Professor can delete the time slot too."""
     context = {}
     data = json.loads(request.body)
     slotID = data['otID']
     try:
-        slot = TimeSlot.objects.get(id=slotID)
+        slot = TimeSlot.objects.get(id=slotID)  #  Find that slot by id firstly.
     except TimeSlot.DoesNotExist:
         context['success'] = False
         context['response'] = f"Cannot Find The Slot with ID: {slotID}"
@@ -128,6 +145,7 @@ def delete_slot(request):
     Location = slot.otLocation
 
     try:
+        # Delete the slot and return.
         slot.delete()
         context['response'] = "The Time Period from {start} to {end} at {location} is successfully deleted.".format(
             start=StartTime,
@@ -135,7 +153,7 @@ def delete_slot(request):
             location=Location)
         context['success'] = True
         return JsonResponse(context)
-    except:
+    except AssertionError:
         context['success'] = False
         context['response'] = "The Time Period from {start} to {end} at {location} fail to be deleted.".format(
             start=StartTime,
@@ -144,20 +162,27 @@ def delete_slot(request):
         return JsonResponse(context)
 
 
+@require_POST
 def book_slot(request):
+    """Student can book that slot
+
+    Key Arguments:
+    slot_id: The slot's id that should be booked.
+    student_id: The student's id who books the slot.
+    """
     context = {}
     data = json.loads(request.body)
-    slotID = data['otID']
-    StudentID = data['StudentID']
+    slot_id = data['otID']
+    student_id = data['StudentID']
     try:
-        slot = TimeSlot.objects.get(id=slotID)
+        slot = TimeSlot.objects.get(id=slot_id)
     except TimeSlot.DoesNotExist:
-        context['response'] = f"Cannot Find The Slot with id:{slotID}"
+        context['response'] = f"Cannot Find The Slot with id:{slot_id}"
         context['success'] = False
         return JsonResponse(context)
 
     slot.booked = True
-    slot.booked_by = MyUser.objects.get(id=StudentID)
+    slot.booked_by = MyUser.objects.get(id=student_id)
     slot.save()
     context['success'] = True
     context[
@@ -166,20 +191,25 @@ def book_slot(request):
     return JsonResponse(context)
 
 
+@require_POST
 def search_by_prof_name(request):
+    """Student can get one professor's all time slots in this week by entering his name
+
+    Key Arguments:
+    prof_name: Professor's name
+    """
     response = {}
-    if request.method == "GET":
-        response['success'] = False
-        return JsonResponse(response)
     data = json.loads(request.body)
     try:
-        prof_Name = data["Professor_Name"]
+        prof_name = data["Professor_Name"]
     except:
         response['success'] = False
         return JsonResponse(response)
+    # Get the span of this week. We always show the data from last Sunday to this Saturday
     today = datetime.today().date()
-    Sunday, Saturday = get_start_end(today)
-    get_slots = TimeSlot.objects.filter(Q(professor__username=prof_Name), Q(otDate__range=(Sunday, Saturday)),
+    sunday, saturday = get_start_end(today)
+    # Filter by prof's name and span of the weekdays.
+    get_slots = TimeSlot.objects.filter(Q(professor__username=prof_name), Q(otDate__range=(sunday, saturday)),
                                         Q(booked=False)).annotate(otID=F("pk")).values("otID", "otStartTime",
                                                                                        "otEndTime", "otDate",
                                                                                        "otLocation")
@@ -194,7 +224,10 @@ def search_by_prof_name(request):
         return JsonResponse(response)
 
 
+
+@require_POST
 def search_by_time(request):
+    """Student can get the list of professor's name and """
     response = {}
     today = datetime.today().date()
     Sunday, Saturday = get_start_end(today)
@@ -219,6 +252,8 @@ def search_by_time(request):
         return JsonResponse(response)
 
 
+
+@require_POST
 def student_check(request):
     today = datetime.today().date()
     Sunday, Saturday = get_start_end(today)
@@ -239,6 +274,8 @@ def student_check(request):
         return JsonResponse(response)
 
 
+
+@require_POST
 def professor_check(request):
     today = datetime.today().date()
     Sunday, Saturday = get_start_end(today)
