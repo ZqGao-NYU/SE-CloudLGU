@@ -208,12 +208,13 @@
 import { getAllUsers, resetProfile, adminDeleteUser } from '@/api/admin'
 
 export default {
-  name: 'ChangePassword',
+  // Admin page, view all users, modify user profile, delete user
+  name: 'AdminArea',
   data() {
     return {
       input_search: '',
-      tableData: [],
-      tableDataShow: [],
+      tableData: [], //all data
+      tableDataShow: [], //data that are shown
       options: [{
         value: 'option1',
         label: 'UserName'
@@ -233,10 +234,10 @@ export default {
         email: '',
         password: '',
         intro: ''
-      },
+      }, //edit user profile form
       roles: ['admin', 'faculty', 'student'],
       user_role: { 0: 'Student', 1: 'Teacher', 2: 'Administrator' },
-      edit_rules: {
+      edit_rules: { //edit user profile rules
         username: [
           {
             min: 5,
@@ -270,14 +271,14 @@ export default {
           trigger: 'blur'
         }]
       },
-      deletedialogVisible: false,
-      editdialogVisible: false,
-      dialogVisibleFalse: false,
-      dialogVisibleTrue: false,
-      edit_index: 0,
+      deletedialogVisible: false, //flag of showing deleting user
+      editdialogVisible: false, //flag of showing editing user
+      dialogVisibleFalse: false, //flag of showing editing false
+      dialogVisibleTrue: false, //flag of showing editing true
+      edit_index: 0, //index of the user in the table
       delete_index: 0,
-      curPage: 1,
-      pagesize: 6
+      curPage: 1, //curent page number
+      pagesize: 6 //maximum users in one page
     }
   },
 
@@ -286,7 +287,7 @@ export default {
   },
   methods: {
     getUsersData() {
-      getAllUsers().then(res => {
+      getAllUsers().then(res => { //call API
         console.log('---admin get all users successfully---')
         console.log(res.data)
         this.tableData = []
@@ -303,14 +304,15 @@ export default {
           i++
         }
         this.tableDataShow = this.tableData
-      })
+      }) // get all user data
     },
 
     doFilter() {
       if (this.input_search === '') {
         this.tableDataShow = this.tableData
         return
-      }
+      } //do filtering by input searching value
+      // can search by name, role, email
       this.tableDataShow = []
       var temp_search = this.input_search.toLowerCase()
       this.tableData.forEach((value, index) => {
@@ -337,7 +339,7 @@ export default {
       if (value === 'option3') {
         this.sortByKey(this.tableDataShow, 'Email')
       }
-    },
+    }, //sorting operation. Sort by name, role or email
 
     editCommand(index) {
       this.editdialogVisible = true
@@ -348,19 +350,20 @@ export default {
       this.edit_user.email = this.tableDataShow[index].Email
       this.edit_user.password = this.tableDataShow[index].Password
       this.edit_user.intro = this.tableDataShow[index].Intro
-    },
+    }, //toggle editing
 
     deleteCommand(index) {
       this.deletedialogVisible = true
       this.delete_index = index
-    },
+    }, // toggel deleting
 
     editUser(formName) {
       // eslint-disable-next-line camelcase
+      // edit one user
       var new_index = this.edit_index + (this.curPage - 1) * this.pagesize
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          resetProfile(this.edit_user).then(res => {
+          resetProfile(this.edit_user).then(res => { //call API
             if (res.data['success']) {
               this.$message({
                 message: 'Edit Successfully',
@@ -382,13 +385,14 @@ export default {
           this.tableDataShow[new_index].Intro = this.edit_user.intro
           */
         }
-        this.editdialogVisible = false
+        this.editdialogVisible = false //close editing form
       })
     },
     deleteUser() {
       // eslint-disable-next-line camelcase
+      // delete one user
       var new_index = this.delete_index + (this.curPage - 1) * this.pagesize
-      adminDeleteUser(this.tableDataShow[new_index].Email).then(res => {
+      adminDeleteUser(this.tableDataShow[new_index].Email).then(res => { // call API
         if (res.data['success']) {
           this.$message({
             message: 'Successfully Deleted',
@@ -402,7 +406,7 @@ export default {
           })
         }
       })
-      this.deletedialogVisible = false
+      this.deletedialogVisible = false //close delete dialog
     },
     cancelEdit() {
       this.edit_user.username = ''
@@ -411,21 +415,21 @@ export default {
       this.edit_user.email = ''
       this.edit_user.intro = ''
       this.editdialogVisible = false
-    },
+    }, //cancel editting
     cancelDelete() {
       this.deletedialogVisible = false
-    },
+    }, //cancel deleting
     setFlag() {
       this.dialogVisibleTrue = false
       this.dialogVisibleFalse = false
-    },
+    }, //set flags
     sortByKey(array, key) {
       return array.sort(function(a, b) {
         var x = a[key]
         var y = b[key]
         return ((x < y) ? -1 : ((x < y) ? 1 : 0))
       })
-    }
+    } //sort function
   }
 }
 </script>

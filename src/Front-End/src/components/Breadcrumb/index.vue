@@ -13,6 +13,8 @@
 import pathToRegexp from 'path-to-regexp'
 
 export default {
+  // dynamically generate the side-bar according to the user identity sepcified router
+  // the dynamical router was further achieved by router.beforeEach in permission.js
   data() {
     return {
       levelList: null
@@ -34,7 +36,7 @@ export default {
 
       if (!this.isDashboard(first)) {
         matched = [{ path: '/dashboard', meta: { title: 'Cloud LGU' }}].concat(matched)
-      }
+      } // make sure the home page is always at the first
 
       this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
     },

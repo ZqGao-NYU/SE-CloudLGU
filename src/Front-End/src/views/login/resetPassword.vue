@@ -116,6 +116,7 @@
 import { sendVerification, resetPassword } from '@/api/resetPassword'
 
 export default {
+  // reset password page
   name: 'ResetPassword',
   data() {
     var validatePass2 = (rule, value, callback) => {
@@ -123,7 +124,7 @@ export default {
         callback(new Error('Password does not match!'))
       } else {
         callback()
-      }
+      } //two passwords must be the same
     }
     const validateemail = (rule, value, callback) => {
       const end1 = value.slice(value.length - 17, value.length)
@@ -132,28 +133,28 @@ export default {
         callback(new Error('Wrong email format: must be CUHKSZ email'))
       } else {
         callback()
-      }
+      } //only accept CUHKSZ accounts
     }
     const validateCode = (rule, value, callback) => {
       if (value !== this.identifyCode) {
         callback(new Error('Wrong verification code'))
       } else {
         callback()
-      }
+      } //verification code must be correct
     }
     return {
       loginForm: {
         email: '',
         code: ''
-      },
+      }, //input form
       loginRules: {
         email: [{ required: true, trigger: 'blur', validator: validateemail }],
         code: [{ required: true, message: 'Verification code can not be empty', trigger: 'blur' }, { validator: validateCode, trigger: 'blur' }]
-      },
+      }, //rules of the input
       pswForm: {
         password: '',
         password2: ''
-      },
+      }, //password form
       pswRules: {
         password: [
           {
@@ -184,7 +185,7 @@ export default {
             validator: validatePass2,
             trigger: 'blur'
           }
-        ]
+        ] //rules for the passwords
       },
       loading: false,
       passwordType: 'password',
@@ -211,23 +212,26 @@ export default {
   methods: {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
+        // check whether the user is the owner of the email
+        // by sending a code to the email and verifing it
         if (valid) {
           this.showReset = true
         } else {
-          return false // 登录失败提示错误
+          return false 
         }
       })
     },
     handleReset() {
       this.$refs.pswForm.validate(valid => {
+        // input passwords should be in valid form
         if (valid) {
-          resetPassword(this.loginForm.email, this.pswForm.password).then(res => {
+          resetPassword(this.loginForm.email, this.pswForm.password).then(res => { //call API
             if (res.data['success']) {
               this.$message({
                 message: 'Reset Password Successfully',
                 type: 'success'
               })
-              this.$router.push('/login')
+              this.$router.push('/login') //go to log in page
             } else {
               this.$alert('Reset Password Failed. Please Try Again')
             }
@@ -245,6 +249,7 @@ export default {
       var end2 = value.slice(value.length - 12, value.length)
       if (end1 !== '@link.cuhk.edu.cn' && end2 !== '@cuhk.edu.cn') {
         this.$alert('Invalid email format!')
+        // only accept CUHKSZ accounts
       } else {
         sendVerification(this.loginForm.email).then(res => {
           console.log('---reset password: get verification code successfully---')
@@ -263,7 +268,7 @@ export default {
                   clearInterval(this.timer)
                   this.timer = null
                 }
-              }, 1000)
+              }, 1000)// can resend after 60 seconds, the counter counts down every 1000 ms (1 second)
             }
           } else {
             this.$alert('Invalid Email!')

@@ -8,7 +8,6 @@ import Layout from '@/layout'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
- * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
  *
  * hidden: true                   if set true, item will not show in the sidebar(default is false)
  * alwaysShow: true               if set true, will always show the root menu
@@ -17,7 +16,7 @@ import Layout from '@/layout'
  * redirect: noRedirect           if set noRedirect will no redirect in the breadcrumb
  * name:'router-name'             the name is used by <keep-alive> (must set!!!)
  * meta : {
-    roles: ['admin','editor']    control the page roles (you can set multiple roles)
+    roles: ['admin','falculty', 'student']    control the page roles
     title: 'title'               the name show in sidebar and breadcrumb (recommend set)
     icon: 'svg-name'/'el-icon-x' the icon show in the sidebar
     breadcrumb: false            if set false, the item will hidden in breadcrumb(default is true)
@@ -35,25 +34,25 @@ export const constantRoutes = [
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
-  },
+  }, //login page
 
   {
     path: '/adduser',
     component: () => import('@/views/login/adduser'),
     hidden: true
-  },
+  }, //register page
 
   {
     path: '/resetPassword',
     component: () => import('@/views/login/resetPassword'),
     hidden: true
-  },
+  }, //forget password and rest password when login
 
   {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
-  },
+  }, // 404 page
 
   {
     path: '/',
@@ -65,7 +64,7 @@ export const constantRoutes = [
       component: () => import('@/views/dashboard/index'),
       meta: { title: 'Cloud LGU', icon: 'education' }
     }]
-  },
+  }, //home page
   {
     path: '/forum',
     component: Layout,
@@ -78,28 +77,30 @@ export const constantRoutes = [
         name: 'forum/All',
         component: () => import('@/views/forum/PostList'),
         meta: { title: 'All Posts', icon: 'list' }
-      },
+      }, //show all post
       { path: 'addPost',
         name: 'add_post',
         component: () => import('@/views/forum/addPost')
-      },
+      }, // add post
       {
         path: 'post:postID',
         name: 'post_content',
         component: () => import('@/views/forum/Article'),
         params: { postID: '1' }
-      }
+      } // show one post
     ]
   }
-  // forum here, every one can access the forum
+  // forum page, every one can access the forum
 
 ]
 
 /**
  * asyncRoutes
  * the routes that need to be dynamically loaded based on user roles
+ * admin can access all pages
  */
 export const asyncRoutes = [
+  //every one can office time page but with different views. 
   {
     path: '/officetime',
     component: Layout,
@@ -112,7 +113,7 @@ export const asyncRoutes = [
         name: 'studentSearchWeek',
         component: () => import('@/views/ot/otStudentSearchWeek'),
         meta: { title: 'Search Week', icon: 'table', roles: ['admin', 'student'] }
-      },
+      }, //student can seach office time in one week
       {
         path: 'student/seachProf',
         name: 'studentSearchProf',
@@ -120,21 +121,22 @@ export const asyncRoutes = [
         meta: { title: 'Search Faculty', icon: 'search', roles: ['admin', 'student'] },
         params: { message: 'p1' }
 
-      },
+      }, // studen can search office  time of one professor
       {
         path: 'faculty',
         name: 'faculty',
         component: () => import('@/views/ot/otProfessor'),
         meta: { title: 'My Office Time', icon: 'eye-open', roles: ['admin', 'faculty'] }
-      },
+      }, // professors can manage their office time
       {
         path: 'student/my',
         name: 'studentMy',
         component: () => import('@/views/ot/otStudentMy'),
         meta: { title: 'My', icon: 'people', roles: ['admin', 'student'] }
-      }
+      } // student can check the bookings he/she has
     ]
-  },
+  }, //every one can access personal center page. 
+  //Put it here because we want it to be in a lower place of the side bar
   {
     path: '/personalCenter',
     component: Layout,
@@ -147,15 +149,16 @@ export const asyncRoutes = [
         name: 'BasicInfo',
         component: () => import('@/views/personalCenter/basicInfo'),
         meta: { title: 'Basic Infomation', icon: 'form', roles: ['admin', 'faculty', 'student'] }
-      },
+      }, // basic information page
       {
         path: 'changePassword',
         name: 'ChangePassword',
         component: () => import('@/views/personalCenter/changePassword'),
         meta: { title: 'Change Password', icon: 'password', roles: ['admin', 'faculty', 'student'] }
-      }
+      } // change password page
     ]
   },
+  // only admin can manage users
   {
     path: '/manageUsers',
     component: Layout,

@@ -162,6 +162,8 @@
 import { sendVerification, resetPassword, resetPasswordWithOld } from '@/api/resetPassword'
 
 export default {
+  //change password page for a logged in user
+  // two methods: email verification code or old password
   name: 'ChangePassword',
   data() {
     var validatePass2 = (rule, value, callback) => {
@@ -170,28 +172,28 @@ export default {
       } else {
         callback()
       }
-    }
+    } //two new passwords must be the same
     const validateCode = (rule, value, callback) => {
       if (value !== this.identifyCode) {
         callback(new Error('Wrong verification code'))
       } else {
         callback()
       }
-    }
+    }//email verification code must be correct
     const validateePass2 = (rule, value, callback) => {
       if (value !== this.codeForm.epassword) {
         callback(new Error('Password does not match!'))
       } else {
         callback()
-      }
+      }//two new passwords must be the same
     }
     return {
       codeForm: {
         code: '',
         epassword: '',
         epassword2: ''
-      },
-      loginRules: {
+      }, //change through email verification code
+      loginRules: { //input rules
         code: [
           { required: true, message: 'Verification code can not be empty', trigger: 'blur' },
           { validator: validateCode, trigger: 'blur' }
@@ -231,8 +233,8 @@ export default {
         oldPassword: '',
         password: '',
         password2: ''
-      },
-      pswRules: {
+      }, //change through old password
+      pswRules: {//input rules
         oldPassword: [
           {
             required: true,
@@ -293,21 +295,21 @@ export default {
   mounted() {
     this.identifyCode = ''
     this.email = this.$store.state.user.email
-  },
+  }, //emial is stored for a logged in user
 
   methods: {
-    handleResetByCode() {
+    handleResetByCode() { //reset by verification code
       this.$refs.codeForm.validate(valid => {
         if (valid) {
           this.loading = true
-          resetPassword(this.email, this.codeForm.epassword).then(res => {
+          resetPassword(this.email, this.codeForm.epassword).then(res => { //call API
             this.loading = false
             if (res.data['success']) {
               this.$message({
                 message: 'Reset Password Successfully',
                 type: 'success'
               })
-              this.$store.dispatch('user/logout')
+              this.$store.dispatch('user/logout') //log out the user and redirect to login page
               this.$router.push(`/login?redirect=${this.$route.fullPath}`)
             } else {
               this.$alert('Reset Password Failed. Please Try Again')
@@ -317,22 +319,22 @@ export default {
             this.loading = false
           })
         } else {
-          return false // 登录失败提示错误
+          return false // error
         }
       })
     },
-    handlePasswordReset() {
+    handlePasswordReset() { //reset by old password
       this.$refs.pswForm.validate(valid => {
         if (valid) {
           this.loading = true
-          resetPasswordWithOld(this.email, this.pswForm).then(res => {
+          resetPasswordWithOld(this.email, this.pswForm).then(res => { //call API
             this.loading = false
             if (res.data['success']) {
               this.$message({
                 message: 'Reset Password Successfully',
                 type: 'success'
               })
-              this.$store.dispatch('user/logout')
+              this.$store.dispatch('user/logout') //log out the user and redirect to login page
               this.$router.push(`/login?redirect=${this.$route.fullPath}`)
             } else {
               this.$alert('Wrong Password! Please try again')
@@ -349,6 +351,7 @@ export default {
     },
     getCode() {
       sendVerification(this.email).then(res => {
+        // send verification code to the user email address
         console.log('---personal center-change password: get verification code successfully---')
         // console.log(res)
         if (res.data['success']) {
@@ -365,7 +368,7 @@ export default {
                 clearInterval(this.timer)
                 this.timer = null
               }
-            }, 1000)
+            }, 1000) //resend in 60 seconds, counter counts down every 1 second (1000 ms).
           }
         } else {
           this.$alert('System Busy! Please try again')

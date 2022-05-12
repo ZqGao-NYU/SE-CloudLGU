@@ -1,5 +1,11 @@
 import request from '@/utils/request'
 
+// APIs related to basic user functions
+
+// login API
+// user can login by email and password
+// return a token that can uniquely identify the user
+// the token is then stored to Cookies
 export function login(loginForm) {
   return request({
     url: '/api/login',
@@ -11,6 +17,10 @@ export function login(loginForm) {
   })
 }
 
+// register API
+// for register, only user name, user email and password 
+//  are required.
+// No empty space allowed in user name
 export function register(registerForm) {
   return request({
     url: '/api/register',
@@ -23,6 +33,11 @@ export function register(registerForm) {
   })
 }
 
+// send email verification code to user's email for register
+// different with sendVerification in resetting password
+// this is for unregistered user
+// that one is for register user
+// different requirements, different return messages
 export function sendVerification(inemail) {
   console.log(inemail)
   return request({
@@ -32,6 +47,9 @@ export function sendVerification(inemail) {
   })
 }
 
+// get basic information (profile) of a user
+// initially only token for the user was in Cookies
+// use this API to the profile of the user
 export function getInfo(token) {
   return request({
     url: '/api/getprofile',

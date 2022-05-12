@@ -41,6 +41,7 @@
 import { register, sendVerification } from '@/api/user'
 
 export default {
+  // register page
   name: 'Register',
   components: {},
   data() {
@@ -49,7 +50,7 @@ export default {
         callback(new Error('Password does not match!'))
       } else {
         callback()
-      }
+      } // two passwords must be the same
     }
     var validateEmail = (rule, value, callback) => {
       const end1 = value.slice(value.length - 17, value.length)
@@ -58,14 +59,14 @@ export default {
         callback(new Error('Wrong email format: must be CUHKSZ email'))
       } else {
         callback()
-      }
+      } // only CUHKSZ emails are accepted
     }
     var validateCode = (rule, value, callback) => {
       if (value !== this.verifyCode) {
         callback(new Error('Wrong email verification code'))
       } else {
         callback()
-      }
+      } // verify code sent to email
     }
 
     return {
@@ -75,10 +76,10 @@ export default {
         code: '',
         password: '',
         password2: ''
-      },
+      }, //register input form
       verifyCode: '',
-      show: true,
-      count: '',
+      show: true, //flag of showing the "send code" button
+      count: '', //count time of resending the code
       timer: null,
       rules: {
         name: [
@@ -86,13 +87,13 @@ export default {
             required: true,
             message: 'Username cannot be empty',
             trigger: 'blur'
-          },
+          }, //username is required
           {
             min: 5,
             max: 12,
             message: 'Range within 5 to 12 characters',
             trigger: 'blur'
-          }
+          } //range from 5 to 12 characters
         ],
         email: [
           {
@@ -100,52 +101,52 @@ export default {
             required: true,
             message: 'Email cannot be empty',
             trigger: 'blur'
-          },
+          }, //email is required
           {
             validator: validateEmail,
             trigger: 'blur'
-          }
+          } // must be CUHKSZ account
         ],
         code: [
           {
             required: true,
             message: 'Verification code cannot be empty',
             trigger: 'blur'
-          },
+          }, //code is required
           {
             validator: validateCode,
             trigger: 'blur'
-          }
+          } //must be the same as the one sent to the email address
         ],
         password: [
           {
             required: true,
             message: 'Password cannot be empty',
             trigger: 'blur'
-          },
+          }, //password is required
           {
             min: 6,
             max: 12,
             message: 'Range within 6 to 12 characters',
             trigger: 'blur'
-          }
+          } //range from 6 to 12 characters
         ],
         password2: [
           {
             required: true,
             message: 'Confirm password cannot be empty',
             trigger: 'blur'
-          },
+          },//password is required
           {
             min: 6,
             max: 12,
             message: 'Range within 6 to 12 characters',
             trigger: 'blur'
-          },
+          },//range from 6 to 12 characters
           {
             validator: validatePass2,
             trigger: 'blur'
-          }
+          } // two passwords must be the same
         ]
       }
     }
@@ -158,24 +159,25 @@ export default {
   methods: {
     submitForm() {
       this.$refs['registerForm'].validate((valid) => {
+        //check inpur form first
         if (valid) {
-          register(this.registerUser).then(res => {
+          register(this.registerUser).then(res => { //API in ./API folder
             if (res.data['success']) {
               this.$message({
                 message: 'Register Successfully',
                 type: 'success'
               })
-              this.$router.push('/login')
+              this.$router.push('/login') //go to log in if register successfully
             } else {
               this.$alert('Email alerady registered!')
-            }
+            } // can fail only if Email alerady registered
           })
-        }
+        } // if not valid, the form would automatically generate error message
       })
     },
     signIn() {
       this.$router.push('/login')
-    },
+    }, //got to log in page
 
     getCode() {
       const value = this.registerUser.email
@@ -183,8 +185,9 @@ export default {
       var end2 = value.slice(value.length - 12, value.length)
       if (end1 !== '@link.cuhk.edu.cn' && end2 !== '@cuhk.edu.cn') {
         this.$alert('Invalid email format!')
+        // only accept CUHKSZ accounts
       } else {
-        sendVerification(this.registerUser.email).then(res => {
+        sendVerification(this.registerUser.email).then(res => { //cal API
           console.log('---register: get verification code successfully---')
           // console.log(res)
           if (res.data['goodMail']) {
@@ -201,10 +204,10 @@ export default {
                   clearInterval(this.timer)
                   this.timer = null
                 }
-              }, 1000)
+              }, 1000) // can resend after 60 seconds, the counter counts down every 1000 ms (1 second)
             }
           } else {
-            this.$alert('Email has already been registered!')
+            this.$alert('Email has already been registered!') //same logic as above
           }
         })
       }

@@ -15,6 +15,7 @@
 
 <script>
 export default {
+  // togle the side-bar or not
   name: 'Hamburger',
   props: {
     isActive: {

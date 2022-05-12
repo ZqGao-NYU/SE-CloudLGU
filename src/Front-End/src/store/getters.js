@@ -10,3 +10,5 @@ const getters = {
   intro: state => state.user.intro
 }
 export default getters
+
+// encapsuled getters to get cookies data

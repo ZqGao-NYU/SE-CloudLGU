@@ -23,6 +23,7 @@
 <script>
 
 export default {
+  // 404 page
   name: 'Page404',
   computed: {
     message() {
