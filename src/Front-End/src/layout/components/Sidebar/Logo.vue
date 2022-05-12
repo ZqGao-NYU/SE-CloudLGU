@@ -15,6 +15,7 @@
 
 <script>
 export default {
+  // sidebar logo
   name: 'SidebarLogo',
   props: {
     collapse: {

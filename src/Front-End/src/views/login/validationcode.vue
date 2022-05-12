@@ -7,39 +7,39 @@
 export default {
   name: 'ValidationCode',
   props: {
-    identifyCode: { // 默认注册码
+    identifyCode: { // default code
       type: String,
       default: '1234'
     },
-    fontSizeMin: { // 字体最小值
+    fontSizeMin: { // minimum font size
       type: Number,
       default: 25
     },
-    fontSizeMax: { // 字体最大值
+    fontSizeMax: { // maximum font size
       type: Number,
       default: 35
     },
-    backgroundColorMin: { // 验证码图片背景色最小值
+    backgroundColorMin: { // minimum color number of the background
       type: Number,
       default: 200
     },
-    backgroundColorMax: { // 验证码图片背景色最大值
+    backgroundColorMax: { // maximum color number of the background
       type: Number,
       default: 220
     },
-    dotColorMin: { // 背景干扰点最小值
+    dotColorMin: { // minimum color number of the dots
       type: Number,
       default: 60
     },
-    dotColorMax: { // 背景干扰点最大值
+    dotColorMax: { // maximum color number of the dots
       type: Number,
       default: 120
     },
-    contentWidth: { // 容器宽度
+    contentWidth: { // width
       type: Number,
       default: 90
     },
-    contentHeight: { // 容器高度
+    contentHeight: { // height
       type: Number,
       default: 38
     }
@@ -53,12 +53,12 @@ export default {
     this.drawPic()
   },
   methods: {
-  // 生成一个随机数
+  // random number
     randomNum(min, max) {
       return Math.floor(Math.random() * (max - min) + min)
     },
 
-    // 生成一个随机的颜色
+    // random color
     randomColor(min, max) {
       const r = this.randomNum(min, max)
       const g = this.randomNum(min, max)
@@ -70,10 +70,10 @@ export default {
       const canvas = document.getElementById('s-canvas')
       const ctx = canvas.getContext('2d')
       ctx.textBaseline = 'bottom'
-      // 绘制背景
+      // draw the background
       ctx.fillStyle = '#e6ecfd'
       ctx.fillRect(0, 0, this.contentWidth, this.contentHeight)
-      // 绘制文字
+      // draw the text
       for (let i = 0; i < this.identifyCode.length; i++) {
         this.drawText(ctx, this.identifyCode[i], i)
       }
@@ -82,22 +82,22 @@ export default {
     },
 
     drawText(ctx, txt, i) {
-      ctx.fillStyle = this.randomColor(50, 160) // 随机生成字体颜色
-      ctx.font = this.randomNum(this.fontSizeMin, this.fontSizeMax) + 'px SimHei' // 随机生成字体大小
+      ctx.fillStyle = this.randomColor(50, 160) // random color of the text
+      ctx.font = this.randomNum(this.fontSizeMin, this.fontSizeMax) + 'px SimHei' // random size of the text
       const x = (i + 1) * (this.contentWidth / (this.identifyCode.length + 1))
       const y = this.randomNum(this.fontSizeMax, this.contentHeight - 5)
       var deg = this.randomNum(-30, 30)
-      // 修改坐标原点和旋转角度
+      // change origin point and rotate
       ctx.translate(x, y)
       ctx.rotate(deg * Math.PI / 180)
       ctx.fillText(txt, 0, 0)
-      // 恢复坐标原点和旋转角度
+      // restore origin point
       ctx.rotate(-deg * Math.PI / 180)
       ctx.translate(-x, -y)
     },
 
     drawLine(ctx) {
-      // 绘制干扰线
+      // draw intefereing lines
       for (let i = 0; i < 4; i++) {
         ctx.strokeStyle = this.randomColor(100, 200)
         ctx.beginPath()
@@ -108,7 +108,7 @@ export default {
     },
 
     drawDot(ctx) {
-      // 绘制干扰点
+      // draw interfering dots
       for (let i = 0; i < 30; i++) {
         ctx.fillStyle = this.randomColor(0, 255)
         ctx.beginPath()
