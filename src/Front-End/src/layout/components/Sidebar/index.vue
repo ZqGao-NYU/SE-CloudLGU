@@ -25,6 +25,7 @@ import SidebarItem from './SidebarItem'
 import variables from '@/styles/variables.scss'
 
 export default {
+  // sidebar, dynamically generated through user identity based routes
   components: { SidebarItem, Logo },
   computed: {
     ...mapGetters([

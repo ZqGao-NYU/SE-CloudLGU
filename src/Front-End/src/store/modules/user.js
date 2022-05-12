@@ -12,6 +12,7 @@ const getDefaultState = () => {
     roles: []
   }
 }
+// user state information
 
 const state = getDefaultState()
 
@@ -43,7 +44,7 @@ const actions = {
   // user login
   login({ commit }, loginForm) {
     return new Promise((resolve, reject) => {
-      login(loginForm).then(res => {
+      login(loginForm).then(res => { //call API
         console.log('---login---store/user.js:login---')
         console.log(res)
         if (res.data['success']) {

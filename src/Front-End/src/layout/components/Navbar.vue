@@ -40,6 +40,8 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
 export default {
+  // navigation bar
+  // shown at the top-right of the page
   components: {
     Breadcrumb,
     Hamburger
