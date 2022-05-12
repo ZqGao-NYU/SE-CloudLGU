@@ -1,7 +1,7 @@
 import json
 
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 
 from .models import TimeSlot
 from django.db.models import Q, F
@@ -209,7 +209,7 @@ def search_by_prof_name(request):
     today = datetime.today().date()
     sunday, saturday = get_start_end(today)
     # Filter by prof's name and span of the weekdays.
-    get_slots = TimeSlot.objects.filter(Q(professor__username=prof_name), Q(otDate__range=(sunday, saturday)),
+    get_slots = TimeSlot.objects.filter(Q(Professor__username=prof_name), Q(otDate__range=(sunday, saturday)),
                                         Q(booked=False)).annotate(otID=F("pk")).values("otID", "otStartTime",
                                                                                        "otEndTime", "otDate",
                                                                                        "otLocation")
@@ -225,14 +225,14 @@ def search_by_prof_name(request):
 
 
 
-@require_POST
+@require_GET
 def search_by_time(request):
     """Student can get the list of professor's name and """
     response = {}
     today = datetime.today().date()
     Sunday, Saturday = get_start_end(today)
     get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(booked=False)).annotate(
-        profName=F("professor__username")).values_list('profName',
+        profName=F("Professor__username")).values_list('profName',
                                                        'otDate').distinct()
     if get_slots.exists():
         response['success'] = True
@@ -255,12 +255,14 @@ def search_by_time(request):
 
 @require_POST
 def student_check(request):
+    """Student can check the time slots that they booked."""
     today = datetime.today().date()
     Sunday, Saturday = get_start_end(today)
     data = json.loads(request.body)
     studentID = data['Student_ID']
+    # Filter the slots that are booked by that student in this week.
     get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(booked_by=studentID)).annotate(
-        otID=F("pk"), prof_name=F("professor__username")
+        otID=F("pk"), prof_name=F("Professor__username")
     ).values("otID", "otDate", "otStartTime", "otEndTime", "otLocation", "prof_name")
     response = {}
     if get_slots.exists():
@@ -277,10 +279,12 @@ def student_check(request):
 
 @require_POST
 def professor_check(request):
+    """Professor can also check all the time slots he created, and know whether they are booked or not."""
     today = datetime.today().date()
     Sunday, Saturday = get_start_end(today)
     data = json.loads(request.body)
     profID = data['Professor_ID']
+    # Filter the slots that created by this professor in this week. Rename the columns by "annotate"
     get_slots = TimeSlot.objects.filter(Q(otDate__range=(Sunday, Saturday)), Q(Professor_id=profID)).annotate(
         otID=F("pk"), isbooked=F("booked"), booked_byName=F("booked_by__username")).values("otID", "otDate",
                                                                                            "otStartTime", "otEndTime",

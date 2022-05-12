@@ -53,7 +53,7 @@ REST_FRAMEWORK = {
 
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:9528',
-    'http://10.30.201.27:9528',
+    'http://10.30.82.184:9528',
 )
 CORS_ALLOW_CREDENTIALS = True
 
