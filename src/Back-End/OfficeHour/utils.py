@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 
-def getStartEnd(today):
+def get_start_end(today):
     weekday = today.isoweekday()
     delta1 = timedelta(days=weekday)
     delta2 = timedelta(days=6 - weekday)

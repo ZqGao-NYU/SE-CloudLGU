@@ -1,9 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.files.storage import FileSystemStorage
-# Create your models here.
 
-class my_user(User):
+class MyUser(User):
     identity = models.CharField(max_length=16, choices=(('faculty', 'faculty'), ('student', 'student'), ('admin', 'admin')), default='student')
     has_confirmed = models.BooleanField(default=False)
     c_time = models.DateTimeField(auto_now_add=True)
@@ -11,10 +9,10 @@ class my_user(User):
         ordering = ["-c_time"]
 
 
-# Save my_user's Confirmation Code and the registered time.
+# Save MyUser's Confirmation Code and the registered time.
 class ConfirmString(models.Model):
     code = models.CharField(max_length=256)
-    user = models.OneToOneField('my_user', on_delete=models.CASCADE)
+    user = models.OneToOneField('MyUser', on_delete=models.CASCADE)
     c_time = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -25,7 +23,7 @@ class ConfirmString(models.Model):
 
 
 class Profile(models.Model):
-    user = models.OneToOneField('my_user', on_delete=models.CASCADE)
+    user = models.OneToOneField('MyUser', on_delete=models.CASCADE)
     userIntro = models.CharField(max_length=400)
     userPhoto = models.ImageField(upload_to='accounts/uploads/', default='accounts/uploads/default.png')
 

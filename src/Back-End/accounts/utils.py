@@ -8,7 +8,7 @@ import re
 from django.urls import reverse
 
 
-def send_mail(to, template, context):
+def send_mail(to, context):
     text_content = '''
     Thank you for using CloudLGU. Here is your verification code. Please use it to finish your operation!
     '''
@@ -22,6 +22,7 @@ def send_mail(to, template, context):
     msg.attach_alternative(html_content, 'text/html')
     msg.send()
 
+
 def send_activation_email(request, email, code):
     context = {
         'subject': f'{request}',
@@ -30,19 +31,18 @@ def send_activation_email(request, email, code):
         'confirm_time': settings.CONFIRM_TIME
     }
 
-    send_mail(email, 'activate_profile', context)
+    send_mail(email, context)
 
 
-def send_Inform(to):
+def send_inform(to):
     text_content = '''
     Thank you for using CloudLGU. Your account has been deleted. Please connect admin(118010339@link.cuhk.edu.cn)!
     '''
-    html_content= '''
+    html_content = '''
     <p>
     Thank you for using CloudLGU. Your account has been deleted. Please connect admin (118010339@link.cuhk.edu.cn)!
     </p>
     '''
-
 
     msg = EmailMultiAlternatives("Your account has been deleted.", text_content, settings.DEFAULT_FROM_EMAIL, [to])
     msg.attach_alternative(html_content, 'text/html')
@@ -59,6 +59,8 @@ def check_identification(email):
         return 'staff'
     else:
         return 'invalid'
+
+
 def get_verification(bits):
     code = ""
     for i in range(bits):
