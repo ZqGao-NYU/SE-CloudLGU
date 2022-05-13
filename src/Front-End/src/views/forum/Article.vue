@@ -54,26 +54,8 @@ export default {
 		    return {
 			  message: '',
 			  userID: 122,
-			  source: {
-				    success: true,
-        postTitle: 'Title of the post (String)',
-        postContent: 'Content of the post (String)',
-        postTag: 'study',
-        posterName: 'Name of the poster(String)',
-        createTime: '2022-02-02T11:12:12',
-        updateTime: '2022-02-02T11:12:12',
-        commentList: [{
-          commentID: 999,
-          userID: 1676,
-          commentContent: 'commentttttt'
-        }, {
-          commentID: 199,
-          userID: 1676,
-          commentContent: 'commentttttt'
-        }]
-			  },
 		    postID: 0,
-      ID: '',
+        ID: '',
 			  postTitle: 'hh',
 			  postContent: '',
 			  postTag: '',
@@ -92,6 +74,7 @@ export default {
     console.log(this.$route.params)
     var postID = this.$route.params.postID
     console.log(postID)
+    // load and show all post information from api
     showPost(postID)
       .then(res => {
         console.log('here')
@@ -108,21 +91,22 @@ export default {
           this.$alert('Create post fail!')
         }
       })
-      .catch(function(error) { // 请求失败处理
+      .catch(function(error) { // request failure error
         console.log(error)
       })
-    // loading: true
   },
-	  	methods: {
+	methods: {
     docomment: function() {
       this.commenting = !this.commenting
       this.message = ''
     },
+    // send a new comment
     sendComment: function() {
       console.log(this.message)
       var commentForm = { postID: this.$route.params.postID,
         userID: this.$store.state.user.token,
         commentContent: this.message }
+      // send request to api to create a comment
       createComment(commentForm)
         .then(res => {
           if (res.data['success']) {
@@ -138,11 +122,13 @@ export default {
             this.$alert('Create post fail!')
           }
         })
-        .catch(function(error) { // 请求失败处理
+        .catch(function(error) { // request failure error
           console.log(error)
         })
     },
+    // delete comment
     deletiComment: function(id) {
+      // send delete request to api
       deleteComment(id)
         .then(res => {
           console.log(id)
@@ -157,44 +143,15 @@ export default {
             this.$alert('Create post fail!')
           }
         })
-        .catch(function(error) { // 请求失败处理
+        .catch(function(error) { // request failure error
           console.log(error)
         })
     }
-		  	// getData(){
-		  	// 	//获取文章信息
-    // 	this.$http({
-		    //         url: `https://cnodejs.org/api/v1/topic/${this.$route.params.id}`,   //ES6语法，引入组件内的 route object（路由信息对象）
-		    //         method: 'get',
-		    //         params:{
-		    //         	mdrender:true
-		    //         }
-		    //       })
-    // 	  .then( (response) => {
-    // 	  	if( response.data.success === true ){
-    // 	  		this.post = response.data.data;
-    // 	  		this.loading = false;
-    // 	  	}
-    // 	  })
-    // 	  .catch(function (error) {
-    // 	  	console.log(error);
-    // 	  });
-		  	// }
-    // },
-	    // beforeMount() {
-	    // 	this.loading = true;
-	    //     this.getData();
-	    // },
-	    // watch:{
-    // 	$route(){
-    // 		this.getData();
-    // 	}
   }
 }
 </script>
 
 <style>
-	/* @import url("../assets/markdown-github.css"); */
 	.ArticleSection {
 		-webkit-box-sizing: border-box;
 		-moz-box-sizing: border-box;
@@ -207,10 +164,7 @@ export default {
 		margin-top:3%;
 	}
 	.floor {
-		/* display: inline-block; */
-		/* /* font-size:0.8rem ; */
 		color:#a8a3a3;
-		/* padding-left: 5px;  */
 	}
 	.ArticleSection #content {
 		padding: 2rem 1rem 2rem 1rem;
@@ -226,7 +180,6 @@ export default {
         padding-left: 20px;
         padding-top: 10px;
 		border-bottom: 1px solid #C0CCDA;
-
 	}
 	.article h1 {
 		font-size:1.2rem;
