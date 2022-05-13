@@ -5,7 +5,6 @@
       <el-form-item label="title" prop="title">
         <el-input v-model="form.title" />
       </el-form-item>
-      <!--进行列表渲染，数据全部存在Vuex的全局静态变量里，修改分区数只需要修改store/index.js的静态数据-->
       <el-form-item label="tag" prop="category">
         <el-select v-model="form.category" filterable placeholder="choose tag">
           <el-option
@@ -35,7 +34,6 @@
 
 <script>
 import { createPost } from '@/api/forum'
-import axios from 'axios'
 
 export default {
   data() {
@@ -55,8 +53,9 @@ export default {
     }
   },
   methods: {
-    onSubmit() {
-      // alert('submit!');
+    //click to submit new post
+    onSubmit() { 
+      //check whether fill all
       if (this.form.content === '' || this.form.title === '' || this.form.category === '') {
         alert('Post it by filling in all required fields')
       } else {
@@ -66,7 +65,7 @@ export default {
           tag: this.form.category,
           userID: this.$store.state.user.token
         }
-        // alert('succss')
+        // send request to api to create new post
         createPost(form).then(res => {
           if (res.data['success']) {
             this.$message({
@@ -78,7 +77,7 @@ export default {
             this.$alert('Create post fail!')
           }
         })
-          .catch(function(error) { // 请求失败处理
+          .catch(function(error) { // request failure error
             console.log(error)
           })
       }
