@@ -1,15 +1,5 @@
 <template>
   <div>
-    <!-- <el-form label="query" style="text-align: left">
-    <el-input
-      v-model="message"
-      style="width: 220px"
-      placeholder="Input Professor's name"
-      prefix-icon="el-icon-search"
-      clearable>
-    </el-input>
-    <el-button @click.native=studentCheckOT()>查询</el-button>
-    </el-form> -->
     <p style="margin-left:42%; margin-top:3%; font-size:2rem;">My Office Time</p>
     <div style="margin-left:5%; width:90%;">
       <FullCalendar
@@ -26,14 +16,9 @@ import DayGridPlugin from '@fullcalendar/daygrid'
 import TimeGridPlugin from '@fullcalendar/timegrid'
 import InteractionPlugin from '@fullcalendar/interaction'
 import ListPlugin from '@fullcalendar/list'
-
-// import axios from 'axios'
 import tippy from 'tippy.js'
-// import 'tippy.js/dist/tippy.css'
-// import 'tippy.js/themes/light.css';
-// import 'tippy.js/animations/scale.css';
 import { profCheckOfficeTime, deleteOfficeTimeSlot, createOfficeTimeSlot } from '@/api/ot'
-// require('@fullcalendar/core/main.min.css')
+
 require('@fullcalendar/daygrid/main.min.css')
 require('@fullcalendar/timegrid/main.min.css')
 
@@ -42,36 +27,10 @@ export default {
   data() {
     return {
       message: 'prof1',
-      source: {
-        Professor_Name: 'p1',
-        success: true,
-        otLists:
-        [
-          {
-            otID: 11,
-            otDate: '2022-04-10',
-            otStartTime: '09:00',
-            otEndTime: '10:00',
-            otLocation: 'place1',
-            isBooked: false,
-            booked_by: ''
-          },
-          {
-            otID: 12,
-            otDate: '2022-04-11',
-            otStartTime: '09:00',
-            otEndTime: '10:00',
-            otLocation: 'place1',
-            isBooked: true,
-            booked_by: 'student'
-          }
-        ]
-      },
-      calendarOptions: {
+      calendarOptions: { //settings for imported fullCalendar
         plugins: [DayGridPlugin, InteractionPlugin, TimeGridPlugin, ListPlugin],
         initialView: 'timeGridWeek',
-        // backgroundColor: '#D3D3D3',
-        headerToolbar: { // 日历头部按钮位置
+        headerToolbar: {
           left: 'title',
           center: '',
           right: 'prev today next'
@@ -80,7 +39,7 @@ export default {
           hour: '2-digit',
           minute: '2-digit',
           meridiem: false,
-          hour12: false // 设置时间为24小时
+          hour12: false
         },
         height: 660,
         customButtons: {
@@ -103,9 +62,9 @@ export default {
   },
   created() {
     var prof_id = this.$store.state.user.token
+    //show all OT slots for professor
     profCheckOfficeTime(prof_id)
       .then(res => {
-      // console.log(res.data['lists'][i]['booked_byName'])
         console.log(res.data)
         if (res.data['success']) {
           console.log('---ot professor: get all ot successfully---')
@@ -113,8 +72,7 @@ export default {
           this.message = res.data['Professor_Name']
           console.log(res.data)
           for (var i = 0; i < res.data['lists'].length; i++) {
-          // console.log(res.data['lists'][i]['isbooked'])
-            if (res.data['lists'][i]['isbooked']) {
+            if (res.data['lists'][i]['isbooked']) { // display a booked OT slot
               this.calendarOptions.events.push({
                 id: res.data['lists'][i]['otID'],
                 title: 'Office Time',
@@ -126,7 +84,7 @@ export default {
                   booked_by: res.data['lists'][i]['booked_byName']
                 }
               })
-            } else {
+            } else { // display an available OT slot
               this.calendarOptions.events.push({
                 id: res.data['lists'][i]['otID'],
                 title: 'Office Time',
@@ -145,30 +103,31 @@ export default {
           this.$alert('You do not have office time currently!')
         }
       })
-      .catch(function(error) { // 请求失败处理
+      .catch(function(error) { // request failure error
         console.log(error)
       })
   },
   methods: {
+     // check whether input is number
     isNumber(value) {
-      // console.log('---check integer---')
       if (value === '') {
         return false
       }
       const r = /^\+?[1-9][0-9]*$/
       return (r.test(value))
     },
+    // click a time slot to create a new OT
     handleDateClick: function(arg) {
       const dateStr = arg.dateStr.substring(0, 10)
       const startStr = arg.dateStr.substring(11, 16)
       if (confirm('Do you want to create an OfficeTime at ' + dateStr + ' ' + startStr + '?')) {
         var length = prompt('Enter the time period in minutes')
-        // console.log(this.isNumber(length))
         if (!this.isNumber(length)) {
           this.$alert('The time period must in interger form!')
           return
         } else {
           var location = prompt('Enter the location')
+          // calculate the time
           var startTime = new Date(dateStr + 'T' + startStr + ':00')
           var endTime = new Date(startTime.setMinutes(startTime.getMinutes() + parseInt(length)))
           var hours = endTime.getHours().toString()
@@ -184,6 +143,7 @@ export default {
             Professor_userID: this.$store.state.user.token
           }
           console.log(otForm)
+          // send create OT request api
           createOfficeTimeSlot(otForm)
             .then(res => {
               if (res.data['status']['success']) {
@@ -196,14 +156,14 @@ export default {
                 this.$alert('Create OT fail!')
               }
             })
-            .catch(function(error) { // 请求失败处理
+            .catch(function(error) { // request failure error
               console.log(error)
             })
         }
       }
     },
+    //click an existing event to delete
     handleEventClick: function(info) {
-      // alert(info.event.extendedProps.Location)
       if (confirm('Do you want to delete the OfficeTime at ' + info.event.start + '?')) {
         deleteOfficeTimeSlot(info.event.id)
           .then(res => {
@@ -217,18 +177,19 @@ export default {
               this.$alert('Delete OT fail!')
             }
           })
-          .catch(function(error) { // 请求失败处理
+          .catch(function(error) { // request failure error
             console.log(error)
           })
       }
     },
+    // move mouse on an event to show detail
     handleMouseEnter: function(info) {
-      if (info.event.overlap) {
+      if (info.event.overlap) { // not be booked
         tippy(info.el, {
           content: 'Location: ' + info.event.extendedProps.Location
         })
       } else {
-        tippy(info.el, {
+        tippy(info.el, { // show locatoin and booked_by
           content: 'Location: ' + info.event.extendedProps.Location + ',   booked by: ' + info.event.extendedProps.booked_by
         })
       }
