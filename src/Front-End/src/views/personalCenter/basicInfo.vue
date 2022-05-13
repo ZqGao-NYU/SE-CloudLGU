@@ -83,6 +83,7 @@
 <script>
 import { updateProfile, updateAvatar } from '@/api/personalCenter'
 export default {
+  //user profile page
   name: 'BasicInformation',
   data() {
     return {
@@ -113,8 +114,9 @@ export default {
     }
   },
   created() {
+    // get user profile in Cookies
     this.valueUrl = this.$store.state.user.avatar
-    this.name = this.$store.state.user.name.replace(/\s*/g, '')
+    this.name = this.$store.state.user.name.replace(/\s*/g, '') //no space allowed
     this.email = this.$store.state.user.email
     this.intro = this.$store.state.user.intro
     this.identity = this.$store.state.user.roles[0]
@@ -126,10 +128,10 @@ export default {
       this.edit_user.username = this.name
       this.edit_user.intro = this.intro
       this.editdialogVisible = true
-    },
+    }, //toggle modify. can only modify name, introduction and avatar
     handleUpdate() {
       // send avatar and name, intro seperately
-      updateProfile(this.$store.state.user.token, this.edit_user).then(res => {
+      updateProfile(this.$store.state.user.token, this.edit_user).then(res => { //call API
         console.log('---basic info: send updated profile successfully')
         if (res.data['success']) {
           this.$message({
@@ -137,7 +139,7 @@ export default {
             type: 'success'
           })
           this.editdialogVisible = false
-          this.$router.go(0)
+          this.$router.go(0) //refresh page to show the updated profile
         } else {
           this.$message({
             message: 'Update Profile Failed! Please try again',
@@ -146,10 +148,11 @@ export default {
           this.edit_user.name = this.name
           this.edit_user.intro = this.intro
           this.editdialogVisible = false
-        }
+        } //close the edit dialog
       })
     },
     uploadFile(el) {
+      // upload image file
       if (!el.target.files[0].size) return // if file size = 0, return
       if (el.target.files[0].type.indexOf('image') === -1) { // make sure an image is selected
         return
@@ -168,7 +171,7 @@ export default {
         formData.append('userID', this.$store.state.user.token)
         formData.append('photo', el.target.files[0])
         // post the image to back-end
-        updateAvatar(formData).then(res => {
+        updateAvatar(formData).then(res => { //call API
           if (res.data['success']) {
             this.$message({
               message: 'Update Profile Successfully',
@@ -182,17 +185,17 @@ export default {
             })
             this.$router.go(0)
           }
-        })
+        }) //refresh the page
       }
     },
     cancelEdit() {
       this.edit_user.username = this.name
       this.edit_user.intro = this.intro
       this.editdialogVisible = false
-    },
+    }, //cancel editing
     goChangePassword() {
       this.$router.push('/personalCenter/changePassword')
-    }
+    } // go to change password
   }
 }
 </script>

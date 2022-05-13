@@ -1,211 +1,139 @@
 import json
-import os
-from datetime import datetime
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.http import Http404, JsonResponse
-from django.shortcuts import render, resolve_url
-from django.contrib import messages
+from django.http import JsonResponse
 from django.db.models import F
-from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse
 from django.conf import settings
+from django.views.decorators.http import require_POST
+
+from .models import MyUser, Profile
+from .utils import send_activation_email, check_identification, get_verification, send_inform
 
 
-from .models import my_user, ConfirmString, Profile
-from .forms import UserForm
-from .utils import send_activation_email, check_identification, get_verification, send_Inform
-
-
-def reg_Verification(request):
-    if(request.method == 'POST'):
-        response = {}
-        data = json.loads(request.body)
-        userEmail = data['email']
-        same_user = my_user.objects.filter(email=userEmail)
-        if same_user:
-            response['goodMail'] = False
-            # response['goodName'] = False
-            # response['success'] = False
-            # response['message'] = "This Email Has Already Been Used!"
-            response['code'] = -1
-            return JsonResponse(response)
-
-        # Generate Verification Code
-        code = get_verification(settings.VERIFICATION_BITS)
-        # new_user = my_user()
-        # new_user.email = userEmail
-        # new_user.save()
-        # Create Confirmation Model
-        # ConfirmString.objects.create(user=new_user, code=code)
-        # Send Confirmation Email
-        send_activation_email("Account Activation", userEmail, code)
-        # response['success'] = True
-        # response['status'] = "Verification Code Has Already Been Sent to Your Email {Mail}".format(Mail=userEmail)
-        response['code'] = code
-        response['goodMail'] = True
+@require_POST
+def reg_verification(request):
+    """Generate the verification code email for the user to register a new account."""
+    response = {}
+    data = json.loads(request.body)
+    userEmail = data['email']
+    same_user = MyUser.objects.filter(email=userEmail)
+    if same_user:
+        response['goodMail'] = False
+        response['code'] = -1
         return JsonResponse(response)
 
-
-def Reset_Pwd_Code(request):
-    if(request.method == 'POST'):
-        response = {}
-        data = json.loads(request.body)
-        userEmail = data['userEmail']
-        # Check the existance of the user's email
-        try:
-            user = my_user.objects.get(email=userEmail)
-            code = get_verification(settings.VERIFICATION_BITS)
-            send_activation_email("Password Reset", user.email, code)
-            response['code'] = code
-            response['success'] = True
-            return JsonResponse(response)
-        except my_user.DoesNotExist:
-            response['success'] = False
-            response['code'] = -1
-            return JsonResponse(response)
-
-def Modify_Pwd_By_Old(request):
-    if(request.method == 'POST'):
-        response = {}
-        data = json.loads(request.body)
-        userEmail = data['userEmail']
-        oldPwd = data['oldPassword']
-        newPwd = data['newPassword']
-        try:
-            uLists = my_user.objects.filter(email = userEmail)
-            if not uLists.exists():
-                response['success'] = False
-                return JsonResponse(response)
-            user = uLists.get(password=oldPwd)
-            user.password=newPwd
-            user.save()
-            response['success'] = True
-            return JsonResponse(response)
-        except my_user.DoesNotExist:
-            response['success'] = False
-            return JsonResponse(response)
+    # Generate Verification Code
+    code = get_verification(settings.VERIFICATION_BITS)
+    # Send Confirmation Email
+    send_activation_email("Account Activation", userEmail, code)
+    response['code'] = code
+    response['goodMail'] = True
+    return JsonResponse(response)
 
 
-def Modify_Pwd(request):
-    if(request.method == 'POST'):
-        response = {}
-        data = json.loads(request.body)
-        userEmail = data['userEmail']
-        password = data['password'] # User's new password
-        try:
-            user = my_user.objects.get(email = userEmail)
-            user.password = password
-            response['success'] = True
-            user.save()
-            return JsonResponse(response)
-
-        except my_user.DoesNotExist:
-            response['success'] = False
-            return JsonResponse(response)
-
-def register(request):
-    if(request.method == 'GET'):
-        form = UserForm()
-        context = {'form': form}
-        return render(request, 'accounts_create.html', context)
-    if(request.method == 'POST'):
-        response = {}
-        data = json.loads(request.body)
-        userName = data['userName']
-        userEmail = data['userEmail']
-        password = data['password']
-        # code = request.POST.get('code')
-        # identify = utils.check_identification(userEmail)
-        new_user = my_user()
-        new_user.username = userName
-        new_user.email = userEmail
-        new_user.password = password
-        identity = check_identification(new_user.email)
-        if identity == 'student':
-            new_user.identity = 'student'
-        elif identity == 'faculty':
-            new_user.identity = 'faculty'
-        elif identity == 'invalid':
-            # response['goodMail'] = False
-            # response['goodName'] = True
-            response['success'] = False
-            # response['message'] = "Invalid Email Address. You need to use your CUHK(SZ) email to sign up"
-            return JsonResponse(response)
-        # Administer?
-        new_user.has_confirmed = True
-        profile = Profile()
-        new_user.save()
-        profile.user = new_user
-        profile.save()
+@require_POST
+def reset_pwd_code(request):
+    """Generate the verification code email for the user to modify their password."""
+    response = {}
+    data = json.loads(request.body)
+    userEmail = data['userEmail']
+    try:
+        user = MyUser.objects.get(email=userEmail)  # Check the existence of the user's email
+        code = get_verification(settings.VERIFICATION_BITS)
+        send_activation_email("Password Reset", user.email, code)
+        response['code'] = code
         response['success'] = True
         return JsonResponse(response)
-       # # Confirmation (Check Verification Code):
-       #  try:
-       #      confirm = ConfirmString.objects.get(code=code)
-       #  except:
-       #      context = {}
-       #      context['success'] = False
-       #      context['message'] = 'Verification Code Not Match'
-       #      return JsonResponse(context) #  Replace it with login page or successful inform page after integration
-       #  c_time = confirm.c_time
-       #  now = datetime.now()
-       #  if now > c_time + datetime.timedelta(settings.CONFIRM_TIME):
-       #      context = {}
-       #      confirm.delete()
-       #      context['success'] = False
-       #      context['message'] = 'Verfication Code Expired, Please Resend The Code!'
-       #      return JsonResponse(context)
-       #  else:
-       #      user = confirm.user
-       #      user.has_confirmed = True
-       #      user.save()
-       #      confirm.delete()
-       #      response['success'] = True
-       #      response['message'] = 'You have successfully registered up! Thank you for your support!'
-       #      return JsonResponse(response)
-
-        # # Generate Verification Code
-        # code = get_verification(settings.VERFICATION_BITS)
-        #
-        # # Create Confirmation Model
-        # ConfirmString.objects.create(user=new_user, code=code)
-        # # Send Confirmation Email
-        # send_activation_email(request, userEmail, code)
-
-# @require_http_methods(["POST"])
-# def register(request):
-#     response = {}
-
-def ActivateView(request, code):
-    print("Check")
-    if(request.method == 'GET'):
-        try:
-            confirm = ConfirmString.objects.get(code=code)
-            user = confirm.user
-            user.has_confirmed = True
-            user.save()
-            confirm.delete()
-        except:
-            context = {}
-            context['message'] = 'Invalid Authentication Request. This link may already been used!'
-            context['uri'] = reverse('register')
-            return render(request, 'verification_fail.html', context) #  Replace it with login page or successful inform page after integration
+    except MyUser.DoesNotExist:
+        response['success'] = False
+        response['code'] = -1
+        return JsonResponse(response)
 
 
 
-        messages.success(request, "You have successfully activated your account!")
-        return redirect('register') # Replace it with login page or successful inform page after integration
-
-
-
-def authenticationView(request):
-    return render(request,'auth.html',locals())
-
-
-def login(request):
+@require_POST
+def modify_pwd_by_old(request):
+    """Modify the password with the old password"""
     response = {}
-    if request.session.get('is_login', None):  # 不允许重复登录
+    data = json.loads(request.body)
+    userEmail = data['userEmail']
+    oldPwd = data['oldPassword']
+    newPwd = data['newPassword']
+    try:
+        uLists = MyUser.objects.filter(email=userEmail)  # Get the user's email first
+        if not uLists.exists():
+            response['success'] = False
+            return JsonResponse(response)
+        user = uLists.get(password=oldPwd)
+        user.password = newPwd
+        user.save()
+        response['success'] = True
+        return JsonResponse(response)
+    except MyUser.DoesNotExist:  # If the user doesn't exist
+        response['success'] = False
+        return JsonResponse(response)
+
+
+@require_POST
+def modify_pwd(request):
+    """Modify the password through verification code sent with email"""
+    response = {}
+    data = json.loads(request.body)
+    userEmail = data['userEmail']
+    password = data['password']  # User's new password
+    try:
+        user = MyUser.objects.get(email=userEmail)
+        user.password = password
+        response['success'] = True
+        user.save()
+        return JsonResponse(response)
+
+    except MyUser.DoesNotExist:
+        response['success'] = False
+        return JsonResponse(response)
+
+
+@require_POST
+def register(request):
+    """Register a new account
+
+    Key Arguments:
+    userName -- User's name that can be seen by other users
+    userEmail -- User's email to register the account
+    password -- User's password for the account
+    """
+    response = {}
+    data = json.loads(request.body)
+    userName = data['userName']
+    userEmail = data['userEmail']
+    password = data['password']
+    # Generate a new user object
+    new_user = MyUser()
+    new_user.username = userName
+    new_user.email = userEmail
+    new_user.password = password
+    identity = check_identification(new_user.email)  # Use email address to verify the identity of the users.
+    if identity == 'student':
+        new_user.identity = 'student'
+    elif identity == 'faculty':
+        new_user.identity = 'faculty'
+    elif identity == 'invalid':
+        response['success'] = False
+        return JsonResponse(response)
+    new_user.has_confirmed = True
+    profile = Profile()
+    new_user.save()
+    profile.user = new_user
+    profile.save()
+    response['success'] = True
+    return JsonResponse(response)
+
+
+@require_POST
+def login(request):
+    """Login with user's email and password"""
+    response = {}
+    if request.session.get('is_login', None):  # No repeated login
         response['success'] = False
         response['info'] = "Repeat Logins are not allowed！"
         return JsonResponse(response)
@@ -215,127 +143,125 @@ def login(request):
         password = data['password']
 
         try:
-            user = my_user.objects.get(email=userEmail)
+            user = MyUser.objects.get(email=userEmail)
             if user.password == password:
                 request.session['is_login'] = True
                 request.session['userID'] = user.id
                 request.session['userEmail'] = user.email
                 response['success'] = True
-                # response['token'] = {"info":"Login Success", "identity":user.identity, "userID":user.id}
                 response['token'] = user.id
                 return JsonResponse(response)
 
-            else:#返回json
+            else:
                 response['success'] = False
                 response['info'] = "Incompatible Password"
                 return JsonResponse(response)
-        except my_user.DoesNotExist:
+        except MyUser.DoesNotExist:
             response['success'] = False
-            # response['info'] = "This Account Does not Exist！Please Try Again"
             response['token'] = -1
             return JsonResponse(response)
 
-    # login_form = UserForm()
-    # return render(request, 'login/login.html', locals())
 
+@require_POST
+def update_profile(request):
+    """Update user's profile
 
-def updateProfile(request):
-    if (request.method == 'POST'):
-        # try:
+    Key Arguments:
+    userIntro -- User's self-introduction
+    userName -- User's nickname shown to other users
+    """
+    if request.method == 'POST':
         data = json.loads(request.body)
-        # userEmail = request.session['userEmail']#session不知道可不可以这么用，不行的话让前端传id
         uID = data['userID']
-        user = my_user.objects.get(id=uID)
+        user = MyUser.objects.get(id=uID)
 
         user.profile.userIntro = data['userIntro']
         user.username = data['userName']
 
         user.profile.save()
         user.save()
-        return JsonResponse({'success':True})
-        # except:
-        #     return JsonResponse({'success':False})
+        return JsonResponse({'success': True})
     else:
-        return JsonResponse({'success':False})
+        return JsonResponse({'success': False})
 
-def updateAvatar(request):
-    if (request.method == 'POST'):
-        #data = json.loads(request.body)
-        #photo = data['photo']
-        #uID = data['userID']
+
+@require_POST
+def update_avatar(request):
+    """Update user's avatar"""
+    if request.method == 'POST':
         photo = request.FILES.get('photo')
         uID = request.POST.get('userID')
-        user = my_user.objects.get(id=uID)
-        # Save Photo
+        user = MyUser.objects.get(id=uID)
+        # Save Avatar to the location set in the models.
         user.profile.userPhoto = photo
         user.profile.save()
         user.save()
-        return JsonResponse({'success':True})
+        return JsonResponse({'success': True})
     else:
-        return JsonResponse({'success':False})
+        return JsonResponse({'success': False})
 
 
-def getProfile(request):
-    if(request.method == 'POST'):
-        response = {}
-        data = json.loads(request.body)
-        uID = data['token']
-        user = my_user.objects.get(id=uID)
-        response['userPhoto'] = "http://" + request.get_host()  + user.profile.userPhoto.url
-        response['userIntro'] = user.profile.userIntro
-        response['userName'] = user.username
-        response['userEmail'] = user.email
-        response['userIdentity'] = user.identity
-        return JsonResponse(response)
-
-def getUserList(request):
+@require_POST
+def get_profile(request):
+    """Get a certain user's profile through their user's ID"""
     response = {}
-    userList = my_user.objects.annotate(userName=F('username'), userEmail=F('email'),
-                                        userPassword=F('password'), userIntro=F('profile__userIntro'),
-                                        userIdentity=F('identity')).values('userName', 'userEmail',
-                                      'userPassword', 'userIdentity', 'userIntro')
+    data = json.loads(request.body)
+    uID = data['token']
+    user = MyUser.objects.get(id=uID)
+    response['userPhoto'] = "http://" + request.get_host() + user.profile.userPhoto.url  # Use http to locate the avatar
+    response['userIntro'] = user.profile.userIntro
+    response['userName'] = user.username
+    response['userEmail'] = user.email
+    response['userIdentity'] = user.identity
+    return JsonResponse(response)
+
+
+@require_POST
+def get_user_list(request):
+    """Get the list of users. This function only belongs to Administer"""
+    response = {}
+    userList = MyUser.objects.annotate(userName=F('username'), userEmail=F('email'),
+                                       userPassword=F('password'), userIntro=F('profile__userIntro'),
+                                       userIdentity=F('identity')).values('userName', 'userEmail',
+                                                                          'userPassword', 'userIdentity', 'userIntro')
     serialized_q = json.dumps(list(userList), cls=DjangoJSONEncoder)
     response['lists'] = json.loads(serialized_q)
-    # json_list = serializers.serialize("json", userList)
-    # response['lists'] = json_list
-
 
     return JsonResponse(response)
 
-def resetProfile(request):
+
+@require_POST
+def reset_profile(request):
+    """Reset the profile or password of a certain user. This function only belongs to Administer"""
     data = json.loads(request.body)
     userEmail = data['userEmail']
-
     userName = data['userName']
     userIntro = data['userIntro']
     password = data['userPassword']
     userIdentity = data['userIdentity']
-    user = my_user.objects.get(email=userEmail)
+    user = MyUser.objects.get(email=userEmail)
     user.username = userName
     try:
         profile = Profile.objects.get(user=user)
     except:
         profile = Profile(user=user)
     profile.userIntro = userIntro
-    profile.save()
+    profile.save()  # Save the updated records
     user.identity = userIdentity
     user.password = password
     user.save()
 
-    response = {}
-    response['success'] = True
+    response = {'success': True}
     return JsonResponse(response)
 
-def deleteUser(request):
+
+@require_POST
+def delete_user(request):
+    """Delete the user and send inform"""
     data = json.loads(request.body)
     userEmail = data['userEmail']
-    user = my_user.objects.get(email=userEmail)
+    user = MyUser.objects.get(email=userEmail)
     user.delete()
-    send_Inform(userEmail)
-    response = {}
-    response['success'] = True
+    send_inform(userEmail)  # Send inform to the email address that will be deleted
+    response = {'success': True}
     return JsonResponse(response)
-
-
-
-

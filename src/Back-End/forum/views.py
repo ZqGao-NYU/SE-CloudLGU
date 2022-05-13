@@ -1,9 +1,7 @@
 from django.core.serializers.json import DjangoJSONEncoder
-from django.shortcuts import render
 import json
 from django.http import Http404, JsonResponse
 from django.views.decorators.http import require_POST
-
 from .models import forumPost, forumComment
 from accounts.models import my_user
 from django.core import serializers
@@ -15,6 +13,7 @@ def Create_new_post(request):
     '''Poster can add a new post to the forum.'''
     # input
     # The front end has already handled illegal input, so no verification is done here
+
     data = json.loads(request.body)
     postTitle = data['postTitle']
     postContent = data['postContent']
@@ -28,6 +27,7 @@ def Create_new_post(request):
     # create a new 'forumPost' object
     new_post = forumPost(Title=postTitle, Content=postContent, Tag=postTag)
     poster = my_user.objects.get(id=userID)
+
     new_post.Poster = poster
     new_post.UpdateTime = datetime.datetime.now()
     new_post.Ctime = datetime.datetime.now()
@@ -96,9 +96,9 @@ def Show_post(request):
                                              commentContent=F('Content'),
                                              createTime=F('Ctime'), commenterName=F('Commenter__username'),
                                              commentID=F('id')).values('commenterName',
-                                                                           'userID',
-                                                                           'commentContent',
-                                                                           'createTime',
+                                                                       'userID',
+                                                                       'commentContent',
+                                                                       'createTime',
                                                                        'commentID')
     json_list = json.dumps(list(comment_list), cls=DjangoJSONEncoder)
 
@@ -123,12 +123,12 @@ def Show_all_post(request):
                                            postContent=F('Content'),
                                            postTag=F('Tag'), posterName=F('Poster__username'),
                                            updateTime=F('UpdateTime'), createTime=F('Ctime')).values('postID',
-                                                                                                    'postTitle',
-                                                                                                    'postContent',
-                                                                                                    'postTag',
-                                                                                                    'posterName',
-                                                                                                    'updateTime',
-                                                                                                    'createTime')
+                                                                                                     'postTitle',
+                                                                                                     'postContent',
+                                                                                                     'postTag',
+                                                                                                     'posterName',
+                                                                                                     'updateTime',
+                                                                                                     'createTime')
     json_list = json.dumps(list(post_list), cls=DjangoJSONEncoder)
 
     # return value
@@ -154,7 +154,7 @@ def Create_new_comment(request):
     new_commment.Ctime = datetime.datetime.now()
     my_post.UpdateTime = datetime.datetime.now()
     my_post.save()
-    new_commment.save()
+    new_comment.save()
 
     # return value
     response = {}

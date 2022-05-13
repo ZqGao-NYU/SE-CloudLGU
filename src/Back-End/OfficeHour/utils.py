@@ -1,7 +1,8 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 
-def getStartEnd(today):
+def get_start_end(today):
+    """This function read the date of today and return the date of the last Sunday and the next Saturday"""
     weekday = today.isoweekday()
     delta1 = timedelta(days=weekday)
     delta2 = timedelta(days=6 - weekday)
@@ -10,6 +11,3 @@ def getStartEnd(today):
     return Sunday, Saturday
 
 
-def converter(TimeSlot):
-    return {'otID': TimeSlot.id, 'otDate': TimeSlot.otDate, 'otStartTime': TimeSlot.otStartTime, 'otEndTime': TimeSlot.otEndTime,
-            'otLocation': TimeSlot.otLocation, 'isBooked': TimeSlot.booked, 'booked_by': TimeSlot.booked_by}

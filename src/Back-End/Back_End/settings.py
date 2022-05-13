@@ -36,7 +36,6 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -45,29 +44,25 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
     'DEFAULT_RENDERER_CLASSES': (
-    #   'rest_framework.renderers.XMLRenderer',
-    'rest_framework.renderers.JSONRenderer',
-    #   'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework.renderers.JSONRenderer',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': [
-    # 'rest_framework.authentication.SessionAuthentication',
-    'rest_framework.authentication.BasicAuthentication',
-]
+        'rest_framework.authentication.BasicAuthentication',
+    ]
 }
 
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:9528',
-    'http://10.30.201.27:9528',
+    'http://10.30.82.184:9528',
 )
 CORS_ALLOW_CREDENTIALS = True
-
 
 ROOT_URLCONF = 'Back_End.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS':[BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -87,12 +82,12 @@ WSGI_APPLICATION = 'Back_End.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', #数据库类型
-        'NAME': 'csc4001', #所使用的数据库的名字
-        'USER': 'root', #数据库服务的用户
-        'PASSWORD': 'GgGg657199', #密码
-        'HOST': '127.0.0.1', #主机
-        'PORT': '3306', #端口
+        'ENGINE': 'django.db.backends.mysql',  # DBMS you used
+        'NAME': 'csc4001',  # Name of the schemas
+        'USER': 'root',  # Username
+        'PASSWORD': 'GgGg657199',  # Password
+        'HOST': '127.0.0.1',  # Address of DB
+        'PORT': '3306',  # Port of DB
     }
 }
 
@@ -145,8 +140,6 @@ EMAIL_HOST = 'smtp.163.com'
 EMAIL_HOST_USER = '13141391404@163.com'
 EMAIL_HOST_PASSWORD = 'KTRHGXYRRFQFFDJW'
 EMAIL_PORT = 25
-
-
 
 # Other Setting
 MAIN_PAGE = ""

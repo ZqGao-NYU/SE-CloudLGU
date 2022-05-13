@@ -40,7 +40,7 @@ module.exports = {
     hotOnly: false,
     proxy: { // 配置跨域
       '/api': {
-        target: 'http://127.0.0.1:8000/api',
+        target: 'http://127.0.0.1:8000/api', //back-end port
         ws: true,
         changOrigin: true,
         pathRewrite: {

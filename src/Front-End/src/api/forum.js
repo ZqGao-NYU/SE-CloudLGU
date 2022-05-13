@@ -1,5 +1,7 @@
 import request from '@/utils/request'
+// APIs related to forum page
 
+// 
 export function showPost(id) {
   return request({
     url: '/api/forum/post/show',

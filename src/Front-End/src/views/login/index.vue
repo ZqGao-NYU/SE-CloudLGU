@@ -82,8 +82,9 @@
 import ValidationCode from './validationcode.vue'
 
 export default {
+  // basic login page
   name: 'Login',
-  components: { ValidationCode },
+  components: { ValidationCode }, // validation code component
   data() {
     const validateEmail = (rule, value, callback) => {
       const end1 = value.slice(value.length - 17, value.length)
@@ -92,14 +93,14 @@ export default {
         callback(new Error('Wrong email format: must be CUHKSZ email'))
       } else {
         callback()
-      }
+      } // only accpet CUHKSZ email
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
         callback(new Error('The password can not be less than 6 digits'))
       } else {
         callback()
-      }
+      } //password rule, length >= 6
     }
     const validateCode = (rule, value, callback) => {
       if (value.toLowerCase() !== this.identifyCode.toLowerCase()) {
@@ -107,37 +108,38 @@ export default {
         this.refreshCode()
       } else {
         callback()
-      }
+      } //verify validation code. The user must input correct validation code
     }
     return {
       loginForm: {
         email: '',
         password: '',
         code: ''
-      },
+      }, // form to stroe login information
       loginRules: {
-        email: [{ required: true, trigger: 'blur', validator: validateEmail }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        email: [{ required: true, trigger: 'blur', validator: validateEmail }], //email is required and must be CUHKSZ email
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }], // password is required and must has at least 6 digits
         code: [{ required: true, message: 'Verification code can not be empty', trigger: 'blur' }, { validator: validateCode, trigger: 'blur' }]
-      },
+      }, //validation code is required can must be correct
       loading: false,
       passwordType: 'password',
       redirect: undefined,
-      identifyCodes: '012345679abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-      identifyCode: ''
+      identifyCodes: '012345679abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', //randomly select from them
+      identifyCode: '' //randomly generated validation code
     }
   },
   watch: {
     $route: {
       handler: function(route) {
         this.redirect = route.query && route.query.redirect
-      },
+      }, //watch route, immediately redirect back
       immediate: true
     }
   },
   mounted() {
     this.identifyCode = ''
     this.makeCode(this.identifyCodes, 4)
+    // make random validation code of length 4 when the page is mounted 
   },
 
   methods: {
@@ -150,23 +152,24 @@ export default {
       this.$nextTick(() => {
         this.$refs.password.focus()
       })
-    },
+    }, // method to show password or hide it
     goadduser() {
       this.$router.push('/adduser')
-    },
+    }, // go to register
     goreset() {
       this.$router.push('/resetPassword')
-    },
+    }, // forget password, go to reset it
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
+        // check input form. Send to back-end only when valid
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push('/') // 登录成功之后重定向到首页
+          this.$store.dispatch('user/login', this.loginForm).then(() => { //user store.login
+            this.$router.push('/') // go to home page if login successfully
             this.loading = false
           }).catch((error) => {
             this.$alert('Invalid user email or password')
-            console.log(error)
+            console.log(error) // wrong email or password, retry
             this.loading = false
             this.refreshCode()
           })
@@ -174,18 +177,19 @@ export default {
           console.log('error submit!!')
           this.refreshCode()
           this.passwordType = ''
-          return false // 登录失败提示错误
+          return false // invalid input
         }
       })
     },
     refreshCode() {
       this.identifyCode = ''
       this.makeCode(this.identifyCodes, 4)
+      // re-generate validation code
     },
     makeCode(o, l) {
       for (let i = 0; i < l; i++) {
         this.identifyCode += this.identifyCodes[this.randomNum(0, this.identifyCodes.length)]
-      }
+      } // randomly generate code of length l from this.identifyCodes
     },
     randomNum(min, max) {
       return Math.floor(Math.random() * (max - min) + min)
