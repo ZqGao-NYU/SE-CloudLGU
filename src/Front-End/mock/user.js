@@ -3,8 +3,11 @@ const tokens = {
   admin: {
     token: 'admin-token'
   },
-  editor: {
-    token: 'editor-token'
+  student: {
+    token: 'student-token'
+  },
+  faculty: {
+    token: 'faculty-token'
   }
 }
 
@@ -13,24 +16,33 @@ const users = {
     roles: ['admin'],
     introduction: 'I am a super administrator',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Super Admin'
+    name: 'Super Admin',
+    email: 'admin@cuhk.edu.cn'
   },
-  'editor-token': {
-    roles: ['editor'],
-    introduction: 'I am an editor',
+  'student-token': {
+    roles: ['student'],
+    introduction: 'I am an student',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Normal Editor'
+    name: 'Normal student',
+    email: 'student@cuhk.edu.cn'
+  },
+  'faculty-token': {
+    roles: ['faculty'],
+    introduction: 'I am a professor',
+    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    name: 'Normal professor',
+    email: 'faculty@cuhk.edu.cn'
   }
 }
 
 module.exports = [
   // user login
   {
-    url: '/vue-admin-template/user/login',
+    url: '/vCloudLGU/user/login',
     type: 'post',
     response: config => {
-      const { username } = config.body
-      const token = tokens[username]
+      const { useremail } = config.body
+      const token = tokens[useremail]
 
       // mock error
       if (!token) {
@@ -49,7 +61,7 @@ module.exports = [
 
   // get user info
   {
-    url: '/vue-admin-template/user/info\.*',
+    url: '/vCloudLGU/user/info\.*',
     type: 'get',
     response: config => {
       const { token } = config.query
@@ -72,7 +84,7 @@ module.exports = [
 
   // user logout
   {
-    url: '/vue-admin-template/user/logout',
+    url: '/vCloudLGU/user/logout',
     type: 'post',
     response: _ => {
       return {
