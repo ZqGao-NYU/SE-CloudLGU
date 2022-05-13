@@ -55,7 +55,6 @@ def create_slot(request):
                 context['status']['success'] = False
                 context['otID'] = -1
                 return JsonResponse(context)
-
         # Create the slot and Return ID
         slot = TimeSlot()
         slot.otDate = date
@@ -79,14 +78,12 @@ def update_slot(request):
     """ Professor can update their already created time slots"""
     otID = request.POST.get('otID')
     slot = TimeSlot.objects.get(id=otID)
-
     # New Information
     data = json.loads(request.body)
     StartTime = data['otStartTime']
     EndTime = data['otEndTime']
     Location = data['otLocation']
     Date = data['otDate']
-
     profID = slot.Professor.id
     today_slots = TimeSlot.objects.filter(Q(otDate=Date), Q(Professor_id=profID))
 
@@ -110,7 +107,6 @@ def update_slot(request):
             context['status']['success'] = False
             context['otID'] = -1
             return JsonResponse(context)
-
     # Update the slot
     slot.otStartTime = StartTime
     slot.otEndTime = EndTime

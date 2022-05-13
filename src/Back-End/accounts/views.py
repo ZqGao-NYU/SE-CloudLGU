@@ -50,6 +50,7 @@ def reset_pwd_code(request):
         return JsonResponse(response)
 
 
+
 @require_POST
 def modify_pwd_by_old(request):
     """Modify the password with the old password"""
