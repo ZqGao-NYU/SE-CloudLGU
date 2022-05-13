@@ -32,14 +32,6 @@ import TimeGridPlugin from '@fullcalendar/timegrid'
 import InteractionPlugin from '@fullcalendar/interaction'
 import ListPlugin from '@fullcalendar/list'
 import { searchWeek } from '@/api/ot'
-
-// import axios from 'axios'
-// import tippy from 'tippy.js'
-// import 'tippy.js/dist/tippy.css'
-// import 'tippy.js/themes/light.css';
-// import 'tippy.js/animations/scale.css';
-
-// require('@fullcalendar/core/main.min.css')
 require('@fullcalendar/daygrid/main.min.css')
 require('@fullcalendar/timegrid/main.min.css')
 
@@ -48,37 +40,10 @@ export default {
   data() {
     return {
       message: 'prof1',
-      source: {
-        success: true,
-        otLists:
-        [
-          {
-            otID: 11,
-            otDate: '2022-04-10',
-            otStartTime: '09:00',
-            otEndTime: '10:00',
-            otLocation: 'place1',
-            isBooked: false,
-            booked_by: 'student',
-            prof_name: 'p3'
-          },
-          {
-            otID: 12,
-            otDate: '2022-04-11',
-            otStartTime: '09:00',
-            otEndTime: '10:00',
-            otLocation: 'place1',
-            isBooked: true,
-            booked_by: 'student',
-            prof_name: 'p3'
-          }
-        ]
-      },
-      calendarOptions: {
+      calendarOptions: { //settings for imported fullCalendar
         plugins: [DayGridPlugin, InteractionPlugin, TimeGridPlugin, ListPlugin],
         initialView: 'dayGridWeek',
-        // backgroundColor: '#D3D3D3',
-        headerToolbar: { // 日历头部按钮位置
+        headerToolbar: {
           left: 'title',
           center: '',
           right: 'prev today next'
@@ -88,7 +53,7 @@ export default {
           hour: '2-digit',
           minute: '2-digit',
           meridiem: false,
-          hour12: false // 设置时间为24小时
+          hour12: false
         },
         slotDuration: '00:10:00',
         slotMaxTime: '24:00:00',
@@ -103,6 +68,7 @@ export default {
     }
   },
   created() {
+    // show available profs this week
     searchWeek()
       .then(res => {
         if (res.data['success']) {
@@ -110,9 +76,6 @@ export default {
             message: 'Search Successfully',
             type: 'success'
           })
-          // console.log('here')
-          // console.log(res.data)
-          // console.log(res.data['lists'][0])
           this.calendarOptions.events = []
           for (var key in res.data['lists']) {
             for (var j = 0; j < res.data['lists'][key].length; j++) {
@@ -126,32 +89,24 @@ export default {
                   prof_name: key
                 }
               })
-              // console.log(this.calendarOptions.events[0])
             }
           }
         } else {
           this.$alert('No available OfficeTime this week!')
         }
       })
-      .catch(function(error) { // 请求失败处理
+      .catch(function(error) { // request failure error
         console.log(error)
       })
   },
   methods: {
+    // click a professor jump to his page
     handleEventClick: function(info) {
-      // alert(info.event.extendedProps.prof_name)
-
       this.$router.push({
         name: 'studentSearchProf',
         params: { message: info.event.extendedProps.prof_name }
       })
-      // alert(info.event.extendedProps.prof_name)
     }
-    // handleMouseEnter: function (info) {
-    //   tippy(info.el, {
-    //     content: info.event.extendedProps.Location
-    //   })
-    // }
   }
 }
 </script>
