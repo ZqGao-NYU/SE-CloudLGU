@@ -20,8 +20,8 @@
       <div v-if="loading" class="loading">
         Loading...
       </div>
-      <div v-else class="posts">
 
+      <div v-else class="posts">
         <ul>
           <li v-for="post in posts" :key="post.postID">
             <span style="font-weight: 900; color: #ff0000;float: left;margin-left:-3%">
@@ -81,31 +81,17 @@ export default {
 			  ]
 		  },
 		  webTag: 'All',
-      // post: {title: '',
-      // content: '',
-      // tag: '',
-      // poster: '',
-      // createTime: '',
-      // updateTime: ''},
 		  posts: [],
 	      loading: false,
 		  tagsList: ['All', 'Discussion', 'Recruit', 'Help']
 	    }
 	  },
-  // watch: {
-  // 	$route: {
-  // 	immediate: true, // 一旦监听到路由的变化立即执行
-  // 	handler(to, from) {
-  // 		alert("监听路由：" + JSON.stringify(to.name))
-  // 		// this.webTag = this.$route.params.webTag;
-  // 		alert(this.webTag)
-  // 	}
-  // 	}
-  // },
 	  created() {
+    // send request to api to show all post
     showAllPost()
       .then(res => {
         if (res.data['success']) {
+          // there is always a TOP post
           this.posts = [{
             title: '',
             content: '',
@@ -115,8 +101,8 @@ export default {
             createTime: '',
             updateTime: ''
           }]
-          console.log(res.data)
           for (var i = 0; i < res.data['postList'].length; i++) {
+            // put TOP post as first one in list
             if (res.data['postList'][i]['postTag'] == 'Top') {
               this.posts[0] = {
                 postID: res.data['postList'][i]['postID'],
@@ -144,12 +130,13 @@ export default {
           this.$alert('Create post fail!')
         }
       })
-      .catch(function(error) { // 请求失败处理
+      .catch(function(error) { // request failure error
         console.log(error)
       })
 	  },
 	  methods: {
 		  clickroute: function(Tag) {
+      // send request to api for all posts information
 		  showAllPost()
         .then(res => {
           if (res.data['success']) {
@@ -177,7 +164,6 @@ export default {
               } else if (res.data['postList'][i]['postTag'] == Tag || Tag == 'All') {
                 this.posts.push({
                   postID: res.data['postList'][i]['postID'],
-
                   title: res.data['postList'][i]['postTitle'],
                   content: res.data['postList'][i]['postContent'],
                   tag: res.data['postList'][i]['postTag'],
@@ -191,11 +177,10 @@ export default {
             this.$alert('Create post fail!')
           }
         })
-        .catch(function(error) { // 请求失败处理
+        .catch(function(error) { // request failure error
           console.log(error)
         })
 		  }
-
 	  }
 }
 </script>
@@ -207,8 +192,6 @@ export default {
 		background:#ffffff ;
 		height: 50px;
 		width: 20%;
-		/* margin-top: 50px; */
-		/* margin-left: 200px; */
 	}
 	.el-button {
 		color: #000000;
@@ -216,7 +199,6 @@ export default {
 		border: 1px solid #dcdfe6;
 		width: 100%;
 		text-align: center;
-		/* vertical-align:middle; */
 		height: 50px;
 		padding-bottom:0%;
 	}
@@ -225,12 +207,10 @@ export default {
 	}
 	.PostList .posts li {
 	list-style: none;
-	/* margin-top: 30px; */
 	margin-bottom: 14px;
 	border-bottom: 1px solid #E7E7E7;
 	line-height: 80px;
 	}
-
 	.router-link-active {
 	text-decoration: none;
 	color: purple;

@@ -13,13 +13,13 @@
         <router-link to="/officetime/student/my">My Reservations</router-link>
       </el-button>
     </el-form>
-    <div>    <p style="margin-left:35%; font-size:2rem;">{{ message }} Office Time</p>
-      <div style="margin-left:5%; width:90%;">
 
-        <FullCalendar
-          :options="calendarOptions"
-        />
-      </div></div>
+    <div>    
+      <p style="margin-left:35%; font-size:2rem;">{{ message }} Office Time</p>
+      <div style="margin-left:5%; width:90%;">
+        <FullCalendar :options="calendarOptions"/>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -32,13 +32,7 @@ import InteractionPlugin from '@fullcalendar/interaction'
 import ListPlugin from '@fullcalendar/list'
 import { bookOfficeTime, searchProf } from '@/api/ot'
 
-// import axios from 'axios'
 import tippy from 'tippy.js'
-// import 'tippy.js/dist/tippy.css'
-// import 'tippy.js/themes/light.css';
-// import 'tippy.js/animations/scale.css';
-
-// require('@fullcalendar/core/main.min.css')
 require('@fullcalendar/daygrid/main.min.css')
 require('@fullcalendar/timegrid/main.min.css')
 
@@ -48,36 +42,10 @@ export default {
     return {
       value: '',
       message: '',
-      source: {
-        Professor_Name: 'p1',
-        success: true,
-        otLists:
-        [
-          {
-            otID: 11,
-            otDate: '2022-04-10',
-            otStartTime: '09:00',
-            otEndTime: '10:00',
-            otLocation: 'place1',
-            isBooked: false,
-            booked_by: 'student'
-          },
-          {
-            otID: 12,
-            otDate: '2022-04-11',
-            otStartTime: '09:00',
-            otEndTime: '10:00',
-            otLocation: 'place1',
-            isBooked: true,
-            booked_by: 'student'
-          }
-        ]
-      },
-      calendarOptions: {
+      calendarOptions: { //settings for imported fullCalendar
         plugins: [DayGridPlugin, InteractionPlugin, TimeGridPlugin, ListPlugin],
         initialView: 'timeGridWeek',
-        // backgroundColor: '#D3D3D3',
-        headerToolbar: { // 日历头部按钮位置
+        headerToolbar: {
           left: 'title',
           center: '',
           right: 'prev today next'
@@ -87,7 +55,7 @@ export default {
           hour: '2-digit',
           minute: '2-digit',
           meridiem: false,
-          hour12: false // 设置时间为24小时
+          hour12: false
         },
         customButtons: {
           addEventButton: {
@@ -114,21 +82,21 @@ export default {
     this.studentSearchProf()
   },
   methods: {
+    // search professor
     studentSearchProf: function() {
-      // alert('send'+this.message)
+      //send request to api to get data
       searchProf(this.message)
         .then(res => {
           console.log('---student get office time---')
           console.log(this.message)
           console.log(res.data)
           this.calendarOptions.events = []
-          if (res.data['success']) {
+          if (res.data['success']) { 
             this.$message({
               message: 'Search Successfully',
               type: 'success'
             })
             for (var i = 0; i < res.data['slots'].length; i++) {
-              // if (!this.source.otLists[i].isBooked) {
               this.calendarOptions.events.push({
                 id: res.data['slots'][i]['otID'],
                 title: 'Office Time',
@@ -140,29 +108,17 @@ export default {
                   Location: res.data['slots'][i]['otLocation']
                 }
               })
-              // } else {
-              //   this.calendarOptions.events.push({
-              //     id: this.source.otLists[i].otID.toString(),
-              //     title: 'Office Time',
-              //     start: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otStartTime + ':00',
-              //     end: this.source.otLists[i].otDate + 'T' + this.source.otLists[i].otEndTime + ':00',
-              //     overlap: true,
-              //     extendedProps: {
-              //       Location: this.source.otLists[i].otLocation
-              //     }
-              //   })
-              // }
             }
           } else {
             this.$alert('The professor does not have office time this week')
           }
         })
-        .catch(function(error) { // 请求失败处理
+        .catch(function(error) { // request failure error
           console.log(error)
         })
     },
+    // click an event to book OT
     handleEventClick: function(info) {
-      // alert(info.event.extendedProps.Location)
       var flag = false
       if (!info.event.overlap) {
         var hours = info.event.start.getHours().toString()
@@ -172,8 +128,9 @@ export default {
         var times = hours + ':' + minutes
         if (confirm('Do you want to book the OfficeTime at ' + times + '?')) {
           var student_id = this.$store.state.user.token
+          // send request to api to book OT
           bookOfficeTime(info.event.id, student_id).then(res => {
-            if (res.data['success']) {
+            if (res.data['success']) { //
               this.$message({
                 message: 'Book Successfully',
                 type: 'success'
@@ -182,14 +139,14 @@ export default {
             } else {
               this.$alert('Book fail!')
             }
-          }).catch(error => { // 请求失败处理
+          }).catch(error => { // request failure error
             console.log(error)
           })
         }
       }
     },
+    // move mouse on event for details
     handleMouseEnter: function(info) {
-      // alert('Event: ' + info.event.title)
       tippy(info.el, {
         content: 'Location: ' + info.event.extendedProps.Location
       })
