@@ -1,6 +1,7 @@
 from django.db import models
 from accounts.models import MyUser
 
+
 # Create your models here.
 
 class Forumpost(models.Model):
@@ -10,6 +11,7 @@ class Forumpost(models.Model):
     Ctime = models.DateTimeField()
     UpdateTime = models.DateTimeField()
     Poster = models.ForeignKey(MyUser, related_name='Poster', on_delete=models.CASCADE)
+
     class Meta:
         ordering = ['-UpdateTime']
 
@@ -19,5 +21,6 @@ class Forumcomment(models.Model):
     Commenter = models.ForeignKey(MyUser, related_name='Commenter', on_delete=models.CASCADE)
     Content = models.TextField()
     Ctime = models.DateTimeField()
+
     class Meta:
         ordering = ['Ctime']

@@ -1,14 +1,13 @@
 import random
 
 from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
 from django.conf import settings
 import re
 
-from django.urls import reverse
 
 
 def send_mail(to, context):
+    """Send verification email with verification code to the user. Send with HTML format."""
     text_content = '''
     Thank you for using CloudLGU. Here is your verification code. Please use it to finish your operation!
     '''
@@ -26,7 +25,6 @@ def send_mail(to, context):
 def send_activation_email(request, email, code):
     context = {
         'subject': f'{request}',
-        # 'uri': request.build_absolute_uri(reverse('activate', kwargs={'code': code})),
         'code': code,
         'confirm_time': settings.CONFIRM_TIME
     }
@@ -35,6 +33,7 @@ def send_activation_email(request, email, code):
 
 
 def send_inform(to):
+    """If the user's account is deleted by the administrator, an email will be sent to that user."""
     text_content = '''
     Thank you for using CloudLGU. Your account has been deleted. Please connect admin(118010339@link.cuhk.edu.cn)!
     '''

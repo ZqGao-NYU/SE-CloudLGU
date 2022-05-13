@@ -2,13 +2,11 @@ import json
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
-from django.shortcuts import render
 from django.db.models import F
 from django.conf import settings
 from django.views.decorators.http import require_POST
 
 from .models import MyUser, Profile
-from .forms import UserForm
 from .utils import send_activation_email, check_identification, get_verification, send_inform
 
 
@@ -170,7 +168,7 @@ def update_profile(request):
     Key Arguments:
     userIntro -- User's self-introduction
     userName -- User's nickname shown to other users
-"""
+    """
     if request.method == 'POST':
         data = json.loads(request.body)
         uID = data['userID']
@@ -258,7 +256,7 @@ def reset_profile(request):
 
 @require_POST
 def delete_user(request):
-    """Delete the user and send an inform"""
+    """Delete the user and send inform"""
     data = json.loads(request.body)
     userEmail = data['userEmail']
     user = MyUser.objects.get(email=userEmail)
