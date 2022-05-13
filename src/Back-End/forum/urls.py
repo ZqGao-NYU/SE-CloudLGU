@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+# the urls of functions in app 'forum'
 urlpatterns = [
     path('post/create', views.create_new_post),
     path('post/delete', views.delete_post),
